@@ -1,0 +1,270 @@
+tree: Events
+dbcache: "2018_UL.db"
+eras:
+  '2017':
+    luminosity: 41000.0
+
+samples:
+  SingleMuon_Run2017B:
+    files: file_paths/2017/SingleMuon_Run2017B.txt
+    era: '2017'
+    split: 30
+    group: data
+    #certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
+  SingleMuon_Run2017C:
+    files: file_paths/2017/SingleMuon_Run2017C.txt
+    era: '2017'
+    split: 30
+    group: data
+    #certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
+  SingleMuon_Run2017D:
+    files: file_paths/2017/SingleMuon_Run2017D.txt
+    era: '2017'
+    split: 30
+    group: data
+    #certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
+  SingleMuon_Run2017E:
+    files: file_paths/2017/SingleMuon_Run2017E.txt
+    era: '2017'
+    split: 30
+    group: data
+    #certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
+  SingleMuon_Run2017F:
+    files: file_paths/2017/SingleMuon_Run2017F.txt
+    era: '2017'
+    split: 30
+    group: data
+    #certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
+  WJetsToQQ_HT-600to800:
+    cross-section: 59.06
+    files: file_paths/2017/WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: WJetsToQQ
+  WJetsToQQ_HT-800toInf:
+    cross-section: 28.75
+    files: file_paths/2017/WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: WJetsToQQ
+  ZJetsToQQ_HT-600to800:
+    cross-section: 25.41
+    files: file_paths/2017/ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: ZJetsToQQ
+  ZJetsToQQ_HT-800toInf:
+    cross-section: 12.91
+    files: file_paths/2017/ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: ZJetsToQQ
+  QCD_HT700to1000:
+    cross-section: 6412.0
+    files: file_paths/2017/QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: QCD
+  QCD_HT1000to1500:
+    cross-section: 1118.0
+    files: file_paths/2017/QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: QCD
+  QCD_HT1500to2000:
+    cross-section: 108.5
+    files: file_paths/2017/QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: QCD
+  QCD_HT2000toInf:
+    cross-section: 21.94
+    files: file_paths/2017/QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: QCD
+  TTTo2L2Nu: 
+    cross-section: 77.10979749999998 
+    files: file_paths/2017/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: TTTo2L2Nu
+  TTToHadronic: 
+    cross-section: 303.8527975
+    files: file_paths/2017/TTToHadronic_TuneCP5_13TeV-powheg-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: TTToHadronic
+  TTToSemiLeptonic:
+    cross-section: 306.137405
+    files: file_paths/2017/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: TTToSemiLeptonic
+  WJetsToLNu_HT200to400:
+    cross-section: 336.5
+    files: file_paths/2017/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: WJetsToLNu
+  WJetsToLNu_HT400to600:
+    cross-section: 45.12
+    files: file_paths/2017/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: WJetsToLNu
+  WJetsToLNu_HT600to800:
+    cross-section: 10.99
+    files: file_paths/2017/WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: WJetsToLNu
+  WJetsToLNu_HT800to1200:
+    cross-section: 4.938
+    files: file_paths/2017/WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: WJetsToLNu
+  WJetsToLNu_HT1200to2500:
+    cross-section: 1.155
+    files: file_paths/2017/WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: WJetsToLNu
+  WJetsToLNu_HT2500toInf:
+    cross-section: 0.02625
+    files: file_paths/2017/WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: WJetsToLNu
+  ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    cross-section: 32.51
+    files: file_paths/2017/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8.txt 
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: SingleTop
+  ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    cross-section: 32.45
+    files: file_paths/2017/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8.txt 
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: SingleTop
+   
+
+  
+plotIt:
+  configuration:
+    width: 800
+    height: 700
+    luminosity-label: '%1$.2f fb^{-1} (13 TeV)'
+    experiment: CMS
+    extra-label: Work in progress
+    luminosity-error: 0.027
+    show-overflow: true
+    error-fill-style: 3154
+    error-fill-color: "#ee556270"
+    ratio-fit-error-fill-style: 1001
+    ratio-fit-error-fill-color: "#aa556270"
+    ratio-fit-line-color: "#0B486B"
+  legend:
+    position: [0.7, 0.6, 0.91, 0.91]
+  groups:
+    data:
+      legend: Data
+    #JetHT:
+    #  legend: Data
+    # signal:
+    #   legend: Signal
+    SingleTop:
+      legend: SingleTop
+      fill-color: "#ffac12"
+    DY:
+      legend: DY
+      fill-color: "#F9D01A"
+    Diboson_WW:
+      legend: Diboson_WW
+      fill-color: "#224BE3"
+    Diboson_WZ:
+      legend: Diboson_WZ
+      fill-color: "#2288E3"
+    Diboson_ZZ:
+      legend: Diboson_ZZ
+      fill-color: "#22DDE3"
+    TTTo2L2Nu:
+      legend: TTTo2L2Nu
+      fill-color: "#da96ff"
+    TTToHadronic:
+      legend: TTToHadronic
+      fill-color: "#f595b4"
+    TTToSemiLeptonic:
+      legend: TTToSemiLeptonic
+      fill-color: "#ff96f1"
+    WJetsToQQ:
+      legend: WJetsToQQ
+      fill-color: "#B722E3"
+    WJetsToLNu:
+      legend: WJetsToLNu
+      fill-color: "#ffcc66"
+    ZJetsToQQ:
+      legend: ZJetsToQQ
+      fill-color: "#51ed6b"
+    #SingleTop:
+    #  legend: SingleTop
+    #  fill-color: "#F48841"
+    DY:
+      legend: DY
+      fill-color: "#F4EA10"
+    QCD:
+      legend: QCD
+      fill-color: "#10b7f4"
+
+  plotdefaults:
+    no-data: False
+    y-axis: Events
+    log-y: both
+    y-axis-show-zero: True
+    save-extensions: [png]
+    show-ratio: False
+    sort-by-yields: True
+    rebins: 4
+
+
+
