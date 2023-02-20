@@ -10,10 +10,11 @@ git clone git@github.com:jeffkrupa/zprime-bamboo.git
 cd zprime-bamboo
 ```
 
-Add this to your bashrc: 
-``
-export X509_USER_PROXY=~/.x509up_u`id -u`
-``
+Each time, do 
+```
+cd zprime-bamboo/
+. setup.sh
+```
 
 Running locally:
 ```
