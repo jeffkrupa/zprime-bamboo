@@ -216,15 +216,15 @@ class zprlegacy(NanoAODHistoModule):
         #######################
         ###  CR2 selection  ###
         #######################
-        Wleptonic_candidate = op.sum(t.Muon[0].p4,t.MET.p4)#op.combine((t.MET,t.Muon[0]))
+        Wleptonic_candidate = op.sum(loose_muons[0].p4,t.MET.p4)
         CR2_jpt_cut = muSel.refine("CR2_jpt_cut",cut=fatjets[0].p4.Pt() > 200)
         CR2_jeta_cut = CR2_jpt_cut.refine("CR2_jeta_cut",cut=op.abs(fatjets[0].p4.Eta())<2.5)
         CR2_jmsd_cut = CR2_jeta_cut.refine("CR2_jmsd_cut",cut=fatjets[0].msoftdrop > 40)
-        CR2_mu_pt_cut = CR2_jmsd_cut.refine("CR2_mu_pt_cut",cut=t.Muon[0].pt > 53)
-        CR2_mu_eta_cut = CR2_mu_pt_cut.refine("CR2_mu_eta_cut",cut=op.abs(t.Muon[0].p4.Eta()) < 2.1)
-        CR2_mu_pfRelIso04_all_cut = CR2_mu_eta_cut.refine("CR2_mu_pfRelIso04_all_cut",cut=t.Muon[0].pfRelIso04_all<0.15)
-        CR2_mu_tightId_cut = CR2_mu_pfRelIso04_all_cut.refine("CR2_mu_tightId_cut",cut=t.Muon[0].looseId)
-        CR2_muonDphiAK8 = CR2_mu_tightId_cut.refine("CR2_muonDphiAK8",cut=op.abs(op.deltaPhi(t.Muon[0].p4, t.FatJet[0].p4))>2*np.pi/3)
+        CR2_mu_pt_cut = CR2_jmsd_cut.refine("CR2_mu_pt_cut",cut=loose_muons[0].pt > 53)
+        CR2_mu_eta_cut = CR2_mu_pt_cut.refine("CR2_mu_eta_cut",cut=op.abs(loose_muons[0].p4.Eta()) < 2.1)
+        CR2_mu_pfRelIso04_all_cut = CR2_mu_eta_cut.refine("CR2_mu_pfRelIso04_all_cut",cut=loose_muons[0].pfRelIso04_all<0.15)
+        CR2_mu_tightId_cut = CR2_mu_pfRelIso04_all_cut.refine("CR2_mu_tightId_cut",cut=loose_muons[0].looseId)
+        CR2_muonDphiAK8 = CR2_mu_tightId_cut.refine("CR2_muonDphiAK8",cut=op.abs(op.deltaPhi(loose_muons[0].p4, t.FatJet[0].p4))>2*np.pi/3)
         CR2_ak4btagMedium08 = CR2_muonDphiAK8.refine("CR2_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagCSVV2>0.8838))
         CR2_MET = CR2_ak4btagMedium08.refine("CR2_MET",t.MET.pt>40)
         CR2_electron_cut = CR2_MET.refine("CR2_electron_cut",cut=[op.rng_len(electrons) == 0])
@@ -384,7 +384,7 @@ class zprlegacy(NanoAODHistoModule):
         plots.append(Plot.make1D(prefix+"FatJetPt", fatjets[0].p4.Pt(), selection, EquidistantBinning(25,200.,1400.) if self.args.CR2 else EquidistantBinning(25,450.,1400.), title="FatJet pT", xTitle="FatJet p_{T} (GeV)"))
         plots.append(Plot.make1D(prefix+"FatJetEta", fatjets[0].p4.Eta(), selection, EquidistantBinning(25,-2.5,2.5), title="FatJet #eta", xTitle="FatJet #eta"))
         plots.append(Plot.make1D(prefix+"FatJetRho", 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt), selection, EquidistantBinning(25,-5.5,-2), title="FatJet #rho", xTitle="FatJet #rho"))
-        plots.append(Plot.make1D(prefix+"FatJetN2",  fatjets[0].n2b1, selection, EquidistantBinning(25,0,0.5), title="FatJet #rho", xTitle="FatJet #rho"))
+        plots.append(Plot.make1D(prefix+"FatJetN2",  fatjets[0].n2b1, selection, EquidistantBinning(25,0,0.5), title="FatJet N2", xTitle="FatJet N_{2}"))
  
 
         
