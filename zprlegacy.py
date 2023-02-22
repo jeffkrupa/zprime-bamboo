@@ -68,9 +68,9 @@ class zprlegacy(NanoAODHistoModule):
         tree,noSel,be,lumiArgs = NanoAODHistoModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg,description=NanoAODDescription.get('v7', year='2018',isMC=True, systVariations=[nanoRochesterCalc]))
         #tree,noSel,be,lumiArgs = HistogramsModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg,)
         era = sampleCfg["era"]
-        if era == "2018":
-            configureRochesterCorrection(tree._Muon, "/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/fromYihan/RoccoR2018UL.txt", isMC=self.isMC(sample), backend=be)
-            return RuntimeError("Need to run on some region!")
+        #if era == "2018":
+        #    configureRochesterCorrection(tree._Muon, "/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/fromYihan/RoccoR2018UL.txt", isMC=self.isMC(sample), backend=be)
+        #    return RuntimeError("Need to run on some region!")
 
         return tree,noSel,be,lumiArgs
 
@@ -83,6 +83,7 @@ class zprlegacy(NanoAODHistoModule):
   
         era = sampleCfg["era"]
         if era == "2018":
+            jettrigger = [ t.HLT.PFHT1050, t.HLT.AK8PFJet400_TrimMass30, t.HLT.AK8PFHT800_TrimMass50, t.HLT.PFJet500, t.HLT.AK8PFJet500]
             muontrigger= [ t.HLT.Mu50 ] # Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8
         if era == "2017":
             #jettrigger = [t.HLT.AK8PFJet330_PFAK8BTagCSV_p17, t.HLT.PFHT1050, t.HLT.AK8PFJet400_TrimMass30, t.HLT.AK8PFHT800_TrimMass50, t.HLT.PFJet500, t.HLT.AK8PFJet500]
@@ -154,7 +155,7 @@ class zprlegacy(NanoAODHistoModule):
         jets = op.sort(op.select(t.Jet, lambda j : op.AND(
 					j.pt > 50.,
 					op.abs(j.eta) < 2.5,
-					j.btagCSVV2 > 0.8838,
+					#j.btagCSVV2 > 0.8838,
 					)), lambda j : -j.pt)[:4]
         jets_away = op.select(jets, lambda j : op.deltaR(fatjets[0].p4, j.p4)  > 0.8) 
 
@@ -189,7 +190,7 @@ class zprlegacy(NanoAODHistoModule):
         SR_pt_cut = jetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > 550)
         SR_eta_cut = SR_pt_cut.refine("fj_eta_cut",cut=op.abs(fatjets[0].p4.Eta()) < 2.5)
         SR_msd_cut = SR_eta_cut.refine("fj_msd_cut",cut=fatjets[0].msoftdrop>40)
-        SR_rho_cut = SR_msd_cut.refine("fj_rho_cut",cut=-5.5 < 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) < -2.)
+        SR_rho_cut = SR_msd_cut.refine("fj_rho_cut",cut=op.AND(2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -5.5,2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) <-2.))
         SR_electron_cut = SR_rho_cut.refine("el_cut",cut=[op.rng_len(electrons) == 0])
         SR_muon_cut = SR_electron_cut.refine("mu_cut",cut=[op.rng_len(loose_muons) == 0])
         SR_tau_cut = SR_muon_cut.refine("tau_cut",cut=[op.rng_len(taus) == 0]) 
@@ -223,8 +224,8 @@ class zprlegacy(NanoAODHistoModule):
         CR2_mu_pt_cut = CR2_jmsd_cut.refine("CR2_mu_pt_cut",cut=loose_muons[0].pt > 53)
         CR2_mu_eta_cut = CR2_mu_pt_cut.refine("CR2_mu_eta_cut",cut=op.abs(loose_muons[0].p4.Eta()) < 2.1)
         CR2_mu_pfRelIso04_all_cut = CR2_mu_eta_cut.refine("CR2_mu_pfRelIso04_all_cut",cut=loose_muons[0].pfRelIso04_all<0.15)
-        CR2_mu_tightId_cut = CR2_mu_pfRelIso04_all_cut.refine("CR2_mu_tightId_cut",cut=loose_muons[0].looseId)
-        CR2_muonDphiAK8 = CR2_mu_tightId_cut.refine("CR2_muonDphiAK8",cut=op.abs(op.deltaPhi(loose_muons[0].p4, t.FatJet[0].p4))>2*np.pi/3)
+        CR2_mu_tightId_cut = CR2_mu_pfRelIso04_all_cut.refine("CR2_mu_tightId_cut",cut=loose_muons[0].tightId)
+        CR2_muonDphiAK8 = CR2_mu_tightId_cut.refine("CR2_muonDphiAK8",cut=op.abs(op.deltaPhi(loose_muons[0].p4, fatjets[0].p4))>2*np.pi/3)
         CR2_ak4btagMedium08 = CR2_muonDphiAK8.refine("CR2_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagCSVV2>0.8838))
         CR2_MET = CR2_ak4btagMedium08.refine("CR2_MET",t.MET.pt>40)
         CR2_electron_cut = CR2_MET.refine("CR2_electron_cut",cut=[op.rng_len(electrons) == 0])
@@ -294,7 +295,7 @@ class zprlegacy(NanoAODHistoModule):
 
         loose_fatjets = op.sort(
           op.select(
-             t.FatJet, lambda fj : op.AND(fj.pt>170, fj.msoftdrop>30, op.abs(fj.eta)<2.5, -5.5 < 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) < -2.)
+             t.FatJet, lambda fj : op.AND(fj.pt>170, fj.msoftdrop>30, op.abs(fj.eta)<2.5, op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -6, op.log(fatjets[0].msoftdrop/fatjets[0].pt) < -2.)
           ), lambda fj : -fj.pt, 
         ) 
         mvaVariables = {
@@ -305,7 +306,7 @@ class zprlegacy(NanoAODHistoModule):
                  
                 
                 "zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime" : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime,
-                "zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime" : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_QCD,
+                "zpr_PN_PFSVE_DISCO200_FLAT_BINARY_QCD"    : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_QCD,
                 "zpr_PN_PFSVE_DISCO200_FLAT_3CAT_bbvQCD"   : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_3CAT_bbvQCD, 
                 "zpr_PN_PFSVE_DISCO200_FLAT_3CAT_ccvQCD"   : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_3CAT_ccvQCD, 
                 "zpr_PN_PFSVE_DISCO200_FLAT_3CAT_qqvQCD"   : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_3CAT_qqvQCD, 
@@ -313,6 +314,14 @@ class zprlegacy(NanoAODHistoModule):
                 "zpr_PN_PFSVE_DISCO200_FLAT_CAT_cc"        : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_CAT_cc,
                 "zpr_PN_PFSVE_DISCO200_FLAT_CAT_qq"        : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_CAT_qq,
                 "zpr_PN_PFSVE_DISCO200_FLAT_CAT_QCD"       : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_CAT_QCD,
+                "zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb"        : loose_fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb,
+                "zpr_IN_PFSVE_DISCO200_FLAT_CAT_cc"        : loose_fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_cc,
+                "zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq"        : loose_fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq,
+                "zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD"       : loose_fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD,
+                "zpr_INv1_PFSVE_DISCO200_FLAT_CAT_bb"      : loose_fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_bb,
+                "zpr_INv1_PFSVE_DISCO200_FLAT_CAT_cc"      : loose_fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_cc,
+                "zpr_INv1_PFSVE_DISCO200_FLAT_CAT_qq"      : loose_fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_qq,
+                "zpr_INv1_PFSVE_DISCO200_FLAT_CAT_QCD"     : loose_fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_QCD,
                 "zpr_PN_PFSVE_noDISCO_FLAT_CAT_bb"         : loose_fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_bb,
                 "zpr_PN_PFSVE_noDISCO_FLAT_CAT_cc"         : loose_fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_cc,
                 "zpr_PN_PFSVE_noDISCO_FLAT_CAT_qq"         : loose_fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_qq,
@@ -330,8 +339,7 @@ class zprlegacy(NanoAODHistoModule):
         ### Save mvaVariables to be retrieved later in the postprocessor and saved in a parquet file ###
         if self.args.mvaSkim:
             from bamboo.plots import Skim
-            plots.append(Skim("allevts", mvaVariables, SR_rho_cut))
-            #plots.append(Skim("allevts_total", mvaVariables2, noSel))
+            plots.append(Skim("allevts", mvaVariables, SR_tau_cut))
          
         pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
        
@@ -354,7 +362,16 @@ class zprlegacy(NanoAODHistoModule):
 
 
         #### IN+DISCO (CAT) plots
-        plots.append(Plot.make1D(prefix+"IN_PFSVE_DISCO200_FLAT_BINARY_zprime", fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime, selection, EquidistantBinning(25,0.,1.), title="ParticleNetDISCO", xTitle="ParticleNet+DISCO 2prong score"))
+        plots.append(Plot.make1D(prefix+"IN_PFSVE_DISCO200_FLAT_CAT_bb", fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb, selection, EquidistantBinning(25,0.,1.), title="IN_DISCO_bb", xTitle="InteractionNet+DISCO bb score"))
+        plots.append(Plot.make1D(prefix+"IN_PFSVE_DISCO200_FLAT_CAT_cc", fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_cc, selection, EquidistantBinning(25,0.,1.), title="IN_DISCO_cc", xTitle="InteractionNet+DISCO cc score"))
+        plots.append(Plot.make1D(prefix+"IN_PFSVE_DISCO200_FLAT_CAT_qq", fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq, selection, EquidistantBinning(25,0.,1.), title="IN_DISCO_qq", xTitle="InteractionNet+DISCO qq score"))
+        plots.append(Plot.make1D(prefix+"IN_PFSVE_DISCO200_FLAT_CAT_QCD", fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD, selection, EquidistantBinning(25,0.,1.), title="IN_DISCO_QCD", xTitle="InteractionNet+DISCO QCD score"))
+
+        #### INv1+DISCO (CAT) plots
+        plots.append(Plot.make1D(prefix+"INv1_PFSVE_DISCO200_FLAT_CAT_bb", fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_bb, selection, EquidistantBinning(25,0.,1.), title="INv1_DISCO_bb", xTitle="InteractionNet(v1)+DISCO bb score"))
+        plots.append(Plot.make1D(prefix+"INv1_PFSVE_DISCO200_FLAT_CAT_cc", fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_cc, selection, EquidistantBinning(25,0.,1.), title="INv1_DISCO_cc", xTitle="InteractionNet(v1)+DISCO cc score"))
+        plots.append(Plot.make1D(prefix+"INv1_PFSVE_DISCO200_FLAT_CAT_qq", fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_qq, selection, EquidistantBinning(25,0.,1.), title="INv1_DISCO_qq", xTitle="InteractionNet(v1)+DISCO qq score"))
+        plots.append(Plot.make1D(prefix+"INv1_PFSVE_DISCO200_FLAT_CAT_QCD", fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_QCD, selection, EquidistantBinning(25,0.,1.), title="INv1_DISCO_QCD", xTitle="InteractionNet(v1)+DISCO QCD score"))
 
 
 
@@ -389,10 +406,10 @@ class zprlegacy(NanoAODHistoModule):
 
         
         #### Muon kinematics 
-        plots.append(Plot.make1D(prefix+"nmuons",op.rng_len(candidatemuons), selection, EquidistantBinning(5,0.,5.),title= "Number of Muons", xTitle="Number of muons" ))
-        plots.append(Plot.make1D(prefix+"muonpt",candidatemuons[0].pt, selection, EquidistantBinning(20,51.,300.),title= "Candidate muon pt", xTitle="Muon p_{T} (GeV)" ))
-        plots.append(Plot.make1D(prefix+"muoneta",candidatemuons[0].p4.Eta(), selection, EquidistantBinning(20,-2.1,2.1),title= "Candidate muon eta", xTitle="Muon #eta" ))
-        plots.append(Plot.make1D(prefix+"pfRelIso04_all",candidatemuons[0].pfRelIso04_all, selection, EquidistantBinning(20,0.,.4),title= "MuonpfRelIso04_all", xTitle="Muon relative isolation (0.4)" ))
+        plots.append(Plot.make1D(prefix+"nmuons",op.rng_len(loose_muons), selection, EquidistantBinning(5,0.,5.),title= "Number of Muons", xTitle="Number of muons" ))
+        plots.append(Plot.make1D(prefix+"muonpt",loose_muons[0].pt, selection, EquidistantBinning(20,51.,300.),title= "Candidate muon pt", xTitle="Muon p_{T} (GeV)" ))
+        plots.append(Plot.make1D(prefix+"muoneta",loose_muons[0].p4.Eta(), selection, EquidistantBinning(20,-2.1,2.1),title= "Candidate muon eta", xTitle="Muon #eta" ))
+        plots.append(Plot.make1D(prefix+"pfRelIso04_all",loose_muons[0].pfRelIso04_all, selection, EquidistantBinning(20,0.,.4),title= "MuonpfRelIso04_all", xTitle="Muon relative isolation (0.4)" ))
 
         return plots
 

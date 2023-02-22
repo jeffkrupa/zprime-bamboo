@@ -6,8 +6,8 @@ os.system("rm tmp_files.txt")
 #os.system("xrdcp root://cmseos.fnal.gov//store/user/jkrupa/zprlegacy/file_database.yaml ./file_database.yaml")
 
 tag="9Feb22_2"
-year = "2017"
-process = ["SingleTop","ZJetsToQQ","WJetsToQQ","QCD_HT","TTToSemiLeptonic","JetHT","SingleMuon","WJetsToLNu","VectorZPrime","TTToHadronic","TTTo2L2Nu"]
+year = "2018"
+process = ["SingleTop","ZJetsToQQ","WJetsToQQ","QCD_HT","TTToSemiLeptonic","JetHT","SingleMuon","WJetsToLNu","VectorZPrime","TTToHadronic","TTTo2L2Nu","DYJetsToLL"]
 #with open("file_database.yaml") as f:
 #   data = yaml.load(f,Loader=SafeLoader)
 #   #print(data)
@@ -16,11 +16,14 @@ process = ["SingleTop","ZJetsToQQ","WJetsToQQ","QCD_HT","TTToSemiLeptonic","JetH
 #        print(subkey,subprocess)
 
 for p in process:
+  try:
     x = subprocess.check_output(f"xrdfs root://cmseos.fnal.gov/ ls /store/user/lpcpfnano/jekrupa/postprocess/{tag}/{year}/{p}", shell=True,encoding='utf-8')
     subprocesses = x.split("\n")[:-1]
     print(subprocesses)
     for sp in subprocesses:
         sp = sp.split("/")[-1]
-        x = os.system(f"xrdfs root://cmseos.fnal.gov/ ls /store/user/lpcpfnano/jekrupa/postprocess/{tag}/{year}/{p}/{sp} > file_paths/{year}/{sp}.txt",)#encoding='utf-8')
-        os.system(f"sed -i 's,^,root://cmseos.fnal.gov/,' file_paths/{year}/{sp}.txt")
+        x = os.system(f"xrdfs root://cmseos.fnal.gov/ ls /store/user/lpcpfnano/jekrupa/postprocess/{tag}/{year}/{p}/{sp} > ../file_paths/{year}/{sp}.txt",)#encoding='utf-8')
+        os.system(f"sed -i 's,^,root://cmseos.fnal.gov/,' ../file_paths/{year}/{sp}.txt")
         #print([y for y in x.split("\n")])
+  except:
+    print(f"cannot find {p}--skipping")

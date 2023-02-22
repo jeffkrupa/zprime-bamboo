@@ -35,6 +35,39 @@ samples:
     split: 30
     group: data
     #certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
+  DYJetsToLL_Pt-100To250:
+    cross-section: 94.42
+    files: file_paths/2017/DYJetsToLL_Pt-100To250_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: DYJetsToLL
+  DYJetsToLL_Pt-250To400:
+    cross-section: 3.651
+    files: file_paths/2017/DYJetsToLL_Pt-250To400_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: DYJetsToLL
+#  DYJetsToLL_Pt-400To650:
+#    cross-section: 0.4986
+#    files: file_paths/2017/DYJetsToLL_Pt-400To650_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt
+#    era: '2017'
+#    type: mc
+#    generated-events: genEventSumw
+#    split: 30
+#    group: DYJetsToLL
+  DYJetsToLL_Pt-650ToInf:
+    cross-section: 0.04678
+    files: file_paths/2017/DYJetsToLL_Pt-650ToInf_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: DYJetsToLL
+
   WJetsToQQ_HT-600to800:
     cross-section: 59.06
     files: file_paths/2017/WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8.txt
@@ -193,7 +226,7 @@ samples:
 plotIt:
   configuration:
     width: 800
-    height: 700
+    height: 1000
     luminosity-label: '%1$.2f fb^{-1} (13 TeV)'
     experiment: CMS
     extra-label: Work in progress
@@ -214,9 +247,9 @@ plotIt:
     # signal:
     #   legend: Signal
     SingleTop:
-      legend: SingleTop
+      legend: t
       fill-color: "#ffac12"
-    DY:
+    DYJetsToLL:
       legend: DY
       fill-color: "#F9D01A"
     Diboson_WW:
@@ -249,9 +282,6 @@ plotIt:
     #SingleTop:
     #  legend: SingleTop
     #  fill-color: "#F48841"
-    DY:
-      legend: DY
-      fill-color: "#F4EA10"
     QCD:
       legend: QCD
       fill-color: "#10b7f4"
@@ -262,7 +292,7 @@ plotIt:
     log-y: both
     y-axis-show-zero: True
     save-extensions: [png]
-    show-ratio: False
+    show-ratio: True
     sort-by-yields: True
     rebins: 4
 
