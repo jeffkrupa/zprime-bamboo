@@ -79,8 +79,11 @@ class zprlegacy(NanoAODHistoModule):
 
         from bamboo.plots import Plot, EquidistantBinning, CutFlowReport
         from bamboo import treefunctions as op
-        do_genmatch = any(sampleCfg["group"] in x for x in v_PDGID.keys())
-  
+        try: 
+            do_genmatch = any(sampleCfg["group"] in x for x in v_PDGID.keys())
+        except:
+            do_genmatch = True
+            #hotfix for Z' not having "group" 
         era = sampleCfg["era"]
         if era == "2018":
             jettrigger = [ t.HLT.PFHT1050, t.HLT.AK8PFJet400_TrimMass30, t.HLT.AK8PFHT800_TrimMass50, t.HLT.PFJet500, t.HLT.AK8PFJet500]
@@ -187,7 +190,7 @@ class zprlegacy(NanoAODHistoModule):
 	########################
 	###   SR selection   ###
 	########################
-        SR_pt_cut = jetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > 550)
+        SR_pt_cut = jetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > 500)
         SR_eta_cut = SR_pt_cut.refine("fj_eta_cut",cut=op.abs(fatjets[0].p4.Eta()) < 2.5)
         SR_msd_cut = SR_eta_cut.refine("fj_msd_cut",cut=fatjets[0].msoftdrop>40)
         SR_rho_cut = SR_msd_cut.refine("fj_rho_cut",cut=op.AND(2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -5.5,2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) <-2.))
@@ -302,8 +305,11 @@ class zprlegacy(NanoAODHistoModule):
                 "weight"         :   noSel.weight,
                 "pt"             :   loose_fatjets[0].p4.Pt(),
                 "msd"            :   loose_fatjets[0].msoftdrop,
+                "n2b1"           :   loose_fatjets[0].n2b1,
                 "rho"            :   2*op.log(loose_fatjets[0].msoftdrop/loose_fatjets[0].pt),
-                 
+                "nelectrons"     :   op.rng_len(electrons),
+                "nmuons"         :   op.rng_len(loose_muons),
+                "ntaus"          :   op.rng_len(taus),
                 
                 "zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime" : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime,
                 "zpr_PN_PFSVE_DISCO200_FLAT_BINARY_QCD"    : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_QCD,

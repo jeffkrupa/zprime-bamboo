@@ -6,7 +6,7 @@ os.system("rm tmp_files.txt")
 #os.system("xrdcp root://cmseos.fnal.gov//store/user/jkrupa/zprlegacy/file_database.yaml ./file_database.yaml")
 
 tag="9Feb22_2"
-year = "2018"
+year = "2017"
 process = ["SingleTop","ZJetsToQQ","WJetsToQQ","QCD_HT","TTToSemiLeptonic","JetHT","SingleMuon","WJetsToLNu","VectorZPrime","TTToHadronic","TTTo2L2Nu","DYJetsToLL"]
 #with open("file_database.yaml") as f:
 #   data = yaml.load(f,Loader=SafeLoader)

@@ -2,7 +2,7 @@ tree: Events
 dbcache: "2018_UL.db"
 eras:
   '2017':
-    luminosity: 4100.0
+    luminosity: 41000.0
 
 samples:
   JetHT_Run2017B:
@@ -91,6 +91,22 @@ samples:
     generated-events: genEventSumw
     split: 30
     group: ZJetsToQQ
+  #VectorZPrimeToQQ_M200:
+  #  cross-section: 10.00
+  #  files: file_paths/2017/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+  #  era: '2017'
+  #  type: signal
+  #  generated-events: genEventSumw
+  #  split: 30
+  #  #group: VectorZPrimeToQQ_M200
+  #VectorZPrimeToQQ_M75:
+  #  cross-section: 10.00
+  #  files: file_paths/2017/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+  #  era: '2017'
+  #  type: signal
+  #  generated-events: genEventSumw
+  #  split: 30
+  #  #group: VectorZPrimeToQQ_M75
   ZJetsToQQ_HT-800toInf:
     cross-section: 12.91
     files: file_paths/2017/ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8.txt
@@ -138,7 +154,7 @@ samples:
     type: mc
     generated-events: genEventSumw
     split: 30
-    group: TTTo2L2Nu
+    group: TTbar
   TTToHadronic: 
     cross-section: 303.8527975
     files: file_paths/2017/TTToHadronic_TuneCP5_13TeV-powheg-pythia8.txt
@@ -146,7 +162,7 @@ samples:
     type: mc
     generated-events: genEventSumw
     split: 30
-    group: TTToHadronic
+    group: TTbar
   TTToSemiLeptonic:
     cross-section: 306.137405
     files: file_paths/2017/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8.txt
@@ -154,7 +170,7 @@ samples:
     type: mc
     generated-events: genEventSumw
     split: 30
-    group: TTToSemiLeptonic
+    group: TTbar
   WJetsToLNu_HT200to400:
     cross-section: 336.5
     files: file_paths/2017/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8.txt
@@ -248,9 +264,6 @@ plotIt:
     SingleTop:
       legend: SingleTop
       fill-color: "#ffac12"
-    DY:
-      legend: DY
-      fill-color: "#F9D01A"
     Diboson_WW:
       legend: Diboson_WW
       fill-color: "#224BE3"
@@ -260,15 +273,15 @@ plotIt:
     Diboson_ZZ:
       legend: Diboson_ZZ
       fill-color: "#22DDE3"
-    TTTo2L2Nu:
-      legend: TTTo2L2Nu
+    TTbar:
+      legend: tt
       fill-color: "#da96ff"
-    TTToHadronic:
-      legend: TTToHadronic
-      fill-color: "#f595b4"
-    TTToSemiLeptonic:
-      legend: TTToSemiLeptonic
-      fill-color: "#ff96f1"
+    #TTToHadronic:
+    #  legend: TTToHadronic
+    #  fill-color: "#f595b4"
+    #TTToSemiLeptonic:
+    #  legend: TTToSemiLeptonic
+    #  fill-color: "#ff96f1"
     WJetsToQQ:
       legend: WJetsToQQ
       fill-color: "#B722E3"
@@ -287,9 +300,18 @@ plotIt:
     QCD:
       legend: QCD
       fill-color: "#10b7f4"
+    DY:
+      legend: DY
+      fill-color: "#F9D01A"
+    VectorZPrimeToQQ_M200:
+      legend: Z' (200 GeV)
+      fill-color: "#47ffe7"
+    VectorZPrimeToQQ_M200:
+      legend: Z' (75 GeV)
+      fill-color: "#49d1bf"
 
   plotdefaults:
-    no-data: False
+    no-data: True
     y-axis: Events
     log-y: both
     y-axis-show-zero: True
