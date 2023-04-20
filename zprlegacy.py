@@ -39,7 +39,8 @@ GEN_FLAGS = {
 
 def goodFlag(p):
     #return op.AND([p.statusFlags & 2**GEN_FLAGS[FLAG] for FLAG in FLAGS],p.parent.idx >= 0)
-    return op.AND(p.statusFlags & 2**GEN_FLAGS["IsLastCopy"], p.statusFlags & 2**GEN_FLAGS["FromHardProcess"], p.parent.idx >= 0)
+    return op.AND(p.statusFlags & 2**GEN_FLAGS["IsLastCopy"], p.statusFlags & 2**GEN_FLAGS["FromHardProcess"],)# p.parent.idx >= 0)
+    #return op.AND(p.statusFlags & 2**GEN_FLAGS["IsLastCopy"], p.parent.idx >= 0)
 
 
 class zprlegacy(NanoAODHistoModule):
@@ -83,7 +84,9 @@ class zprlegacy(NanoAODHistoModule):
             do_genmatch = any(sampleCfg["group"] in x for x in v_PDGID.keys())
         except:
             do_genmatch = True
-            #hotfix for Z' not having "group" 
+            #hotfix for Z' not having "group"
+        print("do genmatch? ", do_genmatch)
+        print("sample: ", sample)
         era = sampleCfg["era"]
         if era == "2018":
             jettrigger = [ t.HLT.PFHT1050, t.HLT.AK8PFJet400_TrimMass30, t.HLT.AK8PFHT800_TrimMass50, t.HLT.PFJet500, t.HLT.AK8PFJet500]
@@ -164,13 +167,19 @@ class zprlegacy(NanoAODHistoModule):
 
 
         if do_genmatch:
-            allGenParticles = t.GenPart
-            genParticles = op.select(allGenParticles, goodFlag)
-            genLightQuark = op.select(genParticles, lambda q: op.AND(op.abs(q.pdgId) >= 1, op.abs(q.pdgId) <= 5))
-            q_from_w = op.select(genLightQuark, lambda q: op.rng_any(q.ancestors, lambda p: op.OR(op.abs(p.pdgId) == 23,op.abs(p.pdgId) == 24, op.abs(p.pdgId) == 55)))
-            Vgen_matched = op.rng_any(q_from_w, lambda q: op.deltaR(q.p4, fatjets[0].p4) < 0.8)
-            genLightQuark = op.select(genLightQuark, lambda q: op.AND(op.rng_any(q.ancestors, lambda p: op.OR(op.abs(p.pdgId) == 23,op.abs(p.pdgId) == 24, op.abs(p.pdgId) == 55)), op.deltaR(q.p4, fatjets[0].p4) < 0.8),
-		) 
+            genQuarks = op.select(t.GenPart, lambda q: op.AND(op.abs(q.pdgId) >= 1, op.abs(q.pdgId) <= 5))
+            w_by_status = op.sort(op.select(t.GenPart, lambda p : op.OR(op.abs(p.pdgId) == 23,op.abs(p.pdgId) == 24, op.abs(p.pdgId) == 55)),
+                                  lambda p: -p.status)
+            q_from_w = op.select(genQuarks, lambda q : q.parent.idx == w_by_status[0].idx)
+            Vgen_matched = op.rng_count(q_from_w, lambda q: op.deltaR(q.p4, fatjets[0].p4) < 0.8) == 2
+            dr_to_q1 = op.deltaR(q_from_w[0].p4, fatjets[0].p4)
+            dr_to_q2 = op.deltaR(q_from_w[1].p4, fatjets[0].p4)
+
+            
+
+
+        from bamboo.scalefactors import get_correction
+        #sf = get_correction("msdcorr.json","msdraw_onebin", )#)params={"pt": lambda obj : obj.pt,})
 
 
         hasTriggerObj  = noSel.refine("hasTriggerObj", cut=[op.rng_len(triggerObj) > 0] )
@@ -194,7 +203,8 @@ class zprlegacy(NanoAODHistoModule):
         SR_eta_cut = SR_pt_cut.refine("fj_eta_cut",cut=op.abs(fatjets[0].p4.Eta()) < 2.5)
         SR_msd_cut = SR_eta_cut.refine("fj_msd_cut",cut=fatjets[0].msoftdrop>40)
         SR_rho_cut = SR_msd_cut.refine("fj_rho_cut",cut=op.AND(2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -5.5,2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) <-2.))
-        SR_electron_cut = SR_rho_cut.refine("el_cut",cut=[op.rng_len(electrons) == 0])
+        SR_id_cut = SR_rho_cut.refine("id_cut",cut=[fatjets[0].jetId & (1 << 1) !=0])
+        SR_electron_cut = SR_id_cut.refine("el_cut",cut=[op.rng_len(electrons) == 0])
         SR_muon_cut = SR_electron_cut.refine("mu_cut",cut=[op.rng_len(loose_muons) == 0])
         SR_tau_cut = SR_muon_cut.refine("tau_cut",cut=[op.rng_len(taus) == 0]) 
         #if "ZJetsToQQ" in sample or "WJetsToQQ" in sample or "VectorZPrime" in sample:
@@ -298,7 +308,7 @@ class zprlegacy(NanoAODHistoModule):
 
         loose_fatjets = op.sort(
           op.select(
-             t.FatJet, lambda fj : op.AND(fj.pt>170, fj.msoftdrop>30, op.abs(fj.eta)<2.5, op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -6, op.log(fatjets[0].msoftdrop/fatjets[0].pt) < -2.)
+             t.FatJet, lambda fj : op.AND(fj.pt>200, fj.msoftdrop>30, op.abs(fj.eta)<2.5, ) #2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -7, 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) < -1.5)
           ), lambda fj : -fj.pt, 
         ) 
         mvaVariables = {
@@ -307,10 +317,27 @@ class zprlegacy(NanoAODHistoModule):
                 "msd"            :   loose_fatjets[0].msoftdrop,
                 "n2b1"           :   loose_fatjets[0].n2b1,
                 "rho"            :   2*op.log(loose_fatjets[0].msoftdrop/loose_fatjets[0].pt),
-                "nelectrons"     :   op.rng_len(electrons),
-                "nmuons"         :   op.rng_len(loose_muons),
-                "ntaus"          :   op.rng_len(taus),
-                
+                #"nelectrons"     :   op.rng_len(electrons),
+                #"nmuons"         :   op.rng_len(loose_muons),
+                #"ntaus"          :   op.rng_len(taus),
+                #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb,
+                #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc,
+                #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq,
+                #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_QCD" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_QCD,
+                #"zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_bb" : loose_fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_bb,
+                #"zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_cc" : loose_fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_cc,
+                #"zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_qq" : loose_fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_qq,
+                #"zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD" : loose_fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD,
+                #"zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_bb" : loose_fatjets[0].zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_bb,
+                #"zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_cc" : loose_fatjets[0].zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_cc,
+                #"zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_qq" : loose_fatjets[0].zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_qq,
+                #"zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_QCD" : loose_fatjets[0].zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_QCD,
+                "particleNetMD_Xqq"                        : loose_fatjets[0].particleNetMD_Xqq,
+                "particleNetMD_Xcc"                        : loose_fatjets[0].particleNetMD_Xcc,
+                "particleNetMD_Xbb"                        : loose_fatjets[0].particleNetMD_Xbb,
+                "particleNetMD_QCD"                        : loose_fatjets[0].particleNetMD_QCD,
+        }
+        ''' 
                 "zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime" : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime,
                 "zpr_PN_PFSVE_DISCO200_FLAT_BINARY_QCD"    : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_QCD,
                 "zpr_PN_PFSVE_DISCO200_FLAT_3CAT_bbvQCD"   : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_3CAT_bbvQCD, 
@@ -332,21 +359,24 @@ class zprlegacy(NanoAODHistoModule):
                 "zpr_PN_PFSVE_noDISCO_FLAT_CAT_cc"         : loose_fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_cc,
                 "zpr_PN_PFSVE_noDISCO_FLAT_CAT_qq"         : loose_fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_qq,
                 "zpr_PN_PFSVE_noDISCO_FLAT_CAT_QCD"        : loose_fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_QCD,
-                "particleNetMD_Xqq"                        : loose_fatjets[0].particleNetMD_Xqq,
-                "particleNetMD_Xcc"                        : loose_fatjets[0].particleNetMD_Xcc,
-                "particleNetMD_Xbb"                        : loose_fatjets[0].particleNetMD_Xbb,
-                "particleNetMD_QCD"                        : loose_fatjets[0].particleNetMD_QCD,
-
-        }
+        '''
         if do_genmatch:
-            mvaVariables["is_Vmatched"]    = Vgen_matched 
-            mvaVariables["q1_flavor"]      = genLightQuark[0].pdgId
-            mvaVariables["q2_flavor"]      = genLightQuark[1].pdgId
+            mvaVariables["W_pdgId"]        = w_by_status[0].pdgId
+            mvaVariables["W_status"]       = w_by_status[0].status
+            mvaVariables["W_pt"]           = w_by_status[0].pt
+            mvaVariables["is_Vmatched"]    = Vgen_matched
+            mvaVariables["q1_dr_jet"]        = dr_to_q1 
+            mvaVariables["q2_dr_jet"]        = dr_to_q2 
+            mvaVariables["q1_flavor"]      = q_from_w[0].pdgId
+            mvaVariables["q2_flavor"]      = q_from_w[1].pdgId
+            mvaVariables["q1_status"]      = q_from_w[0].statusFlags
+            mvaVariables["q2_status"]      = q_from_w[1].statusFlags
         ### Save mvaVariables to be retrieved later in the postprocessor and saved in a parquet file ###
         if self.args.mvaSkim:
             from bamboo.plots import Skim
-            plots.append(Skim("allevts", mvaVariables, SR_tau_cut))
-         
+            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>200, loose_fatjets[0].msoftdrop>40,op.rng_len(loose_fatjets)>0)])
+            plots.append(Skim("signal_region", mvaVariables, parquet_cut))
+            #plots.append(Skim("wtagging_region", mvaVariables, CR2_cut))
         pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
        
         if self.args.SR:
@@ -365,7 +395,18 @@ class zprlegacy(NanoAODHistoModule):
         plots.append(Plot.make1D(prefix+"particlenet_cc_MD", fatjets[0].particleNetMD_Xcc, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD cc score", xTitle="ParticleNet-MD cc score"))
         plots.append(Plot.make1D(prefix+"particlenet_qq_MD", fatjets[0].particleNetMD_Xqq, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD qq score", xTitle="ParticleNet-MD qq score"))
         plots.append(Plot.make1D(prefix+"particlenet_QCD_MD", fatjets[0].particleNetMD_QCD, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD QCD score", xTitle="ParticleNet-MD QCD score"))
+        #### TRANSFORMER+DISCO (CAT) plots
+        '''
 
+        plots.append(Plot.make1D(prefix+"TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD", fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD",xTitle="Transformer QCD score"))
+        plots.append(Plot.make1D(prefix+"TRANSFORMER_25MAR23_V3_CATEGORICAL_bb", fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_bb, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_25MAR23_V3_CATEGORICAL_bb",xTitle="Transformer bb score"))
+        plots.append(Plot.make1D(prefix+"TRANSFORMER_25MAR23_V3_CATEGORICAL_cc", fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_cc, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_25MAR23_V3_CATEGORICAL_cc",xTitle="Transformer cc score"))
+        plots.append(Plot.make1D(prefix+"TRANSFORMER_25MAR23_V3_CATEGORICAL_qq", fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_qq, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_25MAR23_V3_CATEGORICAL_qq",xTitle="Transformer qq score"))
+        #plots.append(Plot.make1D(prefix+"TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb", fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb",xTitle="Transformer+DISCO bb score"))
+        #plots.append(Plot.make1D(prefix+"TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc", fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc",xTitle="Transformer+DISCO cc score"))
+        #plots.append(Plot.make1D(prefix+"TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq", fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq",xTitle="Transformer+DISCO qq score"))
+        #plots.append(Plot.make1D(prefix+"TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_QCD", fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_QCD, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_QCD",xTitle="Transformer+DISCO QCD score"))
+zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
 
         #### IN+DISCO (CAT) plots
         plots.append(Plot.make1D(prefix+"IN_PFSVE_DISCO200_FLAT_CAT_bb", fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb, selection, EquidistantBinning(25,0.,1.), title="IN_DISCO_bb", xTitle="InteractionNet+DISCO bb score"))
@@ -401,7 +442,6 @@ class zprlegacy(NanoAODHistoModule):
         plots.append(Plot.make1D(prefix+"PN_PFSVE_noDISCO_FLAT_CAT_cc", fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_cc, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_noDISCO_FLAT_CAT_cc", xTitle="ParticleNet (no Disco) cc score"))
         plots.append(Plot.make1D(prefix+"PN_PFSVE_noDISCO_FLAT_CAT_qq", fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_qq, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_noDISCO_FLAT_CAT_qq", xTitle="ParticleNet (no Disco) qq score"))
         plots.append(Plot.make1D(prefix+"PN_PFSVE_noDISCO_FLAT_CAT_QCD", fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_QCD, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_noDISCO_FLAT_CAT_QCD", xTitle="ParticleNet (no Disco) QCD score"))
-       
         #### Jet kinematics 
         plots.append(Plot.make1D(prefix+"FatjetMsd", fatjets[0].msoftdrop, selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} (GeV)"))
         plots.append(Plot.make1D(prefix+"FatJetPt", fatjets[0].p4.Pt(), selection, EquidistantBinning(25,200.,1400.) if self.args.CR2 else EquidistantBinning(25,450.,1400.), title="FatJet pT", xTitle="FatJet p_{T} (GeV)"))
@@ -410,6 +450,7 @@ class zprlegacy(NanoAODHistoModule):
         plots.append(Plot.make1D(prefix+"FatJetN2",  fatjets[0].n2b1, selection, EquidistantBinning(25,0,0.5), title="FatJet N2", xTitle="FatJet N_{2}"))
  
 
+        '''
         
         #### Muon kinematics 
         plots.append(Plot.make1D(prefix+"nmuons",op.rng_len(loose_muons), selection, EquidistantBinning(5,0.,5.),title= "Number of Muons", xTitle="Number of muons" ))

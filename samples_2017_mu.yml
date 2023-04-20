@@ -51,14 +51,14 @@ samples:
     generated-events: genEventSumw
     split: 30
     group: DYJetsToLL
-#  DYJetsToLL_Pt-400To650:
-#    cross-section: 0.4986
-#    files: file_paths/2017/DYJetsToLL_Pt-400To650_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt
-#    era: '2017'
-#    type: mc
-#    generated-events: genEventSumw
-#    split: 30
-#    group: DYJetsToLL
+  DYJetsToLL_Pt-400To650:
+    cross-section: 0.4986
+    files: file_paths/2017/DYJetsToLL_Pt-400To650_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 30
+    group: DYJetsToLL
   DYJetsToLL_Pt-650ToInf:
     cross-section: 0.04678
     files: file_paths/2017/DYJetsToLL_Pt-650ToInf_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt

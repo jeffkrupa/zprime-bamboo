@@ -19,10 +19,11 @@ args = parser.parse_args()
 os.system(f"mkdir -p {args.opath}")
 rlabel = f"{args.year} (13 TeV)"
 
-_ptlow = 400
-_pthigh = 1200
+_ptlow = 200
+_pthigh = 1500
 _msdlow = 40 
 _msdhigh = 350
+_nbins = 20
 inlay_font = {
         #'fontfamily' : 'arial',
         #'weight' : 'normal',
@@ -45,7 +46,7 @@ plt.rc('axes', titlesize=14)
 plt.rc('legend', fontsize=10)
 
 ###Global settings
-nn_bins = np.linspace(-0.01,1.01,1000)
+nn_bins = np.linspace(-0.01,1.01,10000)
 master_data = pd.read_parquet(args.parquet)
 
 def axis_settings(ax):
@@ -68,9 +69,10 @@ def make_response(procname,score,kinsel=1,flavorsel=1,flavorname=""):
     cut = kinsel
 
     sel = kinsel&flavorsel&(master_data["process"]==procname)
+    
     if "Vector" in procname or "ZJets" in procname or "WJets" in procname: sel &= (master_data["is_Vmatched"]) 
     sample = master_data[sel]
-
+    #print(sample.pt)
     if type(score) == str:
       if score in master_data.columns:
         sig_score = sample[score]
@@ -87,7 +89,7 @@ def make_response(procname,score,kinsel=1,flavorsel=1,flavorname=""):
 def plot_sculpting_curves(score, kinsel, title, qcdname="QCD"):
     sel = kinsel&(master_data["process"]==qcdname)
     sample = master_data[sel]
-
+    #print(sample)
     if type(score) == str:
       if score in master_data.columns:
         sig_score = sample[score]
@@ -95,10 +97,22 @@ def plot_sculpting_curves(score, kinsel, title, qcdname="QCD"):
         raise RuntimeError(f"Don't recognize score {score}") 
     else:
         sig_score = score[sel]
-    response, bins, _ = plt.hist(sig_score,bins=np.linspace(-0.01,1.01,1000),density=True,weights=sample["weight"])
-    scorepdf = np.cumsum(response)*(bins[1]-bins[0])
+    print("weight",sample["weight"])
+   
+    plt.clf()
+    fig,ax=plt.subplots() 
+    response, bins, _ = ax.hist(sig_score,bins=np.linspace(-0.01,1.01,1000),density=True,weights=sample["weight"])
+    ax.set_xlabel("tagger score")
+    ax.set_ylabel("Events")
+    plt.savefig(args.opath+f"/{title}_mass_{qcdname}_scores.png")
+    plt.savefig(args.opath+f"/{title}_mass_{qcdname}_scores.pdf")
+    plt.clf()
+    response = response/np.sum(response)/np.diff(bins)
+    scorepdf = np.cumsum(response)*np.diff(bins)
+    print("scorepdf",scorepdf)
     pctls = [.97,.95,.93,.9,.8,.5,.0]
     cuts = np.searchsorted(scorepdf,pctls)
+    print("cuts",cuts)
     fig,ax = plt.subplots()
     hep.cms.label("Preliminary",rlabel=rlabel, data=False)
     ax = axis_settings(ax)
@@ -109,10 +123,14 @@ def plot_sculpting_curves(score, kinsel, title, qcdname="QCD"):
     for c in cuts: 
         cut_value = bins[c]
         passing_cut = (sig_score>=cut_value)
+        print("c,bins[c],cut_value,len(passing_cut)",c,bins[c],cut_value,len(passing_cut))
         passing_cut_hist,_ = np.histogram(sample[passing_cut]["msd"],density=True,weights=sample[passing_cut]["weight"],bins=np.linspace(40,300,15))
-        print(distance.jensenshannon(inclusive,passing_cut_hist))
+        #print(passing_cut)
+        #print(distance.jensenshannon(inclusive,passing_cut_hist))
+        print(sample[passing_cut]["weight"],)
+        print(sample["weight"])
         ax.hist(sample[passing_cut]["msd"],density=True,histtype="step",linewidth=1.5,weights=sample[passing_cut]["weight"],
-                label="$\epsilon\mathrm{_{QCD}}$="+str(int(round(passing_cut.sum()/sel.sum()*100,0)))+"%"+ "(JSD=%.3f)"%distance.jensenshannon(inclusive,passing_cut_hist),
+                label="$\epsilon\mathrm{_{QCD}}$="+str(int(round(sample[passing_cut]["weight"].sum()/sample["weight"].sum()*100,0)))+"%"+ "(JSD=%.3f)"%np.nan_to_num(distance.jensenshannon(inclusive,passing_cut_hist)),
                 bins=np.linspace(40,300,15)
         )
         #print(c,cut_value,passing_cut.sum()/sel.sum(),sample[passing_cut]["msd"])
@@ -134,7 +152,7 @@ def plot_response_and_roc(score_list,label_list,bins,xtitle="",reverse=False,tru
     ax.set_yscale('log')
     ax.set_xlabel(xtitle, horizontalalignment='right',x=1.0,**axis_font)
     ax.set_xlim(-0.01,1.01)
-    ax.set_ylim(1e-2,1e2)
+    ax.set_ylim(1e-5,1e2)
     ax.set_ylabel("Events (normalized)",horizontalalignment='right',y=1.0,**axis_font)
     ax.legend(loc="upper right",prop=legend_font)
     plt.tight_layout()
@@ -157,15 +175,24 @@ def plot_response_and_roc(score_list,label_list,bins,xtitle="",reverse=False,tru
             if truthlabel:
                 tprs[label] = [np.sum(score[:ib])/np.sum(score) for ib in range(0,len(bins),1)]  
             else:
-                fprs[label] = [np.sum(score[:ib])/np.sum(score) for ib in range(0,len(bins),1)] 
+                fprs[label] = [np.sum(score[:ib])/np.sum(score) for ib in range(0,len(bins),1)]
+    #print(tprs,fprs) 
     for sig_key,tpr in tprs.items():
+        if 'qq' in sig_key: proc = 'qq'
+        if 'cc' in sig_key: proc = 'cc'
+        if 'bb' in sig_key: proc = 'bb'
         for bkg_key,fpr in fprs.items():
-             
-             rounded_auc = round(integrate.trapz(tpr,fpr),2) #round(auc(fpr, tpr),2)
-             ax.plot(fpr, tpr, 
-                    label = f"{sig_key} vs {bkg_key} (AUC={rounded_auc})",
+           if ("PN" in sig_key and "PN" in bkg_key):
+               leg_text = "ParticleNetMD_"+proc
+           elif ("T" in sig_key and "T" in bkg_key):
+               leg_text = "Transformer_"+proc 
+           else:
+               continue
+           rounded_auc = round(integrate.trapz(tpr,fpr),2) #round(auc(fpr, tpr),2)
+           ax.plot(fpr, tpr, 
+                    label = f"{leg_text} (AUC={rounded_auc})",
                     lw=2.5,
-             )
+           )
     #ax.set_xscale('log')
     ax.text(0.55,0.32,f"{xtitle} score",transform=ax.transAxes,**inlay_font)
     ax.text(0.55,0.28,"Truth matched AK8 jets",transform=ax.transAxes,**inlay_font)
@@ -173,71 +200,102 @@ def plot_response_and_roc(score_list,label_list,bins,xtitle="",reverse=False,tru
     ax.text(0.55,0.2,"%.0f < $m_{SD}$ < %.0f"%(_msdlow,_msdhigh),transform=ax.transAxes,**inlay_font)
     ax.set_ylabel("True positive rate",horizontalalignment='right',y=1.0,**axis_font)
     ax.set_xlabel("False positive rate", horizontalalignment='right',x=1.0,**axis_font)
-    ax.set_xlim(-0.01,1.01)
-    ax.set_ylim(-0.01,1.01)
+    ax.set_xlim(0.0,1.0)
+    ax.set_ylim(0.0,1.0)
     ax.legend(loc="lower right",prop=legend_font)
     plt.tight_layout() 
-    print("PLOT", f"/{xtitle}_roc.png")
     plt.savefig(args.opath+f"/{xtitle}_roc.png")
     plt.savefig(args.opath+f"/{xtitle}_roc.pdf")
 
-kinsel = (master_data["rho"] < -2)&(master_data["rho"]>-5.5)&(master_data["msd"] > _msdlow)&(master_data["msd"] < _msdhigh)& (master_data["pt"] > _ptlow)&(master_data["pt"] < _pthigh)&(master_data["nelectrons"]==0)&(master_data["nmuons"]==0)&(master_data["ntaus"]==0)
+    return tprs,fprs
+
+
+def find_pctl(score,weights,pctl=0.05,reverse=False):
+    pdf,bins = np.histogram(score, bins=np.linspace(0,1,1000), density=True,)
+    cdf = np.cumsum(pdf)*np.diff(bins)
+    pctl_bin = np.searchsorted(cdf, [pctl if reverse else 1.-pctl])
+    return pctl_bin[0]
+    #print(pdf,cdf)
+
+
+def make_ddt_map(qcdname, score, msd, pt, weights, taggername):
+
+    plt.clf()
+    fig,ax=plt.subplots()
+    rho = 2*np.log(msd/pt) 
+    hep.cms.label("Preliminary",rlabel=rlabel, data=False)
+    h2, rhoedges, ptedges, im = plt.hist2d(rho, pt,
+                                         bins=[np.linspace(-5.5, -2, _nbins), np.linspace(_ptlow,_pthigh,_nbins)] ,
+                                         weights=weights, density=False,
+                                         )
+    ax.set_xlim(-5.5,-2)
+    ax.set_ylim(_ptlow,_pthigh)
+    ax.set_xlabel("Jet $rho$")
+    ax.set_ylabel("Jet $p_{T}$ (GeV)")
+    plt.colorbar(im, ax=ax)
+    plt.tight_layout()
+    plt.savefig(args.opath+f"rho_pt.png") 
+    plt.savefig(args.opath+f"rho_pt.pdf")
+    ddt_map = np.zeros(shape=(h2.shape[0],h2.shape[1]))
+
+    for irho in range(len(rhoedges)-1):
+        for ipt in range(len(ptedges)-1):
+            sel = (rho < rhoedges[irho+1]) & (rho > rhoedges[irho]) & (pt < ptedges[ipt+1]) & (pt > ptedges[ipt])
+            score_tmp,weights_tmp = score[sel], weights[sel]
+            ddt_map[irho, ipt] = find_pctl(score_tmp,weights_tmp)
+
+    plt.clf()
+    fig,ax = plt.subplots()
+    plt.imshow(ddt_map,interpolation='none')
+    ax.set_xlabel("Jet $rho$")
+    ax.set_ylabel("Jet $p_{T}$ (GeV)")
+    hep.cms.label("Preliminary",rlabel=rlabel, data=False)
+    plt.tight_layout()
+    plt.savefig(args.opath+f"{taggername}_ddtmap_rho_pt.png")
+    plt.savefig(args.opath+f"{taggername}_ddtmap_rho_pt.pdf")
+
+    
+    return
+
+kinsel = (master_data["rho"] < -2)&(master_data["rho"]>-5.5)&(master_data["msd"] > _msdlow)&(master_data["msd"] < _msdhigh)& (master_data["pt"] > _ptlow)&(master_data["pt"] < _pthigh)
+
+master_data = master_data[kinsel]
 
 bb = ((master_data["q1_flavor"]).abs()==5)&(abs(master_data["q2_flavor"]).abs()==5)
 cc = ((master_data["q1_flavor"]).abs()==4)&(abs(master_data["q2_flavor"]).abs()==4)
 qq = ((master_data["q1_flavor"]).abs()<4)&(abs(master_data["q2_flavor"]).abs()<4)
 
-#zbb_score,_    = make_response("ZJetsToQQ","particleNetMD_QCD",kinsel=kinsel,flavorsel=bb,flavorname="bb")
-#zcc_score,_    = make_response("ZJetsToQQ","particleNetMD_QCD",kinsel=kinsel,flavorsel=cc,flavorname="cc")
-#zqq_score,_    = make_response("ZJetsToQQ","particleNetMD_QCD",kinsel=kinsel,flavorsel=qq,flavorname="qq")
-
-#zqq_hist,bins,sample = make_response("ZJetsToQQ","particleNetMD_Xqq",kinsel=kinsel,flavorsel=qq,flavorname="qq")
-#qcd_hist,bins,sample = make_response("QCD","particleNetMD_Xqq",kinsel=kinsel,)
-#plot_sculpting_curves("particleNetMD_Xqq",kinsel,"particleNetMD_Xqq")  
 
 
-#plot_sculpting_curves(master_data["particleNetMD_Xqq"]/(master_data["particleNetMD_Xqq"]+master_data["particleNetMD_QCD"]),kinsel,"particleNet-MD\nqq vs QCD","QCD_HT1500to2000")  
-#plot_sculpting_curves(master_data["particleNetMD_Xbb"]/(master_data["particleNetMD_Xbb"]+master_data["particleNetMD_QCD"]),kinsel,"particleNet-MD\nbb vs QCD","QCD_HT1500to2000")  
-#
-#plot_sculpting_curves(master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq"]/(master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq"]+master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD"]),kinsel,"IN+Disco\nqq vs QCD","QCD_HT1500to2000")
-#plot_sculpting_curves(master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb"]/(master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb"]+master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD"]),kinsel,"IN+Disco\nbb vs QCD","QCD_HT1500to2000")
+def plot_zprime_roc(signal,background,score_T,score_PN,flavorsel,flavorname,signalnicename):
+    T_zqq_score,bins,_    = make_response(signal,score_T,kinsel=kinsel,flavorsel=flavorsel,flavorname=flavorname)
+    T_qcd_score,_,_       = make_response(background,score_T,kinsel=kinsel)
+    
+    PN_zqq_score,bins,_    = make_response(signal,score_PN,kinsel=kinsel,flavorsel=flavorsel,flavorname=flavorname)
+    PN_qcd_score,_,_       = make_response(background,score_PN,kinsel=kinsel)
+    
+    tpr, fpr = plot_response_and_roc([T_zqq_score,T_qcd_score, PN_zqq_score, PN_qcd_score],[f"{signalnicename} Transformer","QCD Transformer",f"{signalnicename} PN","QCD PN"],bins,xtitle=signalnicename,reverse=False, truthlabel_list=[1,0,1,0],)
 
-#plot_response_and_roc([zqq_hist,qcd_hist], ["Z(qq)","QCD"], bins, xtitle="particleNetMD-Xqq",reverse=False, truthlabel_list=[1,0])
+twoProngPN = master_data["particleNetMD_Xqq"] + master_data["particleNetMD_Xcc"] + master_data["particleNetMD_Xbb"]
+make_ddt_map("QCD", twoProngPN, master_data["msd"], master_data["pt"], master_data["weight"],"2prongPN")
+sys.exit(1)
+plot_zprime_roc("VectorZPrimeToQQ_M75.root","QCD",master_data["zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_qq"],master_data["particleNetMD_Xqq"],qq,"qq","75 GeV Z\'(qq)")
+plot_zprime_roc("VectorZPrimeToQQ_M75.root","QCD",master_data["zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_bb"],master_data["particleNetMD_Xbb"],bb,"bb","75 GeV Z\'(bb)")
+plot_zprime_roc("VectorZPrimeToQQ_M75.root","QCD",master_data["zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_cc"],master_data["particleNetMD_Xcc"],cc,"cc","75 GeV Z\'(cc)")
 
-#zbb_score,_    = make_response("ZJetsToQQ","zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime",kinsel=kinsel,flavorsel=bb,flavorname="bb")
-#zcc_score,_    = make_response("ZJetsToQQ","zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime",kinsel=kinsel,flavorsel=cc,flavorname="cc")
-#zqq_score,_    = make_response("ZJetsToQQ","zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime",kinsel=kinsel,flavorsel=qq,flavorname="qq")
-#qcd_score,bins = make_response("QCD","zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime",kinsel=kinsel,)
-#plot_response_and_roc([zbb_score,zcc_score,zqq_score,qcd_score], ["Z(bb)","Z(cc)","Z(qq)","QCD"], bins, xtitle="PN+Disco",reverse=False, truthlabel_list=[1,1,1,0])
+plot_zprime_roc("VectorZPrimeToQQ_M200.root","QCD",master_data["zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_qq"],master_data["particleNetMD_Xqq"],qq,"qq","200 GeV Z\'(qq)")
+plot_zprime_roc("VectorZPrimeToQQ_M200.root","QCD",master_data["zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_bb"],master_data["particleNetMD_Xbb"],bb,"bb","200 GeV Z\'(bb)")
+plot_zprime_roc("VectorZPrimeToQQ_M200.root","QCD",master_data["zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_cc"],master_data["particleNetMD_Xcc"],cc,"cc","200 GeV Z\'(cc)")
 
-#sys.exit(1)
-
-#zcc_score,_    = make_response("ZJetsToQQ",master_data["particleNetMD_Xcc"]/(master_data["particleNetMD_Xcc"]+master_data["particleNetMD_QCD"]),kinsel=kinsel,flavorsel=cc,flavorname="cc")
-#qcd_score,bins    = make_response("QCD",master_data["particleNetMD_Xcc"]/(master_data["particleNetMD_Xcc"]+master_data["particleNetMD_QCD"]),kinsel=kinsel,)
-
-#plot_response_and_roc([zcc_score,qcd_score], ["Z(cc)","QCD",], bins, xtitle="PN (cc-score)",reverse=False, truthlabel_list=[1,0])
-zqq_score,_,_    = make_response("VectorZPrimeToQQ_M200.root",master_data["particleNetMD_Xqq"]/(master_data["particleNetMD_Xqq"]+master_data["particleNetMD_QCD"]),kinsel=kinsel,flavorsel=qq,flavorname="qq")
-qcd_score,bins,_    = make_response("QCD",master_data["particleNetMD_Xqq"]/(master_data["particleNetMD_Xqq"]+master_data["particleNetMD_QCD"]),kinsel=kinsel,)
-plot_response_and_roc([zqq_score,qcd_score], ["Z'(qq) m=200 GeV","QCD",], bins, xtitle="PNqq",reverse=False, truthlabel_list=[1,0])
-
-zbb_score,_,_    = make_response("VectorZPrimeToQQ_M200.root",master_data["particleNetMD_Xbb"]/(master_data["particleNetMD_Xbb"]+master_data["particleNetMD_QCD"]),kinsel=kinsel,flavorsel=bb,flavorname="bb")
-qcd_score,bins,_    = make_response("QCD",master_data["particleNetMD_Xbb"]/(master_data["particleNetMD_Xbb"]+master_data["particleNetMD_QCD"]),kinsel=kinsel,)
-plot_response_and_roc([zbb_score,qcd_score], ["Z'(bb) m=200 GeV","QCD",], bins, xtitle="PNbb",reverse=False, truthlabel_list=[1,0])
-#plot_response_and_roc([zcc_score,qcd_score], ["Z(cc)","QCD",], bins, xtitle="PN (cc-score)",reverse=False, truthlabel_list=[1,0])
-
-zqq_score,_,_    = make_response("VectorZPrimeToQQ_M200.root",master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq"]/(master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq"]+master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD"]),kinsel=kinsel,flavorsel=qq,flavorname="qq")
-qcd_score,bins,_    = make_response("QCD",master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq"]/(master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq"]+master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD"]),kinsel=kinsel,)
-plot_response_and_roc([zqq_score,qcd_score], ["Z'(qq) m=200 GeV","QCD",], bins, xtitle="INqq",reverse=False, truthlabel_list=[1,0])
-
-zbb_score,_,_    = make_response("VectorZPrimeToQQ_M200.root",master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb"]/(master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb"]+master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD"]),kinsel=kinsel,flavorsel=bb,flavorname="bb")
-qcd_score,bins,_    = make_response("QCD",master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb"]/(master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb"]+master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD"]),kinsel=kinsel,)
-plot_response_and_roc([zbb_score,qcd_score], ["Z'(bb) m=200 GeV","QCD",], bins, xtitle="INbb",reverse=False, truthlabel_list=[1,0])
-
-zqq_score,_,_    = make_response("VectorZPrimeToQQ_M200.root",master_data["n2b1"],kinsel=kinsel)
-qcd_score,_,_    = make_response("QCD",master_data["n2b1"],kinsel=kinsel,)
-plot_response_and_roc([zqq_score,qcd_score], ["Z'(qq) m=200 GeV","QCD",], bins, xtitle="n2b1",reverse=True, truthlabel_list=[1,0])
+plot_zprime_roc("VectorZPrimeToQQ_flat.root","QCD",master_data["zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_qq"],master_data["particleNetMD_Xqq"],qq,"qq","flat Z\'(qq)")
+plot_zprime_roc("VectorZPrimeToQQ_flat.root","QCD",master_data["zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_bb"],master_data["particleNetMD_Xbb"],bb,"bb","flat Z\'(bb)")
+plot_zprime_roc("VectorZPrimeToQQ_flat.root","QCD",master_data["zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_cc"],master_data["particleNetMD_Xcc"],cc,"cc","flat Z\'(cc)")
 
 
-zbb_score,_,_    = make_response("VectorZPrimeToQQ_M200.root",master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD"],kinsel=kinsel,)
-qcd_score,bins,_    = make_response("QCD",master_data["zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD"],kinsel=kinsel,)
-plot_response_and_roc([zbb_score,qcd_score], ["Z'(bb) m=200 GeV","QCD",], bins, xtitle="IN",reverse=True, truthlabel_list=[1,0])
+
+plot_sculpting_curves(master_data["particleNetMD_Xqq"],kinsel,"particleNet-MD\nqq vs QCD",)  
+plot_sculpting_curves(master_data["particleNetMD_Xbb"],kinsel,"particleNet-MD\nbb vs QCD",)  
+plot_sculpting_curves(master_data["zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_qq"],kinsel,"transformer\nqq vs QC")
+plot_sculpting_curves(master_data["zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_bb"],kinsel,"transformer\nbb vs QC")
+
+
