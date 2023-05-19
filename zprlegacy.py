@@ -17,7 +17,7 @@ v_PDGID = {
     "ZJetsToQQ" : 24,
     "WJetsToQQ" : 23,
     "VectorZPrime" : 55,
-    "TTToSemiLeptonic" : 23
+    "TTbar" : 23
 }
 GEN_FLAGS = {
     "IsPrompt": 0,
@@ -168,7 +168,7 @@ class zprlegacy(NanoAODHistoModule):
 
         if do_genmatch:
             genQuarks = op.select(t.GenPart, lambda q: op.AND(op.abs(q.pdgId) >= 1, op.abs(q.pdgId) <= 5))
-            w_by_status = op.sort(op.select(t.GenPart, lambda p : op.OR(op.abs(p.pdgId) == 23,op.abs(p.pdgId) == 24, op.abs(p.pdgId) == 55)),
+            w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.OR(op.abs(p.pdgId) == 23,op.abs(p.pdgId) == 24, op.abs(p.pdgId) == 55),p.statusFlags & 2**GEN_FLAGS["IsLastCopy"])),
                                   lambda p: -p.status)
             q_from_w = op.select(genQuarks, lambda q : q.parent.idx == w_by_status[0].idx)
             Vgen_matched = op.rng_count(q_from_w, lambda q: op.deltaR(q.p4, fatjets[0].p4) < 0.8) == 2
@@ -207,9 +207,11 @@ class zprlegacy(NanoAODHistoModule):
         SR_electron_cut = SR_id_cut.refine("el_cut",cut=[op.rng_len(electrons) == 0])
         SR_muon_cut = SR_electron_cut.refine("mu_cut",cut=[op.rng_len(loose_muons) == 0])
         SR_tau_cut = SR_muon_cut.refine("tau_cut",cut=[op.rng_len(taus) == 0]) 
-        #if "ZJetsToQQ" in sample or "WJetsToQQ" in sample or "VectorZPrime" in sample:
-        if do_genmatch: SR_Vmatched = SR_tau_cut.refine("fj_Vmatched",cut=Vgen_matched)
-        else:           SR_Vmatched = SR_tau_cut.refine("fj_Vmatched",cut=1) 
+        if "ZJetsToQQ" in sample or "WJetsToQQ" in sample or "VectorZPrime" in sample:
+            SR_Vmatched = SR_tau_cut.refine("fj_Vmatched",cut=Vgen_matched)
+        else:
+            SR_Vmatched = SR_tau_cut.refine("fj_Vmatched",cut=1) 
+ 
         SR_cut = SR_Vmatched
 
         #######################
@@ -308,7 +310,7 @@ class zprlegacy(NanoAODHistoModule):
 
         loose_fatjets = op.sort(
           op.select(
-             t.FatJet, lambda fj : op.AND(fj.pt>200, fj.msoftdrop>30, op.abs(fj.eta)<2.5, ) #2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -7, 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) < -1.5)
+             t.FatJet, lambda fj : op.AND(fj.pt>200, fj.msoftdrop>30, op.abs(fj.eta)<2.5, fj.jetId & (1 << 1) !=0 ) #2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -7, 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) < -1.5)
           ), lambda fj : -fj.pt, 
         ) 
         mvaVariables = {
@@ -361,20 +363,24 @@ class zprlegacy(NanoAODHistoModule):
                 "zpr_PN_PFSVE_noDISCO_FLAT_CAT_QCD"        : loose_fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_QCD,
         '''
         if do_genmatch:
-            mvaVariables["W_pdgId"]        = w_by_status[0].pdgId
-            mvaVariables["W_status"]       = w_by_status[0].status
-            mvaVariables["W_pt"]           = w_by_status[0].pt
-            mvaVariables["is_Vmatched"]    = Vgen_matched
-            mvaVariables["q1_dr_jet"]        = dr_to_q1 
-            mvaVariables["q2_dr_jet"]        = dr_to_q2 
+            #mvaVariables["W_pdgId"]        = w_by_status[0].pdgId
+            #mvaVariables["W_status"]       = w_by_status[0].status
+            #mvaVariables["W_pt"]           = w_by_status[0].pt
+            #mvaVariables["is_Vmatched"]    = Vgen_matched
+            #mvaVariables["q1_dr_jet"]        = dr_to_q1 
+            #mvaVariables["q2_dr_jet"]        = dr_to_q2 
             mvaVariables["q1_flavor"]      = q_from_w[0].pdgId
             mvaVariables["q2_flavor"]      = q_from_w[1].pdgId
-            mvaVariables["q1_status"]      = q_from_w[0].statusFlags
-            mvaVariables["q2_status"]      = q_from_w[1].statusFlags
+            #mvaVariables["q1_status"]      = q_from_w[0].statusFlags
+            #mvaVariables["q2_status"]      = q_from_w[1].statusFlags
         ### Save mvaVariables to be retrieved later in the postprocessor and saved in a parquet file ###
         if self.args.mvaSkim:
             from bamboo.plots import Skim
+            parquet_cut1 = noSel.refine("parquet_cut1", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>200, loose_fatjets[0].pt<400,loose_fatjets[0].msoftdrop>40,op.rng_len(loose_fatjets)>0)])
+            parquet_cut2 = noSel.refine("parquet_cut2", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>400, loose_fatjets[0].msoftdrop>40,op.rng_len(loose_fatjets)>0)])
             parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>200, loose_fatjets[0].msoftdrop>40,op.rng_len(loose_fatjets)>0)])
+            #plots.append(Skim("signal_region_1", mvaVariables, parquet_cut1))
+            #plots.append(Skim("signal_region_2", mvaVariables, parquet_cut2))
             plots.append(Skim("signal_region", mvaVariables, parquet_cut))
             #plots.append(Skim("wtagging_region", mvaVariables, CR2_cut))
         pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
@@ -497,9 +503,14 @@ zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
                                cols["process"] = [smp.name]*len(cols["weight"])
                                frames.append(pd.DataFrame(cols))
                     df = pd.concat(frames)
+                    print(df)
+                    for col in df.columns:
+                        if "process" in col: continue
+                        df[col] = df[col].astype('float16')
                     df["process"] = pd.Categorical(df["process"], categories=pd.unique(df["process"]), ordered=False)
                     pqoutname = os.path.join(resultsdir, f"{skim.name}.parquet")
                     df.to_parquet(pqoutname)
+                    del df
                     logger.info(f"Dataframe for skim {skim.name} saved to {pqoutname}")
             except ImportError as ex:
                 logger.error("Could not import pandas, no dataframes will be saved")
@@ -518,6 +529,7 @@ zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
                     frames = []
                     for smp in samples:
                         print("cacca")
+                        if not "QCD" in smp.name: continue
                         print(smp.name)
                         for cb in (smp.files if hasattr(smp, "files") else [smp]):  # could be a helper in plotit
                             tree = cb.tFile.Get(skim.treeName)
@@ -525,13 +537,21 @@ zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
                                print( f"KEY TTree {skim.treeName} does not exist, we are gonna skip this {smp}\n")
                             else:
                                cols = gbl.ROOT.RDataFrame(cb.tFile.Get(skim.treeName)).AsNumpy()
+                               #print(cols["pt"].t	)
                                cols["weight"] *= cb.scale
                                cols["process"] = [smp.name]*len(cols["weight"])
                                frames.append(pd.DataFrame(cols))
+                        #break
                     df = pd.concat(frames)
+                    #for col in df.columns:
+                    #    if "process" in col: continue
+                    #    df[col] = df[col].astype('float16')
+                    #print(df)
+                    #print(df["pt"].dtype)
                     df["process"] = pd.Categorical(df["process"], categories=pd.unique(df["process"]), ordered=False)
-                    pqoutname = os.path.join(resultsdir, f"{skim.name}.parquet")
-                    df.to_parquet(pqoutname)
+                    pqoutname = os.path.join(resultsdir, f"{skim.name}.parquet.gzip")
+                    df.to_parquet(pqoutname,compression="gzip")
+                    del df
                     logger.info(f"Dataframe for skim {skim.name} saved to {pqoutname}")
             except ImportError as ex:
                 logger.error("Could not import pandas, no dataframes will be saved")
