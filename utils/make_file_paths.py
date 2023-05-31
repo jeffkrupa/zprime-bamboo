@@ -5,7 +5,7 @@ os.system("rm tmp_files.txt")
 #/store/user/lpcpfnano/jekrupa/postprocess/3Dec22/2017/QCD_HT/QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph-pythia8
 #os.system("xrdcp root://cmseos.fnal.gov//store/user/jkrupa/zprlegacy/file_database.yaml ./file_database.yaml")
 
-tag="9Feb22_2"
+tag="24May23_v0"
 year = "2017"
 process = ["SingleTop","ZJetsToQQ","WJetsToQQ","QCD_HT","TTToSemiLeptonic","JetHT","SingleMuon","WJetsToLNu","VectorZPrime","TTToHadronic","TTTo2L2Nu","DYJetsToLL"]
 #with open("file_database.yaml") as f:

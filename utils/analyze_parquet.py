@@ -19,15 +19,17 @@ parser.add_argument("-y",dest="year",type=str,required=True)
 parser.add_argument("-o",dest="opath",type=str,required=True)
 args = parser.parse_args()
 os.system(f"mkdir -p {args.opath}")
+os.system(f"mkdir -p {args.opath}/distributions/")
 rlabel = f"{args.year} (13 TeV)"
 
-_ptlow = 400
-_pthigh = 1000
-_msdlow = 30 
+_ptlow = 200
+_pthigh = 1200
+_msdlow = 1 
 _msdhigh = 400
 _rholow = -7
 _rhohigh = -1.5
-_nbins = 25
+_nbins = 81
+
 inlay_font = {
         #'fontfamily' : 'arial',
         #'weight' : 'normal',
@@ -54,9 +56,13 @@ nn_bins = np.linspace(-0.01,1.01,10000)
 print('pre-import')
 import pyarrow.parquet as pq
 
-master_data = pq.read_table(args.parquet,)
+
+parquet_file = pq.ParquetFile(args.parquet,memory_map=True)
+master_data = parquet_file.read().to_pandas()
+
+#master_data = pq.read_table(args.parquet,)
 #master_data = [pd.read_parquet(p,engine="fastparquet") for p in args.parquet]
-master_data = master_data.to_pandas()
+#master_data = master_data.to_pandas()
 print("imported ", master_data)
 def axis_settings(ax):
     import matplotlib.ticker as plticker
@@ -219,24 +225,62 @@ def plot_response_and_roc(score_list,label_list,bins,xtitle="",reverse=False,tru
     return tprs,fprs
 
 
-def find_pctl(score,weights,pctl=0.05,reverse=False):
-    pdf,bins = np.histogram(score, bins=np.linspace(0,1,1000), weights=weights,density=True,)
+def find_pctl(score,weights,ibin,pctl=0.05,reverse=False,):
+    pdf,bins = np.histogram(score, bins=np.linspace(0,0.5,100), weights=weights,density=True,)
+    #fig,ax = plt.subplots()
+    #ax = axis_settings(ax)
     cdf = np.cumsum(pdf)*np.diff(bins)
     pctl_bin = np.searchsorted(cdf, [pctl if reverse else 1.-pctl])
-    #print(pdf,cdf,pctl_bin)
+    #ax.stairs(pdf, bins)
+    #ax.set_xlabel(r"Jet $N_2$")
+    #ax.set_ylabel(r"Normalized events")
+    #ax.axvline(bins[pctl_bin[0]],linestyle="--",color="red",lw=2,)
+    #plt.savefig(args.opath+f"/distributions/rho_pt_{ibin}.png")
+    #plt.savefig(args.opath+f"/distributions/rho_pt_{ibin}.pdf")
     return bins[pctl_bin[0]]
 
 
 def make_ddt_map(qcdname, score, msd, pt, weights, taggername, reverse=False):
 
+    rho = 2*np.log(msd/pt)
+
     plt.clf()
     fig,ax=plt.subplots()
     ax = axis_settings(ax)
-    rho = 2*np.log(msd/pt) 
+    hep.cms.label("Preliminary",rlabel=rlabel, data=False)
+    ax.hist(pt,bins=np.linspace(_ptlow,_pthigh,_nbins),weights=weights,histtype="step",lw=2,label="QCD")
+    ax.set_xlabel("Jet $p_{T}$ (GeV)")   
+    ax.set_ylabel(r"Events")
+    ax.set_yscale("log")
+    ax.legend()
+    plt.tight_layout()
+    plt.savefig(args.opath+f"/pt.png")
+    plt.savefig(args.opath+f"/pt.pdf")
+
+      
+    plt.clf()
+    fig,ax=plt.subplots()
+    ax = axis_settings(ax)
+    hep.cms.label("Preliminary",rlabel=rlabel, data=False)
+    ax.hist(rho,bins=np.linspace(_rholow,_rhohigh,_nbins),weights=weights,histtype="step",lw=2,label="QCD")
+    ax.set_xlabel(r"Jet $\rho$ (GeV)")   
+    ax.set_ylabel(r"Events")
+    ax.set_yscale("log")
+    ax.legend()
+    plt.tight_layout()
+    plt.savefig(args.opath+f"/rho.png")
+    plt.savefig(args.opath+f"/rho.pdf")
+
+
+    plt.clf()
+    fig,ax=plt.subplots()
+    ax = axis_settings(ax)
+
     hep.cms.label("Preliminary",rlabel=rlabel, data=False)
     h2, rhoedges, ptedges, im = plt.hist2d(rho, pt,
                                          bins=[np.linspace(_rholow, _rhohigh, _nbins), np.linspace(_ptlow,_pthigh,_nbins)] ,
-                                         weights=weights, density=False,
+                                         weights=weights, density=False, 
+                                         norm=matplotlib.colors.LogNorm(),
                                          )
     ax.set_xlim(_rholow, _rhohigh)
     ax.set_ylim(_ptlow,_pthigh)
@@ -247,14 +291,16 @@ def make_ddt_map(qcdname, score, msd, pt, weights, taggername, reverse=False):
     plt.tight_layout()
     plt.savefig(args.opath+f"/rho_pt.png") 
     plt.savefig(args.opath+f"/rho_pt.pdf")
+
+    #sys.exit()
     ddt_map = np.zeros(shape=(h2.shape[0],h2.shape[1]))
     counter = 0
     for irho in tqdm.tqdm(range(len(rhoedges)-1)):
         for ipt in range(len(ptedges)-1):
-            sel = (rho < rhoedges[irho+1]) & (rho > rhoedges[irho]) & (pt < ptedges[ipt+1]) & (pt > ptedges[ipt])
+            sel = (rho <= rhoedges[irho+1]) & (rho > rhoedges[irho]) & (pt <= ptedges[ipt+1]) & (pt > ptedges[ipt])
             score_tmp,weights_tmp = score[sel], weights[sel]
             #print(score_tmp,weights_tmp)
-            ddt_map[irho, ipt] = find_pctl(score_tmp,weights_tmp,reverse=reverse)
+            ddt_map[irho, ipt] = find_pctl(score_tmp,weights_tmp,"pt_{}_{}_rho_{}_{}".format(round(rhoedges[irho],2),round(rhoedges[irho+1],2),round(ptedges[ipt],2),round(ptedges[ipt+1],2)),reverse=reverse)
             counter += 1 
     plt.clf()
     fig,ax = plt.subplots()
@@ -271,7 +317,7 @@ def make_ddt_map(qcdname, score, msd, pt, weights, taggername, reverse=False):
     fig,ax = plt.subplots()
     ax = axis_settings(ax)
     ddt_map_smoothed = sc.gaussian_filter(ddt_map.T,1)
-    np.savez(args.opath+f"ddt_map_smoothed",ddt_map=ddt_map_smoothed,rhoedges=rhoedges,ptedges=ptedges)
+    np.savez(args.opath+f"/ddt_map_smoothed",ddt_map=ddt_map_smoothed,rhoedges=rhoedges,ptedges=ptedges)
     plt.imshow(ddt_map_smoothed,origin="lower",extent=[_rholow,_rhohigh,_ptlow,_pthigh,],aspect=abs(_rhohigh-_rholow)/(_pthigh-_ptlow),interpolation='none',)
     ax.set_xlabel(r"Jet $\rho$")
     ax.set_ylabel("Jet $p_{T}$ (GeV)")
@@ -281,7 +327,53 @@ def make_ddt_map(qcdname, score, msd, pt, weights, taggername, reverse=False):
     plt.savefig(args.opath+f"/{taggername}_ddtmap_rho_pt_smoothed.png")
     plt.savefig(args.opath+f"/{taggername}_ddtmap_rho_pt_smoothed.pdf")
  
+    import hist
+    import json
+    import correctionlib.convert
+    h = (
+        hist.Hist.new
+        .Reg(_nbins-1, _rholow, _rhohigh, name="rho")
+        .Reg(_nbins-1, _ptlow, _pthigh, name="pt")
+    )
+    sfhist = hist.Hist(*h.axes[:], data=ddt_map)
+    plt.clf()
+    fig,ax=plt.subplots()
+    sfhist.plot2d()
+    plt.savefig(args.opath+f"/{taggername}_ddtmap_rho_pt_closure.pdf")
+    plt.clf()
+
+
+    sfhist.name = "ddtmap_5pct_n2"
+    sfhist.label = "out"
+
     
+
+    sfhist_correctionlib = correctionlib.convert.from_histogram(sfhist)
+    sfhist_correctionlib.data.flow = "clamp"
+    cset = correctionlib.schemav2.CorrectionSet(
+      schema_version=2,
+      description="my N2DDT correction",
+      corrections=[
+        sfhist_correctionlib,
+      ],
+    )
+    with open(args.opath+f"/{taggername}_ddtmap_rho_pt.json","w") as outfile:
+        outfile.write(cset.json(exclude_unset=True))
+
+    sfhist_smoothed = hist.Hist(*h.axes[:], data=ddt_map_smoothed)
+    sfhist_smoothed.name = "ddtmap_5pct_n2_smoothed"
+    sfhist_smoothed.label = "out"
+    sfhist_correctionlib = correctionlib.convert.from_histogram(sfhist_smoothed)
+    sfhist_correctionlib.data.flow = "clamp"
+    cset = correctionlib.schemav2.CorrectionSet(
+      schema_version=2,
+      description="my N2DDT correction",
+      corrections=[
+        sfhist_correctionlib,
+      ],
+    ) 
+    with open(args.opath+f"/{taggername}_ddtmap_rho_pt_smoothed.json","w") as outfile:
+        outfile.write(cset.json(exclude_unset=True))
     return
 
 #for ipq in range(len(master_data)):
@@ -290,10 +382,10 @@ def make_ddt_map(qcdname, score, msd, pt, weights, taggername, reverse=False):
 #   master_data[ipq] = master_data[ipq][sel]
 #   print(master_data[ipq])
 #master_data = master_data[0]
-#kinsel = (master_data["rho"] < -2)&(master_data["rho"]>-7)&
-kinsel = (master_data["msd"] > _msdlow)&(master_data["msd"] < _msdhigh)& (master_data["pt"] > _ptlow)&(master_data["pt"] < _pthigh)
+#kinsel = (master_data["rho"] < -1)&(master_data["rho"]>-4.7)
+#kinsel = (master_data["msd"] > _msdlow)&(master_data["msd"] < _msdhigh)& (master_data["pt"] > _ptlow)&(master_data["pt"] < _pthigh)
 
-master_data = master_data[kinsel]
+#master_data = master_data[kinsel]
 
 #bb = ((master_data["q1_flavor"]).abs()==5)&(abs(master_data["q2_flavor"]).abs()==5)
 #cc = ((master_data["q1_flavor"]).abs()==4)&(abs(master_data["q2_flavor"]).abs()==4)
@@ -312,7 +404,7 @@ def plot_zprime_roc(signal,background,score_T,score_PN,flavorsel,flavorname,sign
 
 #twoProngPN = master_data["particleNetMD_Xqq"] + master_data["particleNetMD_Xcc"] + master_data["particleNetMD_Xbb"]
 #make_ddt_map("QCD", twoProngPN, master_data["msd"], master_data["pt"], master_data["weight"],"2prongPN")
-make_ddt_map("QCD", master_data["n2b1"], master_data["msd"], master_data["pt"], master_data["weight"],"n2b1",reverse=True)
+make_ddt_map("QCD", master_data["n2b1"], master_data["msd_corrected"], master_data["pt"], master_data["weight"],"n2b1",reverse=True)
 
 sys.exit(1)
 plot_zprime_roc("VectorZPrimeToQQ_M75.root","QCD",master_data["zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_qq"],master_data["particleNetMD_Xqq"],qq,"qq","75 GeV Z\'(qq)")

@@ -178,10 +178,15 @@ class zprlegacy(NanoAODHistoModule):
             
 
 
-        from bamboo.scalefactors import get_correction
+        from bamboo.scalefactors import get_scalefactor, get_correction
         #sf = get_correction("msdcorr.json","msdraw_onebin", )#)params={"pt": lambda obj : obj.pt,})
-
-
+        n2b1ddt = get_correction("/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt.json",
+            "ddtmap_5pct_n2",
+            params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) }, 
+            sel=noSel 
+        )
+        #n2b1ddt = get_scalefactor("jet","/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt_smoothed.json","ddtmap_5pct_n2_smoothed",params = {"pt": lambda fj : fj[0].p4.Pt(), "rho" : lambda fj : 2*:)
+        print(n2b1ddt)
         hasTriggerObj  = noSel.refine("hasTriggerObj", cut=[op.rng_len(triggerObj) > 0] )
         hasBtaggedAK4 =  hasTriggerObj.refine("hasBtaggedAK4", cut=[op.rng_len(jets) > 0] )  
         ''' 
@@ -310,18 +315,20 @@ class zprlegacy(NanoAODHistoModule):
 
         loose_fatjets = op.sort(
           op.select(
-             t.FatJet, lambda fj : op.AND(fj.pt>200, fj.msoftdrop>30, op.abs(fj.eta)<2.5, fj.jetId & (1 << 1) !=0 ) #2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -7, 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) < -1.5)
+             t.FatJet, lambda fj : op.AND(fj.pt>170, op.abs(fj.eta)<2.5, fj.jetId & (1 << 1) !=0 ) 
           ), lambda fj : -fj.pt, 
         ) 
         mvaVariables = {
                 "weight"         :   noSel.weight,
                 "pt"             :   loose_fatjets[0].p4.Pt(),
                 "msd"            :   loose_fatjets[0].msoftdrop,
+                "msd_corrected"  :   loose_fatjets[0].zpr_FatJet_corrected_mass,
                 "n2b1"           :   loose_fatjets[0].n2b1,
+                "n2b1_ddt"       :   loose_fatjets[0].n2b1 - n2b1ddt(loose_fatjets[0]) ,
                 "rho"            :   2*op.log(loose_fatjets[0].msoftdrop/loose_fatjets[0].pt),
-                #"nelectrons"     :   op.rng_len(electrons),
-                #"nmuons"         :   op.rng_len(loose_muons),
-                #"ntaus"          :   op.rng_len(taus),
+                "nelectrons"     :   op.rng_len(electrons),
+                "nmuons"         :   op.rng_len(loose_muons),
+                "ntaus"          :   op.rng_len(taus),
                 #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb,
                 #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc,
                 #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq,
@@ -334,10 +341,10 @@ class zprlegacy(NanoAODHistoModule):
                 #"zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_cc" : loose_fatjets[0].zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_cc,
                 #"zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_qq" : loose_fatjets[0].zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_qq,
                 #"zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_QCD" : loose_fatjets[0].zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_QCD,
-                "particleNetMD_Xqq"                        : loose_fatjets[0].particleNetMD_Xqq,
-                "particleNetMD_Xcc"                        : loose_fatjets[0].particleNetMD_Xcc,
-                "particleNetMD_Xbb"                        : loose_fatjets[0].particleNetMD_Xbb,
-                "particleNetMD_QCD"                        : loose_fatjets[0].particleNetMD_QCD,
+                #"particleNetMD_Xqq"                        : loose_fatjets[0].particleNetMD_Xqq,
+                #"particleNetMD_Xcc"                        : loose_fatjets[0].particleNetMD_Xcc,
+                #"particleNetMD_Xbb"                        : loose_fatjets[0].particleNetMD_Xbb,
+                #"particleNetMD_QCD"                        : loose_fatjets[0].particleNetMD_QCD,
         }
         ''' 
                 "zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime" : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime,
@@ -376,13 +383,9 @@ class zprlegacy(NanoAODHistoModule):
         ### Save mvaVariables to be retrieved later in the postprocessor and saved in a parquet file ###
         if self.args.mvaSkim:
             from bamboo.plots import Skim
-            parquet_cut1 = noSel.refine("parquet_cut1", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>200, loose_fatjets[0].pt<400,loose_fatjets[0].msoftdrop>40,op.rng_len(loose_fatjets)>0)])
-            parquet_cut2 = noSel.refine("parquet_cut2", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>400, loose_fatjets[0].msoftdrop>40,op.rng_len(loose_fatjets)>0)])
-            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>200, loose_fatjets[0].msoftdrop>40,op.rng_len(loose_fatjets)>0)])
-            #plots.append(Skim("signal_region_1", mvaVariables, parquet_cut1))
-            #plots.append(Skim("signal_region_2", mvaVariables, parquet_cut2))
+            #parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>200, loose_fatjets[0].msoftdrop>10,op.rng_len(loose_fatjets)>0)])
+            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>170,op.rng_len(loose_fatjets)>0)])
             plots.append(Skim("signal_region", mvaVariables, parquet_cut))
-            #plots.append(Skim("wtagging_region", mvaVariables, CR2_cut))
         pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
        
         if self.args.SR:
@@ -529,7 +532,7 @@ zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
                     frames = []
                     for smp in samples:
                         print("cacca")
-                        if not "QCD" in smp.name: continue
+                        #if not "QCD" in smp.name: continue
                         print(smp.name)
                         for cb in (smp.files if hasattr(smp, "files") else [smp]):  # could be a helper in plotit
                             tree = cb.tFile.Get(skim.treeName)
