@@ -185,6 +185,11 @@ class zprlegacy(NanoAODHistoModule):
             params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) }, 
             sel=noSel 
         )
+        n2b1ddt_smoothed = get_correction("/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt_smoothed.json",
+            "ddtmap_5pct_n2_smoothed",
+            params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) }, 
+            sel=noSel 
+        )
         #n2b1ddt = get_scalefactor("jet","/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt_smoothed.json","ddtmap_5pct_n2_smoothed",params = {"pt": lambda fj : fj[0].p4.Pt(), "rho" : lambda fj : 2*:)
         print(n2b1ddt)
         hasTriggerObj  = noSel.refine("hasTriggerObj", cut=[op.rng_len(triggerObj) > 0] )
@@ -319,16 +324,17 @@ class zprlegacy(NanoAODHistoModule):
           ), lambda fj : -fj.pt, 
         ) 
         mvaVariables = {
-                "weight"         :   noSel.weight,
-                "pt"             :   loose_fatjets[0].p4.Pt(),
-                "msd"            :   loose_fatjets[0].msoftdrop,
-                "msd_corrected"  :   loose_fatjets[0].zpr_FatJet_corrected_mass,
-                "n2b1"           :   loose_fatjets[0].n2b1,
-                "n2b1_ddt"       :   loose_fatjets[0].n2b1 - n2b1ddt(loose_fatjets[0]) ,
-                "rho"            :   2*op.log(loose_fatjets[0].msoftdrop/loose_fatjets[0].pt),
-                "nelectrons"     :   op.rng_len(electrons),
-                "nmuons"         :   op.rng_len(loose_muons),
-                "ntaus"          :   op.rng_len(taus),
+                "weight"           :   noSel.weight,
+                "pt"               :   loose_fatjets[0].p4.Pt(),
+                "msd"              :   loose_fatjets[0].msoftdrop,
+                "msd_corrected"    :   loose_fatjets[0].zpr_FatJet_corrected_mass,
+                "n2b1"             :   loose_fatjets[0].n2b1,
+                "n2b1_ddt"         :   loose_fatjets[0].n2b1 - n2b1ddt(loose_fatjets[0]) ,
+                "n2b1_ddt_smoothed":   loose_fatjets[0].n2b1 - n2b1ddt_smoothed(loose_fatjets[0]) ,
+                "rho"              :   2*op.log(loose_fatjets[0].msoftdrop/loose_fatjets[0].pt),
+                #"nelectrons"       :   op.rng_len(electrons),
+                #"nmuons"           :   op.rng_len(loose_muons),
+                #"ntaus"            :   op.rng_len(taus),
                 #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb,
                 #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc,
                 #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq,
@@ -384,8 +390,10 @@ class zprlegacy(NanoAODHistoModule):
         if self.args.mvaSkim:
             from bamboo.plots import Skim
             #parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>200, loose_fatjets[0].msoftdrop>10,op.rng_len(loose_fatjets)>0)])
-            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>170,op.rng_len(loose_fatjets)>0)])
-            plots.append(Skim("signal_region", mvaVariables, parquet_cut))
+            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>500,loose_fatjets[0].msoftdrop>20.,op.rng_len(loose_fatjets)>0)])
+            plots.append(Skim("signal_region1", mvaVariables, parquet_cut))
+            parquet_cut2 = noSel.refine("parquet_cut2", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<500,loose_fatjets[0].msoftdrop>20.,op.rng_len(loose_fatjets)>0)])
+            plots.append(Skim("signal_region2", mvaVariables, parquet_cut2))
         pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
        
         if self.args.SR:
@@ -540,11 +548,15 @@ zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
                                print( f"KEY TTree {skim.treeName} does not exist, we are gonna skip this {smp}\n")
                             else:
                                cols = gbl.ROOT.RDataFrame(cb.tFile.Get(skim.treeName)).AsNumpy()
-                               #print(cols["pt"].t	)
+                               #for key,val in cols.items():
+                               #    if "process" in key: continue
+                               #    cols[key] = val.astype(np.float16)
                                cols["weight"] *= cb.scale
                                cols["process"] = [smp.name]*len(cols["weight"])
                                frames.append(pd.DataFrame(cols))
-                        #break
+                               #print("cols",type(cols["pt"]))
+                               print("cols",type(cols["pt"][0]))
+                            #break
                     df = pd.concat(frames)
                     #for col in df.columns:
                     #    if "process" in col: continue
@@ -552,6 +564,8 @@ zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
                     #print(df)
                     #print(df["pt"].dtype)
                     df["process"] = pd.Categorical(df["process"], categories=pd.unique(df["process"]), ordered=False)
+                    #csvoutname = os.path.join(resultsdir, f"{skim.name}.csv.gzip")
+                    #df.to_csv(csvoutname,)
                     pqoutname = os.path.join(resultsdir, f"{skim.name}.parquet.gzip")
                     df.to_parquet(pqoutname,compression="gzip")
                     del df

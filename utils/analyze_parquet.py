@@ -404,7 +404,13 @@ def plot_zprime_roc(signal,background,score_T,score_PN,flavorsel,flavorname,sign
 
 #twoProngPN = master_data["particleNetMD_Xqq"] + master_data["particleNetMD_Xcc"] + master_data["particleNetMD_Xbb"]
 #make_ddt_map("QCD", twoProngPN, master_data["msd"], master_data["pt"], master_data["weight"],"2prongPN")
-make_ddt_map("QCD", master_data["n2b1"], master_data["msd_corrected"], master_data["pt"], master_data["weight"],"n2b1",reverse=True)
+#make_ddt_map("QCD", master_data["n2b1"], master_data["msd_corrected"], master_data["pt"], master_data["weight"],"n2b1",reverse=True)
+
+
+#def make_templates(master_data):
+     
+
+#make_templates(master_data)
 
 sys.exit(1)
 plot_zprime_roc("VectorZPrimeToQQ_M75.root","QCD",master_data["zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_qq"],master_data["particleNetMD_Xqq"],qq,"qq","75 GeV Z\'(qq)")
