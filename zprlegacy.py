@@ -51,6 +51,7 @@ class zprlegacy(NanoAODHistoModule):
         parser.add_argument("--SR", action="store_true", default=False, help="Make SR")
         parser.add_argument("--CR1", action="store_true", default=False, help="Make CR1")
         parser.add_argument("--CR2", action="store_true", default=False, help="Make CR2")
+        parser.add_argument("--arbitration", action="store", required=True, help="Arbitration of jets.")
         #### Till now we don't need --mvaEval since we don't have a MVA model ####
 
     def __init__(self, args):
@@ -92,8 +93,12 @@ class zprlegacy(NanoAODHistoModule):
             jettrigger = [ t.HLT.PFHT1050, t.HLT.AK8PFJet400_TrimMass30, t.HLT.AK8PFHT800_TrimMass50, t.HLT.PFJet500, t.HLT.AK8PFJet500]
             muontrigger= [ t.HLT.Mu50 ] # Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8
         if era == "2017":
+            if "Run2017B" in sample:
+                jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500]
+            else: jettrigger = [t.HLT.AK8PFJet400_TrimMass30,t.HLT.AK8PFHT800_TrimMass50,t.HLT.PFHT1050,t.HLT.PFJet500, t.HLT.AK8PFJet500]
+
             #jettrigger = [t.HLT.AK8PFJet330_PFAK8BTagCSV_p17, t.HLT.PFHT1050, t.HLT.AK8PFJet400_TrimMass30, t.HLT.AK8PFHT800_TrimMass50, t.HLT.PFJet500, t.HLT.AK8PFJet500]
-            jettrigger = [ t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500]
+            #jettrigger = [ t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, t.HLT.AK8PFJet330_PFAK8BTagCSV_p17, t.HLT.AK8PFJet400_TrimMass30,t.HLT.AK8PFHT800_TrimMass50,t.HLT.PFJet500, t.HLT.AK8PFJet500]
             muontrigger = [t.HLT.Mu50,]# t.HLT.OldMu100, t.HLT.TkMu100]
         isoMuFilterMask = 0xA
 
@@ -104,8 +109,10 @@ class zprlegacy(NanoAODHistoModule):
             #jetSel = noSel.refine("passJetHLT", cut="(1==1)")
             #muSel = noSel.refine("passMuHLT", cut="(1==1)")
         else:
-            noSel = noSel.refine("None",) 
-            jetSel = noSel.refine("passJetHLT", cut=op.OR(*(jettrigger))) 
+            noSel = noSel.refine("None",)
+             
+            blindedSel = noSel.refine("blinded",cut=t.event%10==0) 
+            jetSel = blindedSel.refine("passJetHLT", cut=op.OR(*(jettrigger))) 
             muSel  = noSel.refine("passMuHLT", cut=op.OR(*(muontrigger))) 
 
         plots = []
@@ -150,12 +157,18 @@ class zprlegacy(NanoAODHistoModule):
 					)), lambda tau : -tau.pt)
 
 	#AK8 (highest pt or second highest pt, depending on number of fatjets left)
-        fatjets = op.sort(op.select(t.FatJet, lambda fj : op.AND(
+        if self.args.arbitration == "pt":
+            fatjets = op.sort(op.select(t.FatJet, lambda fj : op.AND(
 					fj.pt > 100.,
 					op.abs(fj.eta) < 2.5,
 					)), lambda fj : -fj.pt)
 
-	#fatjets = op.select(t.FatJet, lambda fj : op.AND(fj.pt > 500.,op.abs(fj.eta) < 2.5,))
+        elif self.args.arbitration == "2prong":
+            fatjets = op.sort(op.select(t.FatJet, lambda fj : op.AND(
+					fj.pt > 100.,
+					op.abs(fj.eta) < 2.5,
+					)), lambda fj : -(fj.particleNetMD_Xqq+fj.particleNetMD_Xcc+fj.particleNetMD_Xbb))
+
 
 	#btagged AK4
         jets = op.sort(op.select(t.Jet, lambda j : op.AND(
@@ -180,12 +193,12 @@ class zprlegacy(NanoAODHistoModule):
 
         from bamboo.scalefactors import get_scalefactor, get_correction
         #sf = get_correction("msdcorr.json","msdraw_onebin", )#)params={"pt": lambda obj : obj.pt,})
-        n2b1ddt = get_correction("/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt.json",
+        n2b1ddt = get_correction("/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/runs/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt.json",
             "ddtmap_5pct_n2",
             params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) }, 
             sel=noSel 
         )
-        n2b1ddt_smoothed = get_correction("/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt_smoothed.json",
+        n2b1ddt_smoothed = get_correction("/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/runs/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt_smoothed.json",
             "ddtmap_5pct_n2_smoothed",
             params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) }, 
             sel=noSel 
@@ -209,7 +222,12 @@ class zprlegacy(NanoAODHistoModule):
 	########################
 	###   SR selection   ###
 	########################
-        SR_pt_cut = jetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > 500)
+        if era == "2017":
+
+            SR_pt_cut = jetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > 500)
+        else: 
+            SR_pt_cut = jetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > 525)
+
         SR_eta_cut = SR_pt_cut.refine("fj_eta_cut",cut=op.abs(fatjets[0].p4.Eta()) < 2.5)
         SR_msd_cut = SR_eta_cut.refine("fj_msd_cut",cut=fatjets[0].msoftdrop>40)
         SR_rho_cut = SR_msd_cut.refine("fj_rho_cut",cut=op.AND(2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -5.5,2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) <-2.))
@@ -318,83 +336,54 @@ class zprlegacy(NanoAODHistoModule):
 
         ### Here you can specify the variables that you want to save in the .parquet file, you need to add --mvaSkim to the command line ###
 
-        loose_fatjets = op.sort(
-          op.select(
-             t.FatJet, lambda fj : op.AND(fj.pt>170, op.abs(fj.eta)<2.5, fj.jetId & (1 << 1) !=0 ) 
-          ), lambda fj : -fj.pt, 
-        ) 
+        if self.args.arbitration == "pt":
+            loose_fatjets = op.sort(
+                op.select(
+                t.FatJet, lambda fj : op.AND(fj.msoftdrop > 10.,2*op.log(fj.msoftdrop/fj.pt)>-8, 2*op.log(fj.msoftdrop/fj.pt)<-1, fj.pt>170, op.abs(fj.eta)<2.5, fj.jetId & (1 << 1) !=0 ) 
+                ), lambda fj : -fj.pt, 
+            )
+        elif self.args.arbitration == "2prong":
+            loose_fatjets = op.sort(
+                op.select(
+                t.FatJet, lambda fj : op.AND(fj.msoftdrop > 10.,2*op.log(fj.msoftdrop/fj.pt)>-8, 2*op.log(fj.msoftdrop/fj.pt)<-1,fj.pt>170., op.abs(fj.eta)<2.5, fj.jetId & (1 << 1) !=0 ) 
+                ), lambda fj : -(fj.particleNetMD_Xqq+fj.particleNetMD_Xcc+fj.particleNetMD_Xbb), 
+            )
+     
         mvaVariables = {
-                "weight"           :   noSel.weight,
-                "pt"               :   loose_fatjets[0].p4.Pt(),
-                "msd"              :   loose_fatjets[0].msoftdrop,
-                "msd_corrected"    :   loose_fatjets[0].zpr_FatJet_corrected_mass,
-                "n2b1"             :   loose_fatjets[0].n2b1,
-                "n2b1_ddt"         :   loose_fatjets[0].n2b1 - n2b1ddt(loose_fatjets[0]) ,
-                "n2b1_ddt_smoothed":   loose_fatjets[0].n2b1 - n2b1ddt_smoothed(loose_fatjets[0]) ,
-                "rho"              :   2*op.log(loose_fatjets[0].msoftdrop/loose_fatjets[0].pt),
-                #"nelectrons"       :   op.rng_len(electrons),
-                #"nmuons"           :   op.rng_len(loose_muons),
-                #"ntaus"            :   op.rng_len(taus),
-                #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb,
-                #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc,
-                #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq,
-                #"zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_QCD" : loose_fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_QCD,
-                #"zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_bb" : loose_fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_bb,
-                #"zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_cc" : loose_fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_cc,
-                #"zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_qq" : loose_fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_qq,
-                #"zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD" : loose_fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD,
-                #"zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_bb" : loose_fatjets[0].zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_bb,
-                #"zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_cc" : loose_fatjets[0].zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_cc,
-                #"zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_qq" : loose_fatjets[0].zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_qq,
-                #"zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_QCD" : loose_fatjets[0].zpr_TRANSFORMER_9APR23_V1_CATEGORICAL_QCD,
-                #"particleNetMD_Xqq"                        : loose_fatjets[0].particleNetMD_Xqq,
-                #"particleNetMD_Xcc"                        : loose_fatjets[0].particleNetMD_Xcc,
-                #"particleNetMD_Xbb"                        : loose_fatjets[0].particleNetMD_Xbb,
-                #"particleNetMD_QCD"                        : loose_fatjets[0].particleNetMD_QCD,
+                "weight"            :   noSel.weight,
+                "pt"                :   loose_fatjets[0].p4.Pt(),
+                "eta"               :   loose_fatjets[0].p4.Eta(),
+                "msd"               :   loose_fatjets[0].msoftdrop,
+                "jetId"             :   loose_fatjets[0].jetId,
+                "n2b1"              :   loose_fatjets[0].n2b1,
+                "n2b1_ddt"          :   loose_fatjets[0].n2b1 - n2b1ddt(loose_fatjets[0]) ,
+                "n2b1_ddt_smoothed" :   loose_fatjets[0].n2b1 - n2b1ddt_smoothed(loose_fatjets[0]) ,
+                "rho"               :   2*op.log(loose_fatjets[0].msoftdrop/loose_fatjets[0].pt),
+                "particleNetMD_Xqq" :   loose_fatjets[0].particleNetMD_Xqq,
+                "particleNetMD_Xcc" :   loose_fatjets[0].particleNetMD_Xcc,
+                "particleNetMD_Xbb" :   loose_fatjets[0].particleNetMD_Xbb,
+                "particleNetMD_QCD" :   loose_fatjets[0].particleNetMD_QCD,
         }
-        ''' 
-                "zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime" : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime,
-                "zpr_PN_PFSVE_DISCO200_FLAT_BINARY_QCD"    : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_QCD,
-                "zpr_PN_PFSVE_DISCO200_FLAT_3CAT_bbvQCD"   : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_3CAT_bbvQCD, 
-                "zpr_PN_PFSVE_DISCO200_FLAT_3CAT_ccvQCD"   : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_3CAT_ccvQCD, 
-                "zpr_PN_PFSVE_DISCO200_FLAT_3CAT_qqvQCD"   : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_3CAT_qqvQCD, 
-                "zpr_PN_PFSVE_DISCO200_FLAT_CAT_bb"        : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_CAT_bb,
-                "zpr_PN_PFSVE_DISCO200_FLAT_CAT_cc"        : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_CAT_cc,
-                "zpr_PN_PFSVE_DISCO200_FLAT_CAT_qq"        : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_CAT_qq,
-                "zpr_PN_PFSVE_DISCO200_FLAT_CAT_QCD"       : loose_fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_CAT_QCD,
-                "zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb"        : loose_fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb,
-                "zpr_IN_PFSVE_DISCO200_FLAT_CAT_cc"        : loose_fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_cc,
-                "zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq"        : loose_fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq,
-                "zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD"       : loose_fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD,
-                "zpr_INv1_PFSVE_DISCO200_FLAT_CAT_bb"      : loose_fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_bb,
-                "zpr_INv1_PFSVE_DISCO200_FLAT_CAT_cc"      : loose_fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_cc,
-                "zpr_INv1_PFSVE_DISCO200_FLAT_CAT_qq"      : loose_fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_qq,
-                "zpr_INv1_PFSVE_DISCO200_FLAT_CAT_QCD"     : loose_fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_QCD,
-                "zpr_PN_PFSVE_noDISCO_FLAT_CAT_bb"         : loose_fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_bb,
-                "zpr_PN_PFSVE_noDISCO_FLAT_CAT_cc"         : loose_fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_cc,
-                "zpr_PN_PFSVE_noDISCO_FLAT_CAT_qq"         : loose_fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_qq,
-                "zpr_PN_PFSVE_noDISCO_FLAT_CAT_QCD"        : loose_fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_QCD,
-        '''
         if do_genmatch:
-            #mvaVariables["W_pdgId"]        = w_by_status[0].pdgId
-            #mvaVariables["W_status"]       = w_by_status[0].status
-            #mvaVariables["W_pt"]           = w_by_status[0].pt
-            #mvaVariables["is_Vmatched"]    = Vgen_matched
-            #mvaVariables["q1_dr_jet"]        = dr_to_q1 
-            #mvaVariables["q2_dr_jet"]        = dr_to_q2 
+            mvaVariables["is_Vmatched"]    = Vgen_matched
             mvaVariables["q1_flavor"]      = q_from_w[0].pdgId
             mvaVariables["q2_flavor"]      = q_from_w[1].pdgId
-            #mvaVariables["q1_status"]      = q_from_w[0].statusFlags
-            #mvaVariables["q2_status"]      = q_from_w[1].statusFlags
         ### Save mvaVariables to be retrieved later in the postprocessor and saved in a parquet file ###
         if self.args.mvaSkim:
             from bamboo.plots import Skim
             #parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>200, loose_fatjets[0].msoftdrop>10,op.rng_len(loose_fatjets)>0)])
-            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>500,loose_fatjets[0].msoftdrop>20.,op.rng_len(loose_fatjets)>0)])
+            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>500,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
             plots.append(Skim("signal_region1", mvaVariables, parquet_cut))
-            parquet_cut2 = noSel.refine("parquet_cut2", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<500,loose_fatjets[0].msoftdrop>20.,op.rng_len(loose_fatjets)>0)])
+            parquet_cut2 = noSel.refine("parquet_cut2", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=500,loose_fatjets[0].pt>400,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
             plots.append(Skim("signal_region2", mvaVariables, parquet_cut2))
-        pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
+            parquet_cut3 = noSel.refine("parquet_cut3", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=400,loose_fatjets[0].pt>350,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
+            plots.append(Skim("signal_region3", mvaVariables, parquet_cut3))
+            parquet_cut4 = noSel.refine("parquet_cut4", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=350,loose_fatjets[0].pt>300,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
+            plots.append(Skim("signal_region4", mvaVariables, parquet_cut4))
+            parquet_cut5 = noSel.refine("parquet_cut5", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=300,loose_fatjets[0].pt>250,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
+            plots.append(Skim("signal_region5", mvaVariables, parquet_cut5))
+            parquet_cut6 = noSel.refine("parquet_cut6", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=250,loose_fatjets[0].pt>180,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
+            plots.append(Skim("signal_region6", mvaVariables, parquet_cut6))
        
         if self.args.SR:
             selection = SR_cut
@@ -406,6 +395,7 @@ class zprlegacy(NanoAODHistoModule):
             selection = CR2_cut
             prefix="CR2_" 
 
+        pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
         #### ParticleNet-MD plots
         plots.append(Plot.make1D(prefix+"particlenet_2prong_MD", pnMD_2prong, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD ZPrime binary score", xTitle="ParticleNet-MD 2prong score"))
         plots.append(Plot.make1D(prefix+"particlenet_bb_MD", fatjets[0].particleNetMD_Xbb, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD bb score", xTitle="ParticleNet-MD bb score"))
@@ -459,6 +449,7 @@ zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
         plots.append(Plot.make1D(prefix+"PN_PFSVE_noDISCO_FLAT_CAT_cc", fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_cc, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_noDISCO_FLAT_CAT_cc", xTitle="ParticleNet (no Disco) cc score"))
         plots.append(Plot.make1D(prefix+"PN_PFSVE_noDISCO_FLAT_CAT_qq", fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_qq, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_noDISCO_FLAT_CAT_qq", xTitle="ParticleNet (no Disco) qq score"))
         plots.append(Plot.make1D(prefix+"PN_PFSVE_noDISCO_FLAT_CAT_QCD", fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_QCD, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_noDISCO_FLAT_CAT_QCD", xTitle="ParticleNet (no Disco) QCD score"))
+        '''
         #### Jet kinematics 
         plots.append(Plot.make1D(prefix+"FatjetMsd", fatjets[0].msoftdrop, selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} (GeV)"))
         plots.append(Plot.make1D(prefix+"FatJetPt", fatjets[0].p4.Pt(), selection, EquidistantBinning(25,200.,1400.) if self.args.CR2 else EquidistantBinning(25,450.,1400.), title="FatJet pT", xTitle="FatJet p_{T} (GeV)"))
@@ -467,13 +458,12 @@ zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
         plots.append(Plot.make1D(prefix+"FatJetN2",  fatjets[0].n2b1, selection, EquidistantBinning(25,0,0.5), title="FatJet N2", xTitle="FatJet N_{2}"))
  
 
-        '''
-        
-        #### Muon kinematics 
-        plots.append(Plot.make1D(prefix+"nmuons",op.rng_len(loose_muons), selection, EquidistantBinning(5,0.,5.),title= "Number of Muons", xTitle="Number of muons" ))
-        plots.append(Plot.make1D(prefix+"muonpt",loose_muons[0].pt, selection, EquidistantBinning(20,51.,300.),title= "Candidate muon pt", xTitle="Muon p_{T} (GeV)" ))
-        plots.append(Plot.make1D(prefix+"muoneta",loose_muons[0].p4.Eta(), selection, EquidistantBinning(20,-2.1,2.1),title= "Candidate muon eta", xTitle="Muon #eta" ))
-        plots.append(Plot.make1D(prefix+"pfRelIso04_all",loose_muons[0].pfRelIso04_all, selection, EquidistantBinning(20,0.,.4),title= "MuonpfRelIso04_all", xTitle="Muon relative isolation (0.4)" ))
+        if self.args.CR1 or self.args.CR2: 
+            #### Muon kinematics 
+            plots.append(Plot.make1D(prefix+"nmuons",op.rng_len(loose_muons), selection, EquidistantBinning(5,0.,5.),title= "Number of Muons", xTitle="Number of muons" ))
+            plots.append(Plot.make1D(prefix+"muonpt",loose_muons[0].pt, selection, EquidistantBinning(20,51.,300.),title= "Candidate muon pt", xTitle="Muon p_{T} (GeV)" ))
+            plots.append(Plot.make1D(prefix+"muoneta",loose_muons[0].p4.Eta(), selection, EquidistantBinning(20,-2.1,2.1),title= "Candidate muon eta", xTitle="Muon #eta" ))
+            plots.append(Plot.make1D(prefix+"pfRelIso04_all",loose_muons[0].pfRelIso04_all, selection, EquidistantBinning(20,0.,.4),title= "MuonpfRelIso04_all", xTitle="Muon relative isolation (0.4)" ))
 
         return plots
 
@@ -566,8 +556,8 @@ zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
                     df["process"] = pd.Categorical(df["process"], categories=pd.unique(df["process"]), ordered=False)
                     #csvoutname = os.path.join(resultsdir, f"{skim.name}.csv.gzip")
                     #df.to_csv(csvoutname,)
-                    pqoutname = os.path.join(resultsdir, f"{skim.name}.parquet.gzip")
-                    df.to_parquet(pqoutname,compression="gzip")
+                    pqoutname = os.path.join(resultsdir, f"{skim.name}.parquet")
+                    df.to_parquet(pqoutname,)
                     del df
                     logger.info(f"Dataframe for skim {skim.name} saved to {pqoutname}")
             except ImportError as ex:
