@@ -64,15 +64,78 @@ class zprlegacy(NanoAODHistoModule):
         ## initializes tree.Jet.calc so should be called first (better: use super() instead)
         # https://twiki.cern.ch/twiki/bin/view/CMS/JECDataMC#Recommended_for_MC
 #        tree,noSel,be,lumiArgs = NanoAODHistoModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg, description=NanoAODDescription.get('v7', year='2018', isMC=True), backend=backend)#, calcToAdd=["nMuon"])
-        from bamboo.treedecorators import nanoRochesterCalc
+        from bamboo.treedecorators import nanoRochesterCalc, nanoJetMETCalc, CalcCollectionsGroups, nanoFatJetCalc
         from bamboo.analysisutils import configureJets
         from bamboo.analysisutils import configureRochesterCorrection
-        tree,noSel,be,lumiArgs = NanoAODHistoModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg,description=NanoAODDescription.get('v7', year='2018',isMC=True, systVariations=[nanoRochesterCalc]))
-        #tree,noSel,be,lumiArgs = HistogramsModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg,)
         era = sampleCfg["era"]
+        tree,noSel,be,lumiArgs = NanoAODHistoModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg,description=NanoAODDescription.get('v7', year=era,isMC=self.isMC(sample), systVariations=[nanoRochesterCalc,nanoJetMETCalc,nanoFatJetCalc]),backend=backend)
+        #tree,noSel,be,lumiArgs = HistogramsModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg,)
+        FatJetMETCalc = CalcCollectionsGroups(FatJet=("pt", "mass", "msoftdrop","particleNetMD_Xbb", "particleNetMD_Xcc","particleNetMD_Xqq"),MET=("pt","mass"))
         #if era == "2018":
         #    configureRochesterCorrection(tree._Muon, "/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/fromYihan/RoccoR2018UL.txt", isMC=self.isMC(sample), backend=be)
         #    return RuntimeError("Need to run on some region!")
+
+        addition = ""
+        if self.isMC(sample):
+            jesUncertaintySources = ["Total"]
+            JECs = {'2017'        : "Summer19UL17_V5_MC", 
+                    '2018'        : "Summer19UL18_V5_MC",
+                    }
+            JERs = {'2017'        : "Summer19UL17_JRV3_MC",
+                    '2018'        : "Summer19UL18_JRV2_MC",
+                    }
+            mcYearForFatJets=era
+        
+        else:
+            jesUncertaintySources = None
+            JECs = {'2017B'       : "Summer19UL17_RunB_V5_DATA",
+                    '2017C'       : "Summer19UL17_RunC_V5_DATA",
+                    '2017D'       : "Summer19UL17_RunD_V5_DATA",
+                    '2017E'       : "Summer19UL17_RunE_V5_DATA",
+                    '2017F'       : "Summer19UL17_RunF_V5_DATA",
+                    '2018A'       : "Summer19UL18_RunA_V5_DATA",
+                    '2018B'       : "Summer19UL18_RunB_V5_DATA",
+                    '2018C'       : "Summer19UL18_RunC_V5_DATA",
+                    '2018D'       : "Summer19UL18_RunD_V5_DATA",
+                    }
+            
+            JERs = {'2017'        : None,
+                    '2018'        : None,
+                    }
+            mcYearForFatJets=None
+
+            if era in ["2017","2018"]:
+                  addition = sample.split(era)[1]
+        print(addition)
+        print (JECs[era+addition])
+        print (self.isMC(sample))
+
+        cmJMEArgs = {
+                "jec": JECs[era+addition],
+                "smear": JERs[era],
+#                "splitJER": True,
+                "jesUncertaintySources": jesUncertaintySources,
+                #"jecLevels":[], #  default : L1FastJet, L2Relative, L3Absolute, and also L2L3Residual for data
+                "regroupTag": "V2",
+                "addHEM2018Issue": (era == "2018"),
+                "mayWriteCache": (self.args.distributed != "worker"),
+                "isMC": self.isMC(sample),
+                "backend": be,
+                "uName": sample,
+                "genMatchDR":0.4,
+                "mcYearForFatJets": mcYearForFatJets
+                }
+
+        print (cmJMEArgs["smear"])
+        print (cmJMEArgs["mcYearForFatJets"])
+        print (cmJMEArgs)
+#        if self.isMC(sample):
+#              cmJMEArgs["jesUncertaintySources"] = ["Total"]
+#              configureJets(tree._FatJet, "AK8PFPuppi", mcYearForFatJets=era, **cmJMEArgs_mc)
+#        else:
+#              cmJMEArgs["jesUncertaintySources"] = ["Total"]
+        configureJets(tree._FatJet, "AK8PFPuppi",  **cmJMEArgs)
+
 
         return tree,noSel,be,lumiArgs
 
@@ -89,17 +152,26 @@ class zprlegacy(NanoAODHistoModule):
         print("do genmatch? ", do_genmatch)
         print("sample: ", sample)
         era = sampleCfg["era"]
+        jettrigger = []
+        muontrigger = []
+        #print(t.HLT.PFHT1050)
+        #print(t.HLT["PFHT1050"])
         if era == "2018":
-            jettrigger = [ t.HLT.PFHT1050, t.HLT.AK8PFJet400_TrimMass30, t.HLT.AK8PFHT800_TrimMass50, t.HLT.PFJet500, t.HLT.AK8PFJet500]
+            jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, t.HLT.AK8PFHT800_TrimMass50, t.HLT.AK8PFJet400_TrimMass30,t.HLT.AK8PFJet420_TrimMass30, t.HLT.AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02]            
+            #jettrigger = [ t.HLT.PFHT1050, t.HLT.AK8PFJet400_TrimMass30, t.HLT.AK8PFHT800_TrimMass50, t.HLT.PFJet500, t.HLT.AK8PFJet500, ]#t.HLT.AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np4]
             muontrigger= [ t.HLT.Mu50 ] # Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8
+            sr_pt_cut = 500.
         if era == "2017":
+            sr_pt_cut = 525.
             if "Run2017B" in sample:
-                jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500]
-            else: jettrigger = [t.HLT.AK8PFJet400_TrimMass30,t.HLT.AK8PFHT800_TrimMass50,t.HLT.PFHT1050,t.HLT.PFJet500, t.HLT.AK8PFJet500]
-
-            #jettrigger = [t.HLT.AK8PFJet330_PFAK8BTagCSV_p17, t.HLT.PFHT1050, t.HLT.AK8PFJet400_TrimMass30, t.HLT.AK8PFHT800_TrimMass50, t.HLT.PFJet500, t.HLT.AK8PFJet500]
-            #jettrigger = [ t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, t.HLT.AK8PFJet330_PFAK8BTagCSV_p17, t.HLT.AK8PFJet400_TrimMass30,t.HLT.AK8PFHT800_TrimMass50,t.HLT.PFJet500, t.HLT.AK8PFJet500]
+                jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, ] #t.HLT.AK8PFHT800_TrimMass50]
+            if "Run2017C" in sample or "Run2017D" in sample or "Run2017E" in sample:
+                jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, t.HLT.AK8PFHT800_TrimMass50, t.HLT.AK8PFJet400_TrimMass30,t.HLT.AK8PFJet420_TrimMass30]
+            elif "Run2017F" in sample:
+                jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, t.HLT.AK8PFHT800_TrimMass50, t.HLT.AK8PFJet400_TrimMass30,t.HLT.AK8PFJet420_TrimMass30, ]#t.HLT.AK8PFJet330_BTagCSV_p17]
             muontrigger = [t.HLT.Mu50,]# t.HLT.OldMu100, t.HLT.TkMu100]
+
+        filters = [t.Flag.goodVertices,t.Flag.globalSuperTightHalo2016Filter,t.Flag.HBHENoiseFilter,t.Flag.HBHENoiseIsoFilter,t.Flag.EcalDeadCellTriggerPrimitiveFilter, t.Flag.BadPFMuonFilter, t.Flag.BadPFMuonDzFilter, t.Flag.eeBadScFilter, t.Flag.ecalBadCalibFilter]
         isoMuFilterMask = 0xA
 
         if self.isMC(sample):
@@ -161,12 +233,16 @@ class zprlegacy(NanoAODHistoModule):
             fatjets = op.sort(op.select(t.FatJet, lambda fj : op.AND(
 					fj.pt > 100.,
 					op.abs(fj.eta) < 2.5,
+                                        2*op.log(fj.msoftdrop/fj.pt)>-8, 
+                                        2*op.log(fj.msoftdrop/fj.pt)<-1,
 					)), lambda fj : -fj.pt)
 
         elif self.args.arbitration == "2prong":
             fatjets = op.sort(op.select(t.FatJet, lambda fj : op.AND(
 					fj.pt > 100.,
 					op.abs(fj.eta) < 2.5,
+                                        2*op.log(fj.msoftdrop/fj.pt)>-8, 
+                                        2*op.log(fj.msoftdrop/fj.pt)<-1,
 					)), lambda fj : -(fj.particleNetMD_Xqq+fj.particleNetMD_Xcc+fj.particleNetMD_Xbb))
 
 
@@ -188,10 +264,24 @@ class zprlegacy(NanoAODHistoModule):
             dr_to_q1 = op.deltaR(q_from_w[0].p4, fatjets[0].p4)
             dr_to_q2 = op.deltaR(q_from_w[1].p4, fatjets[0].p4)
 
-            
+           
 
 
         from bamboo.scalefactors import get_scalefactor, get_correction
+
+        ddtmap_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ddt_maps.json"
+
+        pnmd2prong_ddtmap = get_correction(ddtmap_file,
+            f"ddtmap_PNMD_1pct_QCD_{era}" ,
+            params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) },
+            sel=noSel,
+            
+            
+        )
+        
+        pnmd2prong_ddt = (fatjets[0].particleNetMD_Xbb + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xqq) - pnmd2prong_ddtmap(fatjets[0])
+ 
+        '''
         #sf = get_correction("msdcorr.json","msdraw_onebin", )#)params={"pt": lambda obj : obj.pt,})
         n2b1ddt = get_correction("/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/runs/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt.json",
             "ddtmap_5pct_n2",
@@ -203,8 +293,9 @@ class zprlegacy(NanoAODHistoModule):
             params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) }, 
             sel=noSel 
         )
+        '''
+
         #n2b1ddt = get_scalefactor("jet","/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt_smoothed.json","ddtmap_5pct_n2_smoothed",params = {"pt": lambda fj : fj[0].p4.Pt(), "rho" : lambda fj : 2*:)
-        print(n2b1ddt)
         hasTriggerObj  = noSel.refine("hasTriggerObj", cut=[op.rng_len(triggerObj) > 0] )
         hasBtaggedAK4 =  hasTriggerObj.refine("hasBtaggedAK4", cut=[op.rng_len(jets) > 0] )  
         ''' 
@@ -222,12 +313,7 @@ class zprlegacy(NanoAODHistoModule):
 	########################
 	###   SR selection   ###
 	########################
-        if era == "2017":
-
-            SR_pt_cut = jetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > 500)
-        else: 
-            SR_pt_cut = jetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > 525)
-
+        SR_pt_cut = jetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > sr_pt_cut)
         SR_eta_cut = SR_pt_cut.refine("fj_eta_cut",cut=op.abs(fatjets[0].p4.Eta()) < 2.5)
         SR_msd_cut = SR_eta_cut.refine("fj_msd_cut",cut=fatjets[0].msoftdrop>40)
         SR_rho_cut = SR_msd_cut.refine("fj_rho_cut",cut=op.AND(2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -5.5,2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) <-2.))
@@ -335,7 +421,6 @@ class zprlegacy(NanoAODHistoModule):
          
 
         ### Here you can specify the variables that you want to save in the .parquet file, you need to add --mvaSkim to the command line ###
-
         if self.args.arbitration == "pt":
             loose_fatjets = op.sort(
                 op.select(
@@ -348,7 +433,35 @@ class zprlegacy(NanoAODHistoModule):
                 t.FatJet, lambda fj : op.AND(fj.msoftdrop > 10.,2*op.log(fj.msoftdrop/fj.pt)>-8, 2*op.log(fj.msoftdrop/fj.pt)<-1,fj.pt>170., op.abs(fj.eta)<2.5, fj.jetId & (1 << 1) !=0 ) 
                 ), lambda fj : -(fj.particleNetMD_Xqq+fj.particleNetMD_Xcc+fj.particleNetMD_Xbb), 
             )
-     
+        ###new way: use fatjets, not loose_fatjets 
+        mvaVariables = {
+                "weight"            :   noSel.weight,
+                "pt"                :   fatjets[0].p4.Pt(),
+                "eta"               :   fatjets[0].p4.Eta(),
+                "msd"               :   fatjets[0].msoftdrop,
+                "jetId"             :   fatjets[0].jetId,
+                "n2b1"              :   fatjets[0].n2b1,
+                "pnmd2prong_ddt"    :   pnmd2prong_ddt,
+                "particleNetMD_Xqq" :   fatjets[0].particleNetMD_Xqq,
+                "particleNetMD_Xcc" :   fatjets[0].particleNetMD_Xcc,
+                "particleNetMD_Xbb" :   fatjets[0].particleNetMD_Xbb,
+                "particleNetMD_QCD" :   fatjets[0].particleNetMD_QCD,
+        }
+        if do_genmatch:
+            mvaVariables["is_Vmatched"]    = Vgen_matched
+            mvaVariables["q1_flavor"]      = q_from_w[0].pdgId
+            mvaVariables["q2_flavor"]      = q_from_w[1].pdgId
+        if self.isMC(sample):
+            mvaVariables["msd_jesUp"]   =  t._FatJet["jesTotaldown"][fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jesDown"] =  t._FatJet["jesTotalup"]  [fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jerUp"]   =  t._FatJet["jerup"]       [fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jerDown"] =  t._FatJet["jerdown"]     [fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jmsUp"]   =  t._FatJet["jmsup"]       [fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jmsDown"] =  t._FatJet["jmsdown"]     [fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jmrUp"]   =  t._FatJet["jmrup"]       [fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jmrDown"] =  t._FatJet["jmrdown"]     [fatjets[0].idx].msoftdrop
+        '''
+        ###old way: use loose_fatjets
         mvaVariables = {
                 "weight"            :   noSel.weight,
                 "pt"                :   loose_fatjets[0].p4.Pt(),
@@ -356,9 +469,10 @@ class zprlegacy(NanoAODHistoModule):
                 "msd"               :   loose_fatjets[0].msoftdrop,
                 "jetId"             :   loose_fatjets[0].jetId,
                 "n2b1"              :   loose_fatjets[0].n2b1,
-                "n2b1_ddt"          :   loose_fatjets[0].n2b1 - n2b1ddt(loose_fatjets[0]) ,
-                "n2b1_ddt_smoothed" :   loose_fatjets[0].n2b1 - n2b1ddt_smoothed(loose_fatjets[0]) ,
-                "rho"               :   2*op.log(loose_fatjets[0].msoftdrop/loose_fatjets[0].pt),
+                "pnmd2prong_ddt"    :   loose_fatjets_pnmd2prong_ddt,
+                #"n2b1_ddt"          :   loose_fatjets[0].n2b1 - n2b1ddt(loose_fatjets[0]) ,
+                #"n2b1_ddt_smoothed" :   loose_fatjets[0].n2b1 - n2b1ddt_smoothed(loose_fatjets[0]) ,
+                #"rho"               :   2*op.log(loose_fatjets[0].msoftdrop/loose_fatjets[0].pt),
                 "particleNetMD_Xqq" :   loose_fatjets[0].particleNetMD_Xqq,
                 "particleNetMD_Xcc" :   loose_fatjets[0].particleNetMD_Xcc,
                 "particleNetMD_Xbb" :   loose_fatjets[0].particleNetMD_Xbb,
@@ -368,10 +482,20 @@ class zprlegacy(NanoAODHistoModule):
             mvaVariables["is_Vmatched"]    = Vgen_matched
             mvaVariables["q1_flavor"]      = q_from_w[0].pdgId
             mvaVariables["q2_flavor"]      = q_from_w[1].pdgId
+        if self.isMC(sample):
+            mvaVariables["msd_jesUp"]   =  t._FatJet["jesTotaldown"][loose_fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jesDown"] =  t._FatJet["jesTotalup"][loose_fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jerUp"]   =  t._FatJet["jerup"][loose_fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jerDown"] =  t._FatJet["jerdown"][loose_fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jmsUp"]   =  t._FatJet["jmsup"][loose_fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jmsDown"] =  t._FatJet["jmsdown"][loose_fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jmrUp"]   =  t._FatJet["jmrup"][loose_fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jmrDown"] =  t._FatJet["jmrdown"][loose_fatjets[0].idx].msoftdrop
+        '''
         ### Save mvaVariables to be retrieved later in the postprocessor and saved in a parquet file ###
         if self.args.mvaSkim:
             from bamboo.plots import Skim
-            #parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>200, loose_fatjets[0].msoftdrop>10,op.rng_len(loose_fatjets)>0)])
+            '''old way: use loose_fatjets
             parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>500,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
             plots.append(Skim("signal_region1", mvaVariables, parquet_cut))
             parquet_cut2 = noSel.refine("parquet_cut2", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=500,loose_fatjets[0].pt>400,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
@@ -383,6 +507,21 @@ class zprlegacy(NanoAODHistoModule):
             parquet_cut5 = noSel.refine("parquet_cut5", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=300,loose_fatjets[0].pt>250,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
             plots.append(Skim("signal_region5", mvaVariables, parquet_cut5))
             parquet_cut6 = noSel.refine("parquet_cut6", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=250,loose_fatjets[0].pt>180,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
+            plots.append(Skim("signal_region6", mvaVariables, parquet_cut6))
+            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>500,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
+            '''
+            ###new way, use fatjets not loose_fatjets
+            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt>500,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+            plots.append(Skim("signal_region1", mvaVariables, parquet_cut))
+            parquet_cut2 = noSel.refine("parquet_cut2", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=500,fatjets[0].pt>400,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+            plots.append(Skim("signal_region2", mvaVariables, parquet_cut2))
+            parquet_cut3 = noSel.refine("parquet_cut3", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=400,fatjets[0].pt>350,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+            plots.append(Skim("signal_region3", mvaVariables, parquet_cut3))
+            parquet_cut4 = noSel.refine("parquet_cut4", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=350,fatjets[0].pt>300,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+            plots.append(Skim("signal_region4", mvaVariables, parquet_cut4))
+            parquet_cut5 = noSel.refine("parquet_cut5", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=300,fatjets[0].pt>250,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+            plots.append(Skim("signal_region5", mvaVariables, parquet_cut5))
+            parquet_cut6 = noSel.refine("parquet_cut6", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=250,fatjets[0].pt>180,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
             plots.append(Skim("signal_region6", mvaVariables, parquet_cut6))
        
         if self.args.SR:
@@ -398,6 +537,7 @@ class zprlegacy(NanoAODHistoModule):
         pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
         #### ParticleNet-MD plots
         plots.append(Plot.make1D(prefix+"particlenet_2prong_MD", pnMD_2prong, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD ZPrime binary score", xTitle="ParticleNet-MD 2prong score"))
+        plots.append(Plot.make1D(prefix+"particlenet_2prong_MD_ddt", pnmd2prong_ddt, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD ZPrime binary score ddt", xTitle="ParticleNet-MD 2prong score (DDT)"))
         plots.append(Plot.make1D(prefix+"particlenet_bb_MD", fatjets[0].particleNetMD_Xbb, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD bb score", xTitle="ParticleNet-MD bb score"))
         plots.append(Plot.make1D(prefix+"particlenet_cc_MD", fatjets[0].particleNetMD_Xcc, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD cc score", xTitle="ParticleNet-MD cc score"))
         plots.append(Plot.make1D(prefix+"particlenet_qq_MD", fatjets[0].particleNetMD_Xqq, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD qq score", xTitle="ParticleNet-MD qq score"))
@@ -452,7 +592,7 @@ zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
         '''
         #### Jet kinematics 
         plots.append(Plot.make1D(prefix+"FatjetMsd", fatjets[0].msoftdrop, selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} (GeV)"))
-        plots.append(Plot.make1D(prefix+"FatJetPt", fatjets[0].p4.Pt(), selection, EquidistantBinning(25,200.,1400.) if self.args.CR2 else EquidistantBinning(25,450.,1400.), title="FatJet pT", xTitle="FatJet p_{T} (GeV)"))
+        plots.append(Plot.make1D(prefix+"FatJetPt", fatjets[0].p4.Pt(), selection, EquidistantBinning(25,200.,1400.) if self.args.CR2 else EquidistantBinning(25,400,1400.), title="FatJet pT", xTitle="FatJet p_{T} (GeV)"))
         plots.append(Plot.make1D(prefix+"FatJetEta", fatjets[0].p4.Eta(), selection, EquidistantBinning(25,-2.5,2.5), title="FatJet #eta", xTitle="FatJet #eta"))
         plots.append(Plot.make1D(prefix+"FatJetRho", 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt), selection, EquidistantBinning(25,-5.5,-2), title="FatJet #rho", xTitle="FatJet #rho"))
         plots.append(Plot.make1D(prefix+"FatJetN2",  fatjets[0].n2b1, selection, EquidistantBinning(25,0,0.5), title="FatJet N2", xTitle="FatJet N_{2}"))
@@ -464,7 +604,7 @@ zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
             plots.append(Plot.make1D(prefix+"muonpt",loose_muons[0].pt, selection, EquidistantBinning(20,51.,300.),title= "Candidate muon pt", xTitle="Muon p_{T} (GeV)" ))
             plots.append(Plot.make1D(prefix+"muoneta",loose_muons[0].p4.Eta(), selection, EquidistantBinning(20,-2.1,2.1),title= "Candidate muon eta", xTitle="Muon #eta" ))
             plots.append(Plot.make1D(prefix+"pfRelIso04_all",loose_muons[0].pfRelIso04_all, selection, EquidistantBinning(20,0.,.4),title= "MuonpfRelIso04_all", xTitle="Muon relative isolation (0.4)" ))
-
+        print("helloxx")
         return plots
 
     def postProcess(self, taskList, config=None, workdir=None, resultsdir=None):
