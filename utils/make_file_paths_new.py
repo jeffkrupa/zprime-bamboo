@@ -4,7 +4,7 @@ import os,subprocess
 os.system("rm tmp_files.txt")
 
 file_database = "file_database.yaml"
-processes = ["SingleMuon",]#"SingleTop","WJetsToLNu","DYJetsToLL","JetHT","QCD_HT","WJetsToQQ", "ZJetsToQQ","VectorZPrime","TTToHadronic","TTToSemiLeptonic","TTTo2L2Nu",]
+processes = ["SingleMuon","SingleTop","WJetsToLNu","DYJetsToLL","JetHT","QCD_HT","WJetsToQQ", "ZJetsToQQ","VectorZPrime","TTToHadronic","TTToSemiLeptonic","TTTo2L2Nu",]
 year = "2017"
 
 if __name__ == "__main__":

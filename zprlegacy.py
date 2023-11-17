@@ -17,7 +17,8 @@ v_PDGID = {
     "ZJetsToQQ" : 24,
     "WJetsToQQ" : 23,
     "VectorZPrime" : 55,
-    "TTbar" : 23
+    "TTbar" : 23,
+    "SingleTop" : 23,
 }
 GEN_FLAGS = {
     "IsPrompt": 0,
@@ -70,7 +71,7 @@ class zprlegacy(NanoAODHistoModule):
         era = sampleCfg["era"]
         tree,noSel,be,lumiArgs = NanoAODHistoModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg,description=NanoAODDescription.get('v7', year=era,isMC=self.isMC(sample), systVariations=[nanoRochesterCalc,nanoJetMETCalc,nanoFatJetCalc]),backend=backend)
         #tree,noSel,be,lumiArgs = HistogramsModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg,)
-        FatJetMETCalc = CalcCollectionsGroups(FatJet=("pt", "mass", "msoftdrop","particleNetMD_Xbb", "particleNetMD_Xcc","particleNetMD_Xqq"),MET=("pt","mass"))
+        FatJetMETCalc = CalcCollectionsGroups(FatJet=("pt", "mass", "msoftdrop",),MET=("pt","mass"))
         #if era == "2018":
         #    configureRochesterCorrection(tree._Muon, "/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/fromYihan/RoccoR2018UL.txt", isMC=self.isMC(sample), backend=be)
         #    return RuntimeError("Need to run on some region!")
@@ -177,7 +178,9 @@ class zprlegacy(NanoAODHistoModule):
         if self.isMC(sample):
             noSel = noSel.refine("mcWeight", weight=t.genWeight, autoSyst=True)
             jetSel = noSel.refine("passJetHLT", cut=1, autoSyst=True)
+            filterJetSel = jetSel.refine("passFilterJet",cut=1)
             muSel = noSel.refine("passMuHLT", cut=1, autoSyst=True)
+            filterMuSel = muSel.refine("passFilterMu",cut=1)
             #jetSel = noSel.refine("passJetHLT", cut="(1==1)")
             #muSel = noSel.refine("passMuHLT", cut="(1==1)")
         else:
@@ -185,7 +188,9 @@ class zprlegacy(NanoAODHistoModule):
              
             blindedSel = noSel.refine("blinded",cut=t.event%10==0) 
             jetSel = blindedSel.refine("passJetHLT", cut=op.OR(*(jettrigger))) 
+            filterJetSel = jetSel.refine("passFilterJet",cut=op.AND(*(filters)))
             muSel  = noSel.refine("passMuHLT", cut=op.OR(*(muontrigger))) 
+            filterMuSel = muSel.refine("passFilterMu",cut=op.AND(*(filters)))
 
         plots = []
 
@@ -268,18 +273,26 @@ class zprlegacy(NanoAODHistoModule):
 
 
         from bamboo.scalefactors import get_scalefactor, get_correction
-
         ddtmap_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ddt_maps.json"
-
+        jettriggerSF_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/fatjet_triggerSF.json"
         pnmd2prong_ddtmap = get_correction(ddtmap_file,
             f"ddtmap_PNMD_1pct_QCD_{era}" ,
             params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) },
             sel=noSel,
-            
-            
         )
-        
-        pnmd2prong_ddt = (fatjets[0].particleNetMD_Xbb + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xqq) - pnmd2prong_ddtmap(fatjets[0])
+        pnmd2prong_ddt = t._FatJet.orig[fatjets[0].idx].particleNetMD_Xbb + t._FatJet.orig[fatjets[0].idx].particleNetMD_Xcc + t._FatJet.orig[fatjets[0].idx].particleNetMD_Xqq - pnmd2prong_ddtmap(t._FatJet.orig[fatjets[0].idx])
+
+        jettriggerSF = get_correction(jettriggerSF_file,
+            f"fatjet_triggerSF{era}",
+            params = {"pt": lambda fj : fj.p4.Pt(), "msd" : lambda fj : fj.msoftdrop, "systematic" : "nominal", },
+            sel=noSel,
+        )
+
+        if self.isMC(sample):
+            trigweightedJetSel = filterJetSel.refine("weightedJetSel",cut=1, weight=jettriggerSF(fatjets[0]))
+        else:
+            trigweightedJetSel = filterJetSel.refine("weightedJetSel",cut=1, weight=1)
+        #pnmd2prong_ddt = (fatjets[0].particleNetMD_Xbb + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xqq) - pnmd2prong_ddtmap(fatjets[0])
  
         '''
         #sf = get_correction("msdcorr.json","msdraw_onebin", )#)params={"pt": lambda obj : obj.pt,})
@@ -313,7 +326,7 @@ class zprlegacy(NanoAODHistoModule):
 	########################
 	###   SR selection   ###
 	########################
-        SR_pt_cut = jetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > sr_pt_cut)
+        SR_pt_cut = trigweightedJetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > sr_pt_cut)
         SR_eta_cut = SR_pt_cut.refine("fj_eta_cut",cut=op.abs(fatjets[0].p4.Eta()) < 2.5)
         SR_msd_cut = SR_eta_cut.refine("fj_msd_cut",cut=fatjets[0].msoftdrop>40)
         SR_rho_cut = SR_msd_cut.refine("fj_rho_cut",cut=op.AND(2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -5.5,2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) <-2.))
@@ -331,7 +344,7 @@ class zprlegacy(NanoAODHistoModule):
         #######################
         ###  CR1 selection  ###
         #######################
-        CR1_jpt_cut = muSel.refine("CR1_jpt_cut",cut=fatjets[0].p4.Pt() > 400)
+        CR1_jpt_cut = filterMuSel.refine("CR1_jpt_cut",cut=fatjets[0].p4.Pt() > 400)
         CR1_jeta_cut = CR1_jpt_cut.refine("CR1_jeta_cut",cut=op.abs(fatjets[0].p4.Eta())<2.5)
         CR1_jmsd_cut = CR1_jeta_cut.refine("CR1_jmsd_cut",cut=fatjets[0].msoftdrop > 40)
         CR1_jrho_cut = CR1_jmsd_cut.refine("CR1_jrho_cut",cut=-5.5 < 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) < -2.)
@@ -347,7 +360,7 @@ class zprlegacy(NanoAODHistoModule):
         ###  CR2 selection  ###
         #######################
         Wleptonic_candidate = op.sum(loose_muons[0].p4,t.MET.p4)
-        CR2_jpt_cut = muSel.refine("CR2_jpt_cut",cut=fatjets[0].p4.Pt() > 200)
+        CR2_jpt_cut = filterMuSel.refine("CR2_jpt_cut",cut=fatjets[0].p4.Pt() > 200)
         CR2_jeta_cut = CR2_jpt_cut.refine("CR2_jeta_cut",cut=op.abs(fatjets[0].p4.Eta())<2.5)
         CR2_jmsd_cut = CR2_jeta_cut.refine("CR2_jmsd_cut",cut=fatjets[0].msoftdrop > 40)
         CR2_mu_pt_cut = CR2_jmsd_cut.refine("CR2_mu_pt_cut",cut=loose_muons[0].pt > 53)
@@ -372,6 +385,7 @@ class zprlegacy(NanoAODHistoModule):
         plots.append(CR2_yields)
         CR2_yields.add(noSel, title ='TEST')
         CR2_yields.add(muSel, title= 'trigger')
+        CR2_yields.add(filterMuSel, title= 'filters')
         CR2_yields.add(CR2_jpt_cut, title= 'CR2_jpt_cut')
         CR2_yields.add(CR2_jeta_cut, title= 'CR2_jeta_cut')
         CR2_yields.add(CR2_jmsd_cut, title= 'CR2_jmsd_cut')
@@ -394,6 +408,7 @@ class zprlegacy(NanoAODHistoModule):
         plots.append(CR1_yields)
         CR1_yields.add(noSel, title ='TEST')
         CR1_yields.add(muSel, title= 'trigger')
+        CR1_yields.add(filterMuSel, title= 'filters')
         CR1_yields.add(CR1_jpt_cut, title= 'CR1_jpt_cut')
         CR1_yields.add(CR1_jeta_cut, title= 'CR1_jeta_cut')
         CR1_yields.add(CR1_jmsd_cut, title= 'CR1_jmsd_cut')
@@ -408,6 +423,8 @@ class zprlegacy(NanoAODHistoModule):
         SR_yields = CutFlowReport("SR_yields", printInLog=True,)# recursive=True)
         plots.append(SR_yields)
         SR_yields.add(noSel, title ='inclusive')
+        SR_yields.add(filterJetSel, title= 'filters')
+        SR_yields.add(trigweightedJetSel, title= 'trigweightedJetSel')
         SR_yields.add(jetSel, title ='trigger')
         SR_yields.add(SR_pt_cut, title= 'fj_pt')
         SR_yields.add(SR_eta_cut, title= 'fj_eta')
@@ -493,105 +510,54 @@ class zprlegacy(NanoAODHistoModule):
             mvaVariables["msd_jmrDown"] =  t._FatJet["jmrdown"][loose_fatjets[0].idx].msoftdrop
         '''
         ### Save mvaVariables to be retrieved later in the postprocessor and saved in a parquet file ###
-        if self.args.mvaSkim:
-            from bamboo.plots import Skim
-            '''old way: use loose_fatjets
-            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>500,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
-            plots.append(Skim("signal_region1", mvaVariables, parquet_cut))
-            parquet_cut2 = noSel.refine("parquet_cut2", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=500,loose_fatjets[0].pt>400,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
-            plots.append(Skim("signal_region2", mvaVariables, parquet_cut2))
-            parquet_cut3 = noSel.refine("parquet_cut3", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=400,loose_fatjets[0].pt>350,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
-            plots.append(Skim("signal_region3", mvaVariables, parquet_cut3))
-            parquet_cut4 = noSel.refine("parquet_cut4", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=350,loose_fatjets[0].pt>300,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
-            plots.append(Skim("signal_region4", mvaVariables, parquet_cut4))
-            parquet_cut5 = noSel.refine("parquet_cut5", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=300,loose_fatjets[0].pt>250,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
-            plots.append(Skim("signal_region5", mvaVariables, parquet_cut5))
-            parquet_cut6 = noSel.refine("parquet_cut6", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt<=250,loose_fatjets[0].pt>180,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
-            plots.append(Skim("signal_region6", mvaVariables, parquet_cut6))
-            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,loose_fatjets[0].pt>500,loose_fatjets[0].msoftdrop>10.,op.rng_len(loose_fatjets)>0)])
-            '''
-            ###new way, use fatjets not loose_fatjets
-            parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt>500,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-            plots.append(Skim("signal_region1", mvaVariables, parquet_cut))
-            parquet_cut2 = noSel.refine("parquet_cut2", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=500,fatjets[0].pt>400,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-            plots.append(Skim("signal_region2", mvaVariables, parquet_cut2))
-            parquet_cut3 = noSel.refine("parquet_cut3", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=400,fatjets[0].pt>350,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-            plots.append(Skim("signal_region3", mvaVariables, parquet_cut3))
-            parquet_cut4 = noSel.refine("parquet_cut4", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=350,fatjets[0].pt>300,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-            plots.append(Skim("signal_region4", mvaVariables, parquet_cut4))
-            parquet_cut5 = noSel.refine("parquet_cut5", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=300,fatjets[0].pt>250,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-            plots.append(Skim("signal_region5", mvaVariables, parquet_cut5))
-            parquet_cut6 = noSel.refine("parquet_cut6", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=250,fatjets[0].pt>180,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-            plots.append(Skim("signal_region6", mvaVariables, parquet_cut6))
        
         if self.args.SR:
             selection = SR_cut
             prefix="SR_"
+            if self.args.mvaSkim:
+                from bamboo.plots import Skim
+                parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt>500,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+                plots.append(Skim("signal_region1", mvaVariables, parquet_cut))
+                parquet_cut2 = noSel.refine("parquet_cut2", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=500,fatjets[0].pt>400,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+                plots.append(Skim("signal_region2", mvaVariables, parquet_cut2))
+                parquet_cut3 = noSel.refine("parquet_cut3", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=400,fatjets[0].pt>350,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+                plots.append(Skim("signal_region3", mvaVariables, parquet_cut3))
+                parquet_cut4 = noSel.refine("parquet_cut4", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=350,fatjets[0].pt>300,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+                plots.append(Skim("signal_region4", mvaVariables, parquet_cut4))
+                parquet_cut5 = noSel.refine("parquet_cut5", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=300,fatjets[0].pt>250,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+                plots.append(Skim("signal_region5", mvaVariables, parquet_cut5))
+                parquet_cut6 = noSel.refine("parquet_cut6", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=250,fatjets[0].pt>210,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+                plots.append(Skim("signal_region6", mvaVariables, parquet_cut6))
+                parquet_cut7 = noSel.refine("parquet_cut7", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=210,fatjets[0].pt>180,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
+                plots.append(Skim("signal_region7", mvaVariables, parquet_cut7))
         elif self.args.CR1:
             selection = CR1_cut
             prefix="CR1_" 
         elif self.args.CR2:
             selection = CR2_cut
-            prefix="CR2_" 
+            prefix="CR2_"
+            if self.args.mvaSkim:
+                from bamboo.plots import Skim
+                plots.append(Skim("CR2", mvaVariables, selection))
+ 
+        selection_pass = selection.refine("pass_pnmd2prong_1pctddt",cut = [pnmd2prong_ddt >= 0.])
+        selection_fail = selection.refine("fail_pnmd2prong_1pctddt",cut = [pnmd2prong_ddt  < 0.])
 
         pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
         #### ParticleNet-MD plots
         plots.append(Plot.make1D(prefix+"particlenet_2prong_MD", pnMD_2prong, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD ZPrime binary score", xTitle="ParticleNet-MD 2prong score"))
-        plots.append(Plot.make1D(prefix+"particlenet_2prong_MD_ddt", pnmd2prong_ddt, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD ZPrime binary score ddt", xTitle="ParticleNet-MD 2prong score (DDT)"))
+        plots.append(Plot.make1D(prefix+"particlenet_2prong_MD_ddt", pnmd2prong_ddt, selection, EquidistantBinning(25,-1.,0.1), title="ParticleNet-MD ZPrime binary score ddt", xTitle="ParticleNet-MD 2prong score (DDT)"))
         plots.append(Plot.make1D(prefix+"particlenet_bb_MD", fatjets[0].particleNetMD_Xbb, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD bb score", xTitle="ParticleNet-MD bb score"))
         plots.append(Plot.make1D(prefix+"particlenet_cc_MD", fatjets[0].particleNetMD_Xcc, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD cc score", xTitle="ParticleNet-MD cc score"))
         plots.append(Plot.make1D(prefix+"particlenet_qq_MD", fatjets[0].particleNetMD_Xqq, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD qq score", xTitle="ParticleNet-MD qq score"))
+        plots.append(Plot.make1D(prefix+"particlenet_bb_MD_vs_QCD", fatjets[0].particleNetMD_Xbb/(fatjets[0].particleNetMD_Xbb+fatjets[0].particleNetMD_QCD), selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD bb score", xTitle="ParticleNet-MD bb vs QCD"))
+        plots.append(Plot.make1D(prefix+"particlenet_cc_MD_vs_QCD", fatjets[0].particleNetMD_Xcc/(fatjets[0].particleNetMD_Xcc+fatjets[0].particleNetMD_QCD), selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD cc score", xTitle="ParticleNet-MD cc vs QCD"))
+        plots.append(Plot.make1D(prefix+"particlenet_qq_MD_vs_QCD", fatjets[0].particleNetMD_Xqq/(fatjets[0].particleNetMD_Xqq+fatjets[0].particleNetMD_QCD), selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD qq score", xTitle="ParticleNet-MD qq vs QCD"))
         plots.append(Plot.make1D(prefix+"particlenet_QCD_MD", fatjets[0].particleNetMD_QCD, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD QCD score", xTitle="ParticleNet-MD QCD score"))
-        #### TRANSFORMER+DISCO (CAT) plots
-        '''
-
-        plots.append(Plot.make1D(prefix+"TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD", fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD",xTitle="Transformer QCD score"))
-        plots.append(Plot.make1D(prefix+"TRANSFORMER_25MAR23_V3_CATEGORICAL_bb", fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_bb, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_25MAR23_V3_CATEGORICAL_bb",xTitle="Transformer bb score"))
-        plots.append(Plot.make1D(prefix+"TRANSFORMER_25MAR23_V3_CATEGORICAL_cc", fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_cc, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_25MAR23_V3_CATEGORICAL_cc",xTitle="Transformer cc score"))
-        plots.append(Plot.make1D(prefix+"TRANSFORMER_25MAR23_V3_CATEGORICAL_qq", fatjets[0].zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_qq, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_25MAR23_V3_CATEGORICAL_qq",xTitle="Transformer qq score"))
-        #plots.append(Plot.make1D(prefix+"TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb", fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_bb",xTitle="Transformer+DISCO bb score"))
-        #plots.append(Plot.make1D(prefix+"TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc", fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_cc",xTitle="Transformer+DISCO cc score"))
-        #plots.append(Plot.make1D(prefix+"TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq", fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_qq",xTitle="Transformer+DISCO qq score"))
-        #plots.append(Plot.make1D(prefix+"TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_QCD", fatjets[0].zpr_TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_QCD, selection, EquidistantBinning(25,0.,1.), title="TRANSFORMER_2MAR23_V3_DISCO500ALLSIGBKG_CATEGORICAL_QCD",xTitle="Transformer+DISCO QCD score"))
-zpr_TRANSFORMER_25MAR23_V3_CATEGORICAL_QCD
-
-        #### IN+DISCO (CAT) plots
-        plots.append(Plot.make1D(prefix+"IN_PFSVE_DISCO200_FLAT_CAT_bb", fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_bb, selection, EquidistantBinning(25,0.,1.), title="IN_DISCO_bb", xTitle="InteractionNet+DISCO bb score"))
-        plots.append(Plot.make1D(prefix+"IN_PFSVE_DISCO200_FLAT_CAT_cc", fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_cc, selection, EquidistantBinning(25,0.,1.), title="IN_DISCO_cc", xTitle="InteractionNet+DISCO cc score"))
-        plots.append(Plot.make1D(prefix+"IN_PFSVE_DISCO200_FLAT_CAT_qq", fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_qq, selection, EquidistantBinning(25,0.,1.), title="IN_DISCO_qq", xTitle="InteractionNet+DISCO qq score"))
-        plots.append(Plot.make1D(prefix+"IN_PFSVE_DISCO200_FLAT_CAT_QCD", fatjets[0].zpr_IN_PFSVE_DISCO200_FLAT_CAT_QCD, selection, EquidistantBinning(25,0.,1.), title="IN_DISCO_QCD", xTitle="InteractionNet+DISCO QCD score"))
-
-        #### INv1+DISCO (CAT) plots
-        plots.append(Plot.make1D(prefix+"INv1_PFSVE_DISCO200_FLAT_CAT_bb", fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_bb, selection, EquidistantBinning(25,0.,1.), title="INv1_DISCO_bb", xTitle="InteractionNet(v1)+DISCO bb score"))
-        plots.append(Plot.make1D(prefix+"INv1_PFSVE_DISCO200_FLAT_CAT_cc", fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_cc, selection, EquidistantBinning(25,0.,1.), title="INv1_DISCO_cc", xTitle="InteractionNet(v1)+DISCO cc score"))
-        plots.append(Plot.make1D(prefix+"INv1_PFSVE_DISCO200_FLAT_CAT_qq", fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_qq, selection, EquidistantBinning(25,0.,1.), title="INv1_DISCO_qq", xTitle="InteractionNet(v1)+DISCO qq score"))
-        plots.append(Plot.make1D(prefix+"INv1_PFSVE_DISCO200_FLAT_CAT_QCD", fatjets[0].zpr_INv1_PFSVE_DISCO200_FLAT_CAT_QCD, selection, EquidistantBinning(25,0.,1.), title="INv1_DISCO_QCD", xTitle="InteractionNet(v1)+DISCO QCD score"))
-
-
-
-        #### ParticleNet+DISCO (BINARY) plots
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_DISCO200_FLAT_BINARY_zprime", fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_zprime, selection, EquidistantBinning(25,0.,1.), title="ParticleNetDISCO", xTitle="ParticleNet+DISCO 2prong score"))
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_DISCO200_FLAT_BINARY_QCD", fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_BINARY_QCD, selection, EquidistantBinning(25,0.,1.), title="ParticleNetDISCO", xTitle="ParticleNet+DISCO QCD score"))
-        #### ParticleNet+DISCO each vs QCD plots
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_DISCO200_FLAT_3CAT_bbvQCD", fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_3CAT_bbvQCD, selection, EquidistantBinning(25,0.,1.), title="zpr_PN_PFSVE_DISCO200_FLAT_3CAT_bbvQCD", xTitle="ParticleNet+DISCO bb vs QCD score"))
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_DISCO200_FLAT_3CAT_ccvQCD", fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_3CAT_ccvQCD, selection, EquidistantBinning(25,0.,1.), title="zpr_PN_PFSVE_DISCO200_FLAT_3CAT_ccvQCD", xTitle="ParticleNet+DISCO cc vs QCD score"))
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_DISCO200_FLAT_3CAT_qqvQCD", fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_3CAT_qqvQCD, selection, EquidistantBinning(25,0.,1.), title="zpr_PN_PFSVE_DISCO200_FLAT_3CAT_qqvQCD", xTitle="ParticleNet+DISCO qq vs QCD score"))
- 
-        #### ParticleNet+DISCO (CAT) plots
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_DISCO200_FLAT_CAT_bb", fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_CAT_bb, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_DISCO200_FLAT_CAT_bb", xTitle="ParticleNet+DISCO bb score"))
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_DISCO200_FLAT_CAT_cc", fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_CAT_cc, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_DISCO200_FLAT_CAT_cc", xTitle="ParticleNet+DISCO cc score"))
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_DISCO200_FLAT_CAT_qq", fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_CAT_qq, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_DISCO200_FLAT_CAT_qq", xTitle="ParticleNet+DISCO qq score"))
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_DISCO200_FLAT_CAT_QCD", fatjets[0].zpr_PN_PFSVE_DISCO200_FLAT_CAT_QCD, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_DISCO200_FLAT_CAT_QCD", xTitle="ParticleNet+DISCO QCD score"))
-
-
-        #### ParticleNet+NODISCO (CAT) plots
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_noDISCO_FLAT_CAT_bb", fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_bb, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_noDISCO_FLAT_CAT_bb", xTitle="ParticleNet (no Disco) bb score"))
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_noDISCO_FLAT_CAT_cc", fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_cc, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_noDISCO_FLAT_CAT_cc", xTitle="ParticleNet (no Disco) cc score"))
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_noDISCO_FLAT_CAT_qq", fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_qq, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_noDISCO_FLAT_CAT_qq", xTitle="ParticleNet (no Disco) qq score"))
-        plots.append(Plot.make1D(prefix+"PN_PFSVE_noDISCO_FLAT_CAT_QCD", fatjets[0].zpr_PN_PFSVE_noDISCO_FLAT_CAT_QCD, selection, EquidistantBinning(25,0.,1.), title="PN_PFSVE_noDISCO_FLAT_CAT_QCD", xTitle="ParticleNet (no Disco) QCD score"))
-        '''
         #### Jet kinematics 
         plots.append(Plot.make1D(prefix+"FatjetMsd", fatjets[0].msoftdrop, selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} (GeV)"))
+        plots.append(Plot.make1D(prefix+"FatjetMsd_pass", fatjets[0].msoftdrop, selection_pass, EquidistantBinning(25,40.,400.), title="FatJet msd", xTitle="FatJet m_{SD} (GeV)"))
+        plots.append(Plot.make1D(prefix+"FatjetMsd_fail", fatjets[0].msoftdrop, selection_fail, EquidistantBinning(25,40.,400.), title="FatJet msd", xTitle="FatJet m_{SD} (GeV)"))
         plots.append(Plot.make1D(prefix+"FatJetPt", fatjets[0].p4.Pt(), selection, EquidistantBinning(25,200.,1400.) if self.args.CR2 else EquidistantBinning(25,400,1400.), title="FatJet pT", xTitle="FatJet p_{T} (GeV)"))
         plots.append(Plot.make1D(prefix+"FatJetEta", fatjets[0].p4.Eta(), selection, EquidistantBinning(25,-2.5,2.5), title="FatJet #eta", xTitle="FatJet #eta"))
         plots.append(Plot.make1D(prefix+"FatJetRho", 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt), selection, EquidistantBinning(25,-5.5,-2), title="FatJet #rho", xTitle="FatJet #rho"))
