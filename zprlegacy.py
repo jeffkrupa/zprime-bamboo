@@ -276,7 +276,7 @@ class zprlegacy(NanoAODHistoModule):
         ddtmap_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ddt_maps.json"
         jettriggerSF_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/fatjet_triggerSF.json"
         pnmd2prong_ddtmap = get_correction(ddtmap_file,
-            f"ddtmap_PNMD_1pct_QCD_{era}" ,
+            f"ddtmap_PNMD_pctl0.05_QCD_{era}" ,
             params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) },
             sel=noSel,
         )

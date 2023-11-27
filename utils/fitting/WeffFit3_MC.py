@@ -23,6 +23,7 @@ parser.add_argument("-o",dest="opath",type=str,required=True)
 parser.add_argument("-c",dest="cut",type=float,required=True)
 parser.add_argument("-e",dest="efficiency",type=float,required=True)
 parser.add_argument("--erf",dest="erf",action="store_true",)
+parser.add_argument("--cmsbkg",dest="cmsbkg",action="store_true",)
 args = parser.parse_args()
 os.system(f"mkdir -p {args.opath}")
 
@@ -231,12 +232,12 @@ Nerf1  = ROOT.RooRealVar("Nerf1", "Bkg pass erf", entries_signal*0.1, 1., entrie
 Nerf2  = ROOT.RooRealVar("Nerf2", "Bkg fail erf", entries_signal*0.1, 1., entries_signal*1)
 
 
-alpha1_cms = ROOT.RooRealVar("alpha1_cms", "Turn-on threshold", 60, 50, 90)
+alpha1_cms = ROOT.RooRealVar("alpha1_cms", "Turn-on threshold", 30, 50, 180)
 beta1_cms = ROOT.RooRealVar("beta1_cms", "Exponential fall-off", -0.1,-1,0)
-gamma1_cms = ROOT.RooRealVar("gamma1_cms", "Turn-on width", 0.1,0.01,50)
-alpha2_cms = ROOT.RooRealVar("alpha2_cms", "Turn-on threshold", 60, 50, 90)
+gamma1_cms = ROOT.RooRealVar("gamma1_cms", "Turn-on width", 0.1,0.001,50)
+alpha2_cms = ROOT.RooRealVar("alpha2_cms", "Turn-on threshold", 30, 50, 180)
 beta2_cms = ROOT.RooRealVar("beta2_cms", "Exponential fall-off", -0.1,-1,0)
-gamma2_cms = ROOT.RooRealVar("gamma2_cms", "Turn-on width", 0.1,0.01,50)
+gamma2_cms = ROOT.RooRealVar("gamma2_cms", "Turn-on width", 0.1,0.001,50)
 
 
 mean1 = ROOT.RooRealVar("mean1","mean1", 90, fit_min, fit_max)#80, 70, 90
@@ -273,7 +274,7 @@ gaus = ROOT.RooGaussian("gaus","gaus",jmsd, mean1, sigma1)
 gaus2 = ROOT.RooGaussian("gaus2","gaus2",jmsd, mean2, sigma2)
 
 #define normalization of sig, bkg passing, bkg failing
-nSig = ROOT.RooRealVar("nSig", "Number of signal candidates ", entries_signal*0.99, 1., entries_signal*1)
+nSig = ROOT.RooRealVar("nSig", "Number of signal candidates ", entries_signal*0.99, 1., entries_signal)
 nBkg_pass = ROOT.RooRealVar("nBkg_pass", "Bkg pass component", entries_signal*0.1, 1., entries_signal*1)
 nBkg_fail = ROOT.RooRealVar("nBkg_fail", "Bkg fail component", entries_signal*0.1, 1., entries_signal*1)
 eff = ROOT.RooRealVar("eff", "eff", 0.9, 0, 1);
@@ -339,14 +340,19 @@ w.Import(pars_w,ROOT.RooFit.RecycleConflictNodes());
 
 # In[16]:
 
-model_r0="SUM::model_r0(nSig_pass*signal1, nBkg_pass*cms_shape1)"
-model_r1="EDIT::model_r1(model_r0, nSig_pass=nSig_fail, nBkg_pass=nBkg_fail, signal1=signal2, cms_shape1=cms_shape2)"
+model_r0="SUM::model_r0(nSig_pass*signal1, nBkg_pass*exp)"
+model_r1="EDIT::model_r1(model_r0, nSig_pass=nSig_fail, nBkg_pass=nBkg_fail, signal1=signal2, cms_shape1=exp2)"
 
 if args.erf:
     model_r0=model_r0.replace(")",", Nerf1*erf_pdf1)")
     model_r1=model_r1.replace(")",", Nerf1=Nerf2,erf_pdf1=erf_pdf2)")
     print("Adding erf...", model_r0, model_r1)
-
+elif args.cmsbkg:
+    model_r0="SUM::model_r0(nSig_pass*signal1, nBkg_pass*cms_shape1)"
+    model_r1="EDIT::model_r1(model_r0, nSig_pass=nSig_fail, nBkg_pass=nBkg_fail, signal1=signal2, cms_shape1=cms_shape2)"
+else:
+    model_r0="SUM::model_r0(nSig_pass*signal1, nBkg_pass*exp)"
+    model_r1="EDIT::model_r1(model_r0, nSig_pass=nSig_fail, nBkg_pass=nBkg_fail, signal1=signal2, exp=exp2)"
 w.factory(model_r0)
 w.factory(model_r1)
 #w.factory("SUM::model_r0(nSig_pass*signal1, nBkg_pass*exp, Nerf1*erf_pdf1)");
@@ -414,9 +420,10 @@ simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFi
 chi2 = xframe.chiSquare()
 simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFit.Components(signal1), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kRed));
 simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFit.Components(exp), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kGreen));
-simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFit.Components(cms_shape1), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kOrange));
 if args.erf:
    simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFit.Components(erf_pdf1), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kOrange));
+elif args.cmsbkg:
+   simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFit.Components(cms_shape1), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kOrange));
 n_floating_params = results.floatParsFinal().getSize()
 dof = nbins - n_floating_params
 chi2_value = chi2 * dof
@@ -498,9 +505,10 @@ simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "fail_probe"), ROOT.RooFi
 fail_chi2 = xframe.chiSquare()
 simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "fail_probe"), ROOT.RooFit.Components(signal2), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kRed));
 simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "fail_probe"), ROOT.RooFit.Components(exp2), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kGreen));
-simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFit.Components(cms_shape2), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kOrange));
 if args.erf:
    simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "fail_probe"), ROOT.RooFit.Components(erf_pdf1), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kOrange));
+elif args.cmsbkg:
+   simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "fail_probe"), ROOT.RooFit.Components(cms_shape2), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kOrange));
 xframe.GetXaxis().SetLabelSize(0.035)
 xframe.GetYaxis().SetLabelSize(0.035)
 xframe.Draw()

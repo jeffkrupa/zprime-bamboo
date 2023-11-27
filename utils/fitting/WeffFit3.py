@@ -22,6 +22,8 @@ parser.add_argument("-y",dest="year",type=str,required=True)
 parser.add_argument("-o",dest="opath",type=str,required=True)
 parser.add_argument("-c",dest="cut",type=float,required=True)
 parser.add_argument("-e",dest="efficiency",type=float,required=True)
+parser.add_argument("--erf",dest="erf",action="store_true",)
+parser.add_argument("--cmsbkg",dest="cmsbkg",action="store_true",)
 args = parser.parse_args()
 os.system(f"mkdir -p {args.opath}")
 
@@ -149,8 +151,46 @@ plt.savefig(args.opath+"/mass_dist.pdf")
 #gamma1 = ROOT.RooRealVar("gamma1", "gamma1", 5, -30, 30)
 #sigma1 = ROOT.RooRealVar("sigma1", "sigma1", 2, -30, 30)
 
+offset1 = ROOT.RooRealVar("offset1", "Offset1", 70, 50,80)
+offset2 = ROOT.RooRealVar("offset2", "Offset2", 70, 50,80)
+width1 = ROOT.RooRealVar("width1", "Width1", 10, 1, 20)
+width2 = ROOT.RooRealVar("width2", "Width2", 10, 1, 20)
+# Create the error function component using RooGenericPdf
+erf_pdf1 = ROOT.RooGenericPdf("erf_pdf1", "Error Function",
+                             "0.5 * (1 + TMath::Erf((jmsd - offset1) / (width1 * sqrt(2))))",
+                             ROOT.RooArgList(jmsd, offset1, width1))
+erf_pdf2 = ROOT.RooGenericPdf("erf_pdf2", "Error Function",
+                             "0.5 * (1 + TMath::Erf((jmsd - offset2) / (width2 * sqrt(2))))",
+                             ROOT.RooArgList(jmsd, offset2, width2))
+
+
+
+Nerf1  = ROOT.RooRealVar("Nerf1", "Bkg pass erf", entries_signal*0.1, 1., entries_signal*1)
+Nerf2  = ROOT.RooRealVar("Nerf2", "Bkg fail erf", entries_signal*0.1, 1., entries_signal*1)
+
+
+alpha1_cms = ROOT.RooRealVar("alpha1_cms", "Turn-on threshold", 60, 40, 90)
+beta1_cms = ROOT.RooRealVar("beta1_cms", "Exponential fall-off", -0.1,-10,0)
+gamma1_cms = ROOT.RooRealVar("gamma1_cms", "Turn-on width", 10,0.001,50)
+alpha2_cms = ROOT.RooRealVar("alpha2_cms", "Turn-on threshold", 60, 40, 90)
+beta2_cms = ROOT.RooRealVar("beta2_cms", "Exponential fall-off", -0.1,-10,0)
+gamma2_cms = ROOT.RooRealVar("gamma2_cms", "Turn-on width", 10,0.001,50)
+
+
 mean1 = ROOT.RooRealVar("mean1","mean1", 90, fit_min, fit_max)#80, 70, 90
 mean2 = ROOT.RooRealVar("mean2","mean2", 90, fit_min, fit_max)#80, 70, 90
+#cms_shape1 = ROOT.RooCMSShape("cms_shape1", "CMS Shape", jmsd, alpha1_cms, beta1_cms, gamma1_cms, mean1)
+#cms_shape2 = ROOT.RooCMSShape("cms_shape2", "CMS Shape", jmsd, alpha2_cms, beta2_cms, gamma2_cms, mean2)
+
+cms_shape1 = ROOT.RooGenericPdf("cms_shape1","cms_shape1",
+ "RooMath::erfc((alpha1_cms-jmsd)*beta1_cms) * TMath::Exp(-(jmsd-mean1)*gamma1_cms)", 
+ ROOT.RooArgList(alpha1_cms,jmsd,beta1_cms,gamma1_cms,mean1)
+)
+cms_shape2 = ROOT.RooGenericPdf("cms_shape2","cms_shape2",
+ "RooMath::erfc((alpha2_cms-jmsd)*beta2_cms) * TMath::Exp(-(jmsd-mean2)*gamma2_cms)", 
+ ROOT.RooArgList(alpha2_cms,jmsd,beta2_cms,gamma2_cms,mean2)
+)
+
 gamma1 = ROOT.RooRealVar("gamma1", "gamma1", 5, -100, 100)#2.495, -10, 10#10, -30, 30
 gamma2 = ROOT.RooRealVar("gamma2", "gamma2", 5, -100, 100)#2.495, -10, 10#10, -30, 30
 sigma1 = ROOT.RooRealVar("sigma1", "sigma1", 2, -30, 30)#2, -10, 10#2, -30, 30
@@ -187,6 +227,22 @@ print('before workspace')
 #build the workspace
 w = ROOT.RooWorkspace("w","w")
 pars_w = ROOT.RooArgSet()
+pars_w.add(alpha1_cms)
+pars_w.add(beta1_cms)
+pars_w.add(gamma1_cms)
+pars_w.add(alpha2_cms)
+pars_w.add(beta2_cms)
+pars_w.add(gamma2_cms)
+pars_w.add(cms_shape1)
+pars_w.add(cms_shape2)
+pars_w.add(Nerf1)
+pars_w.add(Nerf2)
+pars_w.add(width1)
+pars_w.add(width2)
+pars_w.add(offset1)
+pars_w.add(offset2)
+pars_w.add(erf_pdf1)
+pars_w.add(erf_pdf2)
 pars_w.add(mean1)
 pars_w.add(mean2)
 pars_w.add(gamma1)
@@ -221,9 +277,24 @@ w.Import(pars_w,ROOT.RooFit.RecycleConflictNodes());
 
 # In[16]:
 
+model_r0="SUM::model_r0(nSig_pass*signal1, nBkg_pass*exp)"
+model_r1="EDIT::model_r1(model_r0, nSig_pass=nSig_fail, nBkg_pass=nBkg_fail, signal1=signal2, cms_shape1=exp2)"
 
-w.factory("SUM::model_r0(nSig_pass*signal1, nBkg_pass*exp)");
-w.factory("EDIT::model_r1(model_r0, nSig_pass=nSig_fail, nBkg_pass=nBkg_fail, signal1=signal2, exp=exp2)");
+if args.erf:
+    model_r0=model_r0.replace(")",", Nerf1*erf_pdf1)")
+    model_r1=model_r1.replace(")",", Nerf1=Nerf2,erf_pdf1=erf_pdf2)")
+    print("Adding erf...", model_r0, model_r1)
+elif args.cmsbkg:
+    model_r0="SUM::model_r0(nSig_pass*signal1, nBkg_pass*cms_shape1)"
+    model_r1="EDIT::model_r1(model_r0, nSig_pass=nSig_fail, nBkg_pass=nBkg_fail, signal1=signal2, cms_shape1=cms_shape2)"
+else:
+    model_r0="SUM::model_r0(nSig_pass*signal1, nBkg_pass*exp)"
+    model_r1="EDIT::model_r1(model_r0, nSig_pass=nSig_fail, nBkg_pass=nBkg_fail, signal1=signal2, exp=exp2)"
+  
+w.factory(model_r0)
+w.factory(model_r1)
+#w.factory("SUM::model_r0(nSig_pass*signal1, nBkg_pass*exp)");
+#w.factory("EDIT::model_r1(model_r0, nSig_pass=nSig_fail, nBkg_pass=nBkg_fail, signal1=signal2, exp=exp2)");
 
 
 # In[17]:
@@ -280,7 +351,10 @@ simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFi
 chi2 = xframe.chiSquare()
 simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFit.Components(signal1), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kRed));
 simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFit.Components(exp), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kGreen));
-
+if args.erf:
+   simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFit.Components(erf_pdf1), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kOrange));
+elif args.cmsbkg:
+   simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "pass_probe"), ROOT.RooFit.Components(cms_shape1), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kOrange));
 n_floating_params = results.floatParsFinal().getSize()
 dof = nbins - n_floating_params
 chi2_value = chi2 * dof
@@ -345,6 +419,10 @@ simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "fail_probe"), ROOT.RooFi
 fail_chi2 = xframe.chiSquare()
 simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "fail_probe"), ROOT.RooFit.Components(signal2), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kRed));
 simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "fail_probe"), ROOT.RooFit.Components(exp2), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kGreen));
+if args.erf:
+   simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "fail_probe"), ROOT.RooFit.Components(erf_pdf1), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kOrange));
+elif args.cmsbkg:
+   simPdf.plotOn(xframe, ROOT.RooFit.Slice(data_category, "fail_probe"), ROOT.RooFit.Components(cms_shape2), ROOT.RooFit.ProjWData(data_category,combData), ROOT.RooFit.LineColor(ROOT.kOrange));
 xframe.GetXaxis().SetLabelSize(0.035)
 xframe.GetYaxis().SetLabelSize(0.035)
 xframe.Draw()
