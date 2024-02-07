@@ -58,9 +58,9 @@ data = ROOT.RooDataSet("data","data",argset,ROOT.RooFit.WeightVar("weight"))
 
 # In[4]:
 
-#dataframe = pd.read_parquet(args.parquet)
+dataframe = pd.read_parquet(args.parquet)
 #dataframe = pd.read_parquet("/eos/user/j/jekrupa/plots/bamboo/9Feb22_jobs2_2017_CR2_v3/results/wtagging_region.parquet")
-dataframe = pd.read_parquet("/eos/project/c/contrast/public/cl/www/zprime/bamboo/3Nov23-2prongarbitration-CR2-4/results/CR2.parquet")
+#dataframe = pd.read_parquet("/eos/project/c/contrast/public/cl/www/zprime/bamboo/3Nov23-2prongarbitration-CR2-4/results/CR2.parquet")
 dataframe["particleNetMD_2prong"] = dataframe["particleNetMD_Xbb"] + dataframe["particleNetMD_Xcc"] + dataframe["particleNetMD_Xqq"]
 
 
@@ -138,7 +138,8 @@ for i,row in dataframe.iterrows():
           #print(row.msd,row.weight)
         '''
         if 1:  
-          if row.particleNetMD_2prong >= cut:
+          if row.pnmd2prong_ddt >= 0.:
+          #if row.particleNetMD_2prong >= cut:
             jmsd.setVal(row.msd)
             c.setLabel("data_pass")
             weight.setVal(row.weight)

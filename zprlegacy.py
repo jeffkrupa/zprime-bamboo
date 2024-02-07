@@ -69,9 +69,9 @@ class zprlegacy(NanoAODHistoModule):
         from bamboo.analysisutils import configureJets
         from bamboo.analysisutils import configureRochesterCorrection
         era = sampleCfg["era"]
-        tree,noSel,be,lumiArgs = NanoAODHistoModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg,description=NanoAODDescription.get('v7', year=era,isMC=self.isMC(sample), systVariations=[nanoRochesterCalc,nanoJetMETCalc,nanoFatJetCalc]),backend=backend)
+        tree,noSel,be,lumiArgs = NanoAODHistoModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg,description=NanoAODDescription.get('v7', year=era,isMC=self.isMC(sample), systVariations=[nanoRochesterCalc,nanoFatJetCalc]),backend=backend)
         #tree,noSel,be,lumiArgs = HistogramsModule.prepareTree(self, tree, sample=sample, sampleCfg=sampleCfg,)
-        FatJetMETCalc = CalcCollectionsGroups(FatJet=("pt", "mass", "msoftdrop",),MET=("pt","mass"))
+        #FatJetMETCalc = CalcCollectionsGroups(FatJet=("pt", "mass", "msoftdrop",),MET=("pt","mass"))
         #if era == "2018":
         #    configureRochesterCorrection(tree._Muon, "/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/fromYihan/RoccoR2018UL.txt", isMC=self.isMC(sample), backend=be)
         #    return RuntimeError("Need to run on some region!")
@@ -127,9 +127,9 @@ class zprlegacy(NanoAODHistoModule):
                 "mcYearForFatJets": mcYearForFatJets
                 }
 
-        print (cmJMEArgs["smear"])
-        print (cmJMEArgs["mcYearForFatJets"])
-        print (cmJMEArgs)
+#        print (cmJMEArgs["smear"])
+#        print (cmJMEArgs["mcYearForFatJets"])
+#        print (cmJMEArgs)
 #        if self.isMC(sample):
 #              cmJMEArgs["jesUncertaintySources"] = ["Total"]
 #              configureJets(tree._FatJet, "AK8PFPuppi", mcYearForFatJets=era, **cmJMEArgs_mc)
@@ -166,10 +166,8 @@ class zprlegacy(NanoAODHistoModule):
             sr_pt_cut = 525.
             if "Run2017B" in sample:
                 jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, ] #t.HLT.AK8PFHT800_TrimMass50]
-            if "Run2017C" in sample or "Run2017D" in sample or "Run2017E" in sample:
+            else:
                 jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, t.HLT.AK8PFHT800_TrimMass50, t.HLT.AK8PFJet400_TrimMass30,t.HLT.AK8PFJet420_TrimMass30]
-            elif "Run2017F" in sample:
-                jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, t.HLT.AK8PFHT800_TrimMass50, t.HLT.AK8PFJet400_TrimMass30,t.HLT.AK8PFJet420_TrimMass30, ]#t.HLT.AK8PFJet330_BTagCSV_p17]
             muontrigger = [t.HLT.Mu50,]# t.HLT.OldMu100, t.HLT.TkMu100]
 
         filters = [t.Flag.goodVertices,t.Flag.globalSuperTightHalo2016Filter,t.Flag.HBHENoiseFilter,t.Flag.HBHENoiseIsoFilter,t.Flag.EcalDeadCellTriggerPrimitiveFilter, t.Flag.BadPFMuonFilter, t.Flag.BadPFMuonDzFilter, t.Flag.eeBadScFilter, t.Flag.ecalBadCalibFilter]
@@ -469,8 +467,8 @@ class zprlegacy(NanoAODHistoModule):
             mvaVariables["q1_flavor"]      = q_from_w[0].pdgId
             mvaVariables["q2_flavor"]      = q_from_w[1].pdgId
         if self.isMC(sample):
-            mvaVariables["msd_jesUp"]   =  t._FatJet["jesTotaldown"][fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jesDown"] =  t._FatJet["jesTotalup"]  [fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jesUp"]   =  t._FatJet["jesTotalup"]  [fatjets[0].idx].msoftdrop
+            mvaVariables["msd_jesDown"] =  t._FatJet["jesTotaldown"][fatjets[0].idx].msoftdrop
             mvaVariables["msd_jerUp"]   =  t._FatJet["jerup"]       [fatjets[0].idx].msoftdrop
             mvaVariables["msd_jerDown"] =  t._FatJet["jerdown"]     [fatjets[0].idx].msoftdrop
             mvaVariables["msd_jmsUp"]   =  t._FatJet["jmsup"]       [fatjets[0].idx].msoftdrop

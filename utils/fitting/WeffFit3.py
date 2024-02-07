@@ -54,9 +54,9 @@ data_fail = ROOT.RooDataSet("data_fail","data_fail",{jmsd, c})
 
 # In[4]:
 
-#dataframe = pd.read_parquet(args.parquet)
+dataframe = pd.read_parquet(args.parquet)
 #dataframe = pd.read_parquet("/eos/user/j/jekrupa/plots/bamboo/9Feb22_jobs2_2017_CR2_v3/results/wtagging_region.parquet")
-dataframe = pd.read_parquet("/eos/project/c/contrast/public/cl/www/zprime/bamboo/3Nov23-2prongarbitration-CR2-4/results/CR2.parquet")
+#dataframe = pd.read_parquet("/eos/project/c/contrast/public/cl/www/zprime/bamboo/3Nov23-2prongarbitration-CR2-4/results/CR2.parquet")
 dataframe["particleNetMD_2prong"] = dataframe["particleNetMD_Xbb"] + dataframe["particleNetMD_Xcc"] + dataframe["particleNetMD_Xqq"]
 
 
@@ -76,7 +76,9 @@ for i,row in dataframe.iterrows():
     if row.process=="data" and row.msd<fit_max and row.msd>fit_min:
         histo_min_max_all.Fill(row.msd)
         #if row.particleNetMD_2prong > 0.9:
-        if row.particleNetMD_2prong >= cut:
+        #if row.particleNetMD_2prong >= cut:
+        if row.pnmd2prong_ddt >= 0.:
+
             jmsd.setVal(row.msd)
             c.setLabel("data_pass")
             #jmsd = row.msd
@@ -470,13 +472,29 @@ canvas1.SaveAs(f"./nov23/fail_Data_{efficiency}.pdf")
 canvas1.SaveAs(f"./nov23/fail_Data_{efficiency}.png")
 
 
+#                   eff    9.0000e-01    2.7637e-01 +/-  1.40e-02  <none>
+#                gamma1    5.0000e+00   -2.2448e+01 +/-  3.80e+00  <none>
+#                gamma2    5.0000e+00    3.2277e+01 +/-  3.28e+00  <none>
+#                 mean1    9.0000e+01    9.2758e+01 +/-  2.88e-01  <none>
+#                 mean2    9.0000e+01    9.2780e+01 +/-  3.15e-01  <none>
+#                    ml   -1.0000e-01   -7.9799e-03 +/-  7.04e-04  <none>
+#                   ml2   -1.0000e-01   -2.1685e-02 +/-  1.06e-03  <none>
+#             nBkg_fail    3.0336e+03    1.0986e+04 +/-  5.90e+02  <none>
+#             nBkg_pass    3.0336e+03    2.2514e+03 +/-  2.35e+02  <none>
+#                  nSig    3.0033e+04    1.7098e+04 +/-  6.36e+02  <none>
+#                sigma1    2.0000e+00    2.8848e+00 +/-  3.58e+00  <none>
+#                sigma2    2.0000e+00    4.2700e+00 +/-  2.48e+00  <none>
 
 csv_data += f"\nfail_p_value,{fail_p_value},0. \nfail_chi2,{fail_chi2_value},0. "#\nefficiency,{fit_params.find('eff').getVal()},{fit_params.find('eff').getError()} \n"
 
+csv_data += f"\gamma,{fit_params.find('gamma1').getVal()},{fit_params.find('gamma1').getError()}"
+csv_data += f"\fail_gamma,{fit_params.find('gamma2').getVal()},{fit_params.find('gamma2').getError()}"
 
+print("csv_data",csv_data)
 with open(f"nov23/{efficiency}_data.csv","w") as file:
    file.write(csv_data)
 
+print("csv_data",csv_data)
 
-
+print("done...")
 

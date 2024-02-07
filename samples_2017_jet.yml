@@ -16,25 +16,25 @@ samples:
     era: '2017'
     split: -20
     group: data
-    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
+    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
   JetHT_Run2017D:
     files: file_paths/2017/JetHT_Run2017D.txt
     era: '2017'
     split: -20
     group: data
-    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
+    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
   JetHT_Run2017E:
     files: file_paths/2017/JetHT_Run2017E.txt
     era: '2017'
     split: -20
     group: data
-    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
+    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
   JetHT_Run2017F:
     files: file_paths/2017/JetHT_Run2017F.txt
     era: '2017'
     split: -20
     group: data
-    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
+    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
   DYJetsToLL_Pt-100To250:
     cross-section: 94.42
     files: file_paths/2017/DYJetsToLL_Pt-100To250_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt
@@ -163,6 +163,45 @@ samples:
     generated-events: genEventSumw
     split: -20
     group: QCD
+  VectorZPrimeToQQ_M50:
+    cross-section: 14
+    files: file_paths/2017/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -20
+    legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+  VectorZPrimeToQQ_M75:
+    cross-section: 15
+    files: file_paths/2017/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -20
+    legend: "m_{Z'} = 75 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#ff0000"
+    line-width: 3
+    order: 3
+  VectorZPrimeToQQ_M75:
+    cross-section: 15
+    files: file_paths/2017/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -20
+    legend: "m_{Z'} = 75 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#ff0000"
+    line-width: 3
+    order: 3
   VectorZPrimeToQQ_M200:
     cross-section: 100.00
     files: file_paths/2017/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
@@ -176,32 +215,6 @@ samples:
     line-color: "#df2bff"
     line-width: 3
     order: 2
-  VectorZPrimeToQQ_M50:
-    cross-section: 100.00
-    files: file_paths/2017/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -20
-    legend: "m_{Z'} = 50 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#b314f7"
-    line-width: 3
-    order: 3
-  VectorZPrimeToQQ_M75:
-    cross-section: 100.00
-    files: file_paths/2017/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -20
-    legend: "m_{Z'} = 75 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    line-width: 3
-    order: 3
   TTTo2L2Nu: 
     cross-section: 77.10979749999998 
     files: file_paths/2017/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8.txt
@@ -274,38 +287,38 @@ samples:
     generated-events: genEventSumw
     split: -20
     group: WJetsToLNu
-  ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
-    cross-section: 35.6
-    files: file_paths/2017/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8.txt 
-    era: '2017'
-    type: mc
-    generated-events: genEventSumw
-    split: -20
-    group: SingleTop
-  ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
-    cross-section: 35.6
-    files: file_paths/2017/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8.txt 
-    era: '2017'
-    type: mc
-    generated-events: genEventSumw
-    split: -20
-    group: SingleTop
-  ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
-    cross-section: 81.42
-    files: file_paths/2017/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8.txt 
-    era: '2017'
-    type: mc
-    generated-events: genEventSumw
-    split: -20
-    group: SingleTop
-  ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
-    cross-section: 136.82
-    files: file_paths/2017/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8.txt 
-    era: '2017'
-    type: mc
-    generated-events: genEventSumw
-    split: -20
-    group: SingleTop
+#  ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+#    cross-section: 35.6
+#    files: file_paths/2017/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8.txt 
+#    era: '2017'
+#    type: mc
+#    generated-events: genEventSumw
+#    split: -20
+#    group: SingleTop
+#  ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+#    cross-section: 35.6
+#    files: file_paths/2017/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8.txt 
+#    era: '2017'
+#    type: mc
+#    generated-events: genEventSumw
+#    split: -20
+#    group: SingleTop
+#  ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+#    cross-section: 81.42
+#    files: file_paths/2017/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8.txt 
+#    era: '2017'
+#    type: mc
+#    generated-events: genEventSumw
+#    split: -20
+#    group: SingleTop
+#  ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+#    cross-section: 136.82
+#    files: file_paths/2017/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8.txt 
+#    era: '2017'
+#    type: mc
+#    generated-events: genEventSumw
+#    split: -20
+#    group: SingleTop
     
   
 plotIt:
