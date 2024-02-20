@@ -4,7 +4,7 @@ import os,subprocess
 os.system("rm tmp_files.txt")
 
 file_database = "file_database.yaml"
-processes = ["SingleMuon","SingleTop","WJetsToLNu","DYJetsToLL","JetHT","QCD_HT","WJetsToQQ", "ZJetsToQQ","VectorZPrime","TTToHadronic","TTToSemiLeptonic","TTTo2L2Nu",]
+processes = ["DYJetsToLL"]#WJetsToLNu","SingleTop","Higgs",] #["SingleMuon","SingleTop","WJetsToLNu","DYJetsToLL","JetHT","QCD_HT","WJetsToQQ", "ZJetsToQQ","VectorZPrime","TTToHadronic","TTToSemiLeptonic","TTTo2L2Nu",]
 year = "2017"
 
 if __name__ == "__main__":
@@ -18,7 +18,7 @@ if __name__ == "__main__":
             for p in path:
               
                 try:
-                    x = subprocess.check_output(f"xrdfs root://cmseos.fnal.gov/ ls {p}", shell=True,encoding='utf-8')
+                    x = subprocess.check_output(f"echo xrdfs root://cmseos.fnal.gov/ ls {p}", shell=True,encoding='utf-8')
                     #print(f"xrdfs root://cmseos.fnal.gov/ ls {p} > ../file_paths/{year}/{sp_name}.txt",)
                     x = os.system(f"xrdfs root://cmseos.fnal.gov/ ls {p} >> ../file_paths/{year}/{sp_name}.txt",)#encoding='utf-8')
                 except:

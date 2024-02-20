@@ -35,38 +35,54 @@ samples:
     split: -20
     group: data
     certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
-  DYJetsToLL_Pt-100To250:
-    cross-section: 94.42
-    files: file_paths/2017/DYJetsToLL_Pt-100To250_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt
+  DYJetsToLL_Pt-200To400:
+    cross-section: 38.35
+    files: file_paths/2017/DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
     era: '2017'
     type: mc
     generated-events: genEventSumw
     split: -20
     group: DYJetsToLL
-  DYJetsToLL_Pt-250To400:
-    cross-section: 3.651
-    files: file_paths/2017/DYJetsToLL_Pt-250To400_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt
+  DYJetsToLL_Pt-400To600:
+    cross-section: 5.217
+    files: file_paths/2017/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
     era: '2017'
     type: mc
     generated-events: genEventSumw
     split: -20
     group: DYJetsToLL
-  DYJetsToLL_Pt-400To650:
-    cross-section: 0.4986
-    files: file_paths/2017/DYJetsToLL_Pt-400To650_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt
+  DYJetsToLL_Pt-600To800:
+    cross-section: 1.267
+    files: file_paths/2017/DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
     era: '2017'
     type: mc
     generated-events: genEventSumw
     split: -20
     group: DYJetsToLL
-  DYJetsToLL_Pt-650ToInf:
-    cross-section: 0.04678
-    files: file_paths/2017/DYJetsToLL_Pt-650ToInf_MatchEWPDG20_TuneCP5_13TeV-amcatnloFXFX-pythia8.txt
+  DYJetsToLL_Pt-800To1200:
+    cross-section: 0.5682
+    files: file_paths/2017/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
     era: '2017'
     type: mc
     generated-events: genEventSumw
     split: -20
     group: DYJetsToLL
+  DYJetsToLL_Pt-1200To2500:
+    cross-section: 0.1332
+    files: file_paths/2017/DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -20
+    group: DYJetsToLL
+  #DYJetsToLL_Pt-2500ToInf:
+  #  cross-section: 0.002978 
+  #  files: file_paths/2017/DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
+  #  era: '2017'
+  #  type: mc
+  #  generated-events: genEventSumw
+  #  split: -20
+  #  group: DYJetsToLL
   WJetsToQQ_HT-600to800:
     cross-section: 59.06
     files: file_paths/2017/WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8.txt
@@ -83,22 +99,6 @@ samples:
     generated-events: genEventSumw
     split: -20
     group: WJetsToQQ
-#  VectorZPrimeToQQ_M200:
-#    cross-section: 10.00
-#    files: file_paths/2017/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-#    era: '2017'
-#    type: signal
-#    generated-events: genEventSumw
-#    split: 30
-#    group: VectorZPrimeToQQ_M200
-#  VectorZPrimeToQQ_M75:
-#    cross-section: 10.00
-#    files: file_paths/2017/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-#    era: '2017'
-#    type: signal
-#    generated-events: genEventSumw
-#    split: 30
-#    group: VectorZPrimeToQQ_M75
   ZJetsToQQ_HT-600to800:
     cross-section: 25.41
     files: file_paths/2017/ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8.txt
@@ -164,7 +164,7 @@ samples:
     split: -20
     group: QCD
   VectorZPrimeToQQ_M50:
-    cross-section: 14
+    cross-section: 1.466e+01
     files: file_paths/2017/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
@@ -177,7 +177,7 @@ samples:
     line-width: 3
     order: 3
   VectorZPrimeToQQ_M75:
-    cross-section: 15
+    cross-section: 1.521e+01
     files: file_paths/2017/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
@@ -189,27 +189,92 @@ samples:
     line-color: "#ff0000"
     line-width: 3
     order: 3
-  VectorZPrimeToQQ_M75:
-    cross-section: 15
-    files: file_paths/2017/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+  VectorZPrimeToQQ_M100:
+    cross-section: 1.433e+01
+    files: file_paths/2017/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
     split: -20
-    legend: "m_{Z'} = 75 GeV"
+    legend: "m_{Z'} = 100 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#ff0000"
+    line-width: 3
+    order: 3
+  VectorZPrimeToQQ_M125:
+    cross-section: 1.456e+01
+    files: file_paths/2017/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -20
+    legend: "m_{Z'} = 125 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#ff0000"
+    line-width: 3
+    order: 3
+  VectorZPrimeToQQ_M150:
+    cross-section: 1.444e+01
+    files: file_paths/2017/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -20
+    legend: "m_{Z'} = 150 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#ff0000"
+    line-width: 3
+    order: 3
+  VectorZPrimeToQQ_M175:
+    cross-section: 1.362e+01
+    files: file_paths/2017/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -20
+    legend: "m_{Z'} = 175 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
     line-color: "#ff0000"
     line-width: 3
     order: 3
   VectorZPrimeToQQ_M200:
-    cross-section: 100.00
+    cross-section: 1.338e+01
     files: file_paths/2017/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
     split: -20
     legend: "m_{Z'} = 200 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#df2bff"
+    line-width: 3
+    order: 2
+  VectorZPrimeToQQ_M225:
+    cross-section: 1.370e+01
+    files: file_paths/2017/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -20
+    legend: "m_{Z'} = 225 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#df2bff"
+    line-width: 3
+    order: 2
+  VectorZPrimeToQQ_M250:
+    cross-section: 1.278e+01
+    files: file_paths/2017/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -20
+    legend: "m_{Z'} = 250 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
     line-color: "#df2bff"
@@ -287,39 +352,46 @@ samples:
     generated-events: genEventSumw
     split: -20
     group: WJetsToLNu
-#  ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
-#    cross-section: 35.6
-#    files: file_paths/2017/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8.txt 
-#    era: '2017'
-#    type: mc
-#    generated-events: genEventSumw
-#    split: -20
-#    group: SingleTop
-#  ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
-#    cross-section: 35.6
-#    files: file_paths/2017/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8.txt 
-#    era: '2017'
-#    type: mc
-#    generated-events: genEventSumw
-#    split: -20
-#    group: SingleTop
-#  ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
-#    cross-section: 81.42
-#    files: file_paths/2017/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8.txt 
-#    era: '2017'
-#    type: mc
-#    generated-events: genEventSumw
-#    split: -20
-#    group: SingleTop
-#  ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
-#    cross-section: 136.82
-#    files: file_paths/2017/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8.txt 
-#    era: '2017'
-#    type: mc
-#    generated-events: genEventSumw
-#    split: -20
-#    group: SingleTop
-    
+  ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    cross-section: 35.6
+    files: file_paths/2017/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8.txt 
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -20
+    group: SingleTop
+  ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    cross-section: 35.6
+    files: file_paths/2017/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8.txt 
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -20
+    group: SingleTop
+  ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+    cross-section: 81.42
+    files: file_paths/2017/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8.txt 
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: SingleTop
+  ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+    cross-section: 136.82
+    files: file_paths/2017/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8.txt 
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -20
+    group: SingleTop
+  GluGluHToBB:
+    cross-section : 0.27 #CHECK???
+    files: file_paths/2017/GluGluHToBB.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -20
+    group: HiggsToBB
   
 plotIt:
   configuration:
@@ -371,6 +443,9 @@ plotIt:
     WJetsToLNu:
       legend: W(l\nu)+jets
       fill-color: "#ffcc66"
+    HiggsToBB:
+      legend: H(bb)
+      fill-color: "#FFC0CB"
     ZJetsToQQ:
       legend: Z(qq)+jets
       fill-color: "#51ed6b"

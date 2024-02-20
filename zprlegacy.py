@@ -2,7 +2,10 @@
 from bamboo.analysismodules import NanoAODHistoModule, HistogramsModule
 from bamboo.treedecorators import NanoAODDescription
 from bamboo.scalefactors import binningVariables_nano,lumiPerPeriod_default
+from bamboo.scalefactors import get_scalefactor, get_correction
 from bamboo.analysisutils import loadPlotIt
+from bamboo.plots import Plot
+from bamboo.plots import EquidistantBinning as EqB
 
 from bamboo import treefunctions as op
 from bamboo import scalefactors
@@ -13,12 +16,50 @@ import numpy as np
 
 import logging
 logger = logging.getLogger(__name__)
+
 v_PDGID = {
+    "HiggsToBB" : 25,
+    "GluGluHToBB" : 25,
+    "DYJetsToLL" : 24,
+    "WJetsToLNu" : 24,
     "ZJetsToQQ" : 24,
     "WJetsToQQ" : 23,
     "VectorZPrime" : 55,
     "TTbar" : 23,
     "SingleTop" : 23,
+}
+
+syst_file = {
+    "triggerweights" :  f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/fatjet_triggerSF.json",
+    "pileup" : {
+        "2017" : f"/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/LUM/2017_UL/puWeights.json.gz",
+    },
+    "NLOVkfactors" : f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ULvjets_corrections.json",
+}
+
+btagWPs = {
+    #"deepJet": {
+        '2016APV': {
+            'L': 0.0508,
+            'M': 0.2598,
+            'T': 0.6502,
+        },
+        '2016': {
+            'L': 0.0480,
+            'M': 0.2489,
+            'T': 0.6377,
+        },
+        '2017': {
+            'L': 0.0532,
+            'M': 0.3040,
+            'T': 0.7476,
+        },
+        '2018': {
+            'L': 0.0490,
+            'M': 0.2783,
+            'T': 0.7100,
+        }
+    #}
 }
 GEN_FLAGS = {
     "IsPrompt": 0,
@@ -38,10 +79,29 @@ GEN_FLAGS = {
     "IsLastCopyBeforeFSR": 14,
 }
 
+class makeYieldPlots:
+    def __init__(self):
+        self.calls = 0
+        self.plots = []
+    def addYields(self, sel, name, title):
+        """
+            Make Yield plot and use it also in the latex yield table
+            sel     = refine selection
+            name    = name of the PDF to be produced
+            title   = title that will be used in the LateX yield table
+        """
+        self.plots.append(Plot.make1D("Yield_"+name,   
+                        op.c_int(0),
+                        sel,
+                        EqB(1, 0., 1.),
+                        title = title + " Yield",
+                        plotopts = {"for-yields":True, "yields-title":title, 'yields-table-order':self.calls}))
+        self.calls += 1
+    def returnPlots(self):
+        return self.plots
+
 def goodFlag(p):
-    #return op.AND([p.statusFlags & 2**GEN_FLAGS[FLAG] for FLAG in FLAGS],p.parent.idx >= 0)
-    return op.AND(p.statusFlags & 2**GEN_FLAGS["IsLastCopy"], p.statusFlags & 2**GEN_FLAGS["FromHardProcess"],)# p.parent.idx >= 0)
-    #return op.AND(p.statusFlags & 2**GEN_FLAGS["IsLastCopy"], p.parent.idx >= 0)
+    return op.AND(p.statusFlags & 2**GEN_FLAGS["IsLastCopy"], p.statusFlags & 2**GEN_FLAGS["FromHardProcess"])
 
 
 class zprlegacy(NanoAODHistoModule):
@@ -77,6 +137,8 @@ class zprlegacy(NanoAODHistoModule):
         #    return RuntimeError("Need to run on some region!")
 
         addition = ""
+        self.yield_object = makeYieldPlots()
+
         if self.isMC(sample):
             jesUncertaintySources = ["Total"]
             JECs = {'2017'        : "Summer19UL17_V5_MC", 
@@ -142,50 +204,39 @@ class zprlegacy(NanoAODHistoModule):
 
 
     def definePlots(self,t, noSel, sample=None, sampleCfg=None):
-
         from bamboo.plots import Plot, EquidistantBinning, CutFlowReport
         from bamboo import treefunctions as op
         try: 
             do_genmatch = any(sampleCfg["group"] in x for x in v_PDGID.keys())
         except:
             do_genmatch = True
-            #hotfix for Z' not having "group"
-        print("do genmatch? ", do_genmatch)
-        print("sample: ", sample)
+        print("do_genmatch",do_genmatch,"sample",sample)
         era = sampleCfg["era"]
         jettrigger = []
         muontrigger = []
-        #print(t.HLT.PFHT1050)
-        #print(t.HLT["PFHT1050"])
-        if era == "2018":
+        if "18" in era:
             jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, t.HLT.AK8PFHT800_TrimMass50, t.HLT.AK8PFJet400_TrimMass30,t.HLT.AK8PFJet420_TrimMass30, t.HLT.AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_p02]            
-            #jettrigger = [ t.HLT.PFHT1050, t.HLT.AK8PFJet400_TrimMass30, t.HLT.AK8PFHT800_TrimMass50, t.HLT.PFJet500, t.HLT.AK8PFJet500, ]#t.HLT.AK8PFJet330_TrimMass30_PFAK8BoostedDoubleB_np4]
-            muontrigger= [ t.HLT.Mu50 ] # Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8
+            muontrigger= [ t.HLT.Mu50 ] 
             sr_pt_cut = 500.
-        if era == "2017":
-            sr_pt_cut = 525.
+            pt_bins = ((500,550),(550,600),(600,700),(700,800),(800,1200))
+        elif "17" in era:
             if "Run2017B" in sample:
                 jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, ] #t.HLT.AK8PFHT800_TrimMass50]
             else:
                 jettrigger = [t.HLT.PFHT1050, t.HLT.PFJet500, t.HLT.AK8PFJet500, t.HLT.AK8PFHT800_TrimMass50, t.HLT.AK8PFJet400_TrimMass30,t.HLT.AK8PFJet420_TrimMass30]
             muontrigger = [t.HLT.Mu50,]# t.HLT.OldMu100, t.HLT.TkMu100]
+            sr_pt_cut = 525.
+            pt_bins = ((525,575),(575,625),(625,700),(700,800),(800,1200))
 
         filters = [t.Flag.goodVertices,t.Flag.globalSuperTightHalo2016Filter,t.Flag.HBHENoiseFilter,t.Flag.HBHENoiseIsoFilter,t.Flag.EcalDeadCellTriggerPrimitiveFilter, t.Flag.BadPFMuonFilter, t.Flag.BadPFMuonDzFilter, t.Flag.eeBadScFilter, t.Flag.ecalBadCalibFilter]
         isoMuFilterMask = 0xA
 
         if self.isMC(sample):
             noSel = noSel.refine("mcWeight", weight=t.genWeight, autoSyst=True)
-            jetSel = noSel.refine("passJetHLT", cut=1, autoSyst=True)
-            filterJetSel = jetSel.refine("passFilterJet",cut=1)
-            muSel = noSel.refine("passMuHLT", cut=1, autoSyst=True)
-            filterMuSel = muSel.refine("passFilterMu",cut=1)
-            #jetSel = noSel.refine("passJetHLT", cut="(1==1)")
-            #muSel = noSel.refine("passMuHLT", cut="(1==1)")
         else:
-            noSel = noSel.refine("None",)
-             
-            blindedSel = noSel.refine("blinded",cut=t.event%10==0) 
-            jetSel = blindedSel.refine("passJetHLT", cut=op.OR(*(jettrigger))) 
+            ##blinding data for now
+            noSel = noSel.refine("blinded",cut=t.event%10==0)
+            jetSel = noSel.refine("passJetHLT", cut=op.OR(*(jettrigger))) 
             filterJetSel = jetSel.refine("passFilterJet",cut=op.AND(*(filters)))
             muSel  = noSel.refine("passMuHLT", cut=op.OR(*(muontrigger))) 
             filterMuSel = muSel.refine("passFilterMu",cut=op.AND(*(filters)))
@@ -194,24 +245,21 @@ class zprlegacy(NanoAODHistoModule):
 
         triggerObj = op.select(t.TrigObj, lambda trgObj: op.AND( trgObj.id == 13,
 			(trgObj.filterBits & isoMuFilterMask) )) 
-        veto_muons = op.sort(op.select(t.Muon, lambda mu : op.AND(
-					mu.pt > 5.,
-					)), lambda mu : -mu.pt)
 
 
         loose_muons = op.sort(op.select(t.Muon, lambda mu : op.AND(
 					mu.pt > 10.,
-					mu.looseId,
+					#mu.looseId,
 					op.abs(mu.eta) < 2.1,
 					op.abs(mu.pfRelIso04_all) < 0.4,
 					)), lambda mu : -mu.pt)
 
 
         candidatemuons = op.sort(op.select(t.Muon, lambda mu : op.AND(
-					mu.pt > 55.,
+					mu.pt > 53.,
 					mu.looseId,
 					op.abs(mu.eta) < 2.1,
-					op.abs(mu.pfRelIso04_all) < 0.1,
+					op.abs(mu.pfRelIso04_all) < 0.15,
 					)), lambda mu : -mu.pt)
 
         electrons = op.sort(op.select(t.Electron, lambda el : op.AND(
@@ -223,8 +271,7 @@ class zprlegacy(NanoAODHistoModule):
 
         taus = op.sort(op.select(t.Tau, lambda tau : op.AND(
 					tau.pt > 20.,
-					tau.decayMode,
-					tau.rawIso < 5,
+					tau.decayMode >= 0,
 					op.abs(tau.eta) < 2.3,
 					tau.idDeepTau2017v2p1VSe >= 2,
 					tau.idDeepTau2017v2p1VSjet >= 16,
@@ -255,24 +302,36 @@ class zprlegacy(NanoAODHistoModule):
 					op.abs(j.eta) < 2.5,
 					#j.btagCSVV2 > 0.8838,
 					)), lambda j : -j.pt)[:4]
+
         jets_away = op.select(jets, lambda j : op.deltaR(fatjets[0].p4, j.p4)  > 0.8) 
 
+        #https://github.com/jennetd/hbb-coffea/blob/UL2022/boostedhiggs/vbfprocessor.py#L263-L268
+        ak4_jets = op.sort(op.select(t.Jet, lambda j : op.AND(
+                                        j.pt > 30.,
+                                        op.abs(j.eta) < 5.0,
+                                        j.jetId & (1 << 1) != 0, #tight id
+                                        j.puId > 0,
+                                        )), lambda j : -j.pt)[:4]
+
+        ak4_jet_opp_hemisphere = op.sort(op.select(ak4_jets, lambda j : op.deltaPhi(j.p4,fatjets[0].p4) > np.pi/2), lambda j : -j.btagDeepB)[0]
+          
+        
 
         if do_genmatch:
             genQuarks = op.select(t.GenPart, lambda q: op.AND(op.abs(q.pdgId) >= 1, op.abs(q.pdgId) <= 5))
-            w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.OR(op.abs(p.pdgId) == 23,op.abs(p.pdgId) == 24, op.abs(p.pdgId) == 55),p.statusFlags & 2**GEN_FLAGS["IsLastCopy"])),
+            w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.OR(op.abs(p.pdgId) == 23,op.abs(p.pdgId) == 24,op.abs(p.pdgId) == 25, op.abs(p.pdgId) == 55),p.statusFlags & 2**GEN_FLAGS["IsLastCopy"])),
                                   lambda p: -p.status)
             q_from_w = op.select(genQuarks, lambda q : q.parent.idx == w_by_status[0].idx)
             Vgen_matched = op.rng_count(q_from_w, lambda q: op.deltaR(q.p4, fatjets[0].p4) < 0.8) == 2
             dr_to_q1 = op.deltaR(q_from_w[0].p4, fatjets[0].p4)
             dr_to_q2 = op.deltaR(q_from_w[1].p4, fatjets[0].p4)
-
-           
+            Vgen_quality_criterion_pt = ((fatjets[0].pt - w_by_status[0].pt)/w_by_status[0].pt) < 0.5
+            Vgen_quality_criterion_msd = ((fatjets[0].msoftdrop - w_by_status[0].mass)/w_by_status[0].mass) < 0.3
 
 
         from bamboo.scalefactors import get_scalefactor, get_correction
         ddtmap_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ddt_maps.json"
-        jettriggerSF_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/fatjet_triggerSF.json"
+
         pnmd2prong_ddtmap = get_correction(ddtmap_file,
             f"ddtmap_PNMD_pctl0.05_QCD_{era}" ,
             params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) },
@@ -280,62 +339,104 @@ class zprlegacy(NanoAODHistoModule):
         )
         pnmd2prong_ddt = t._FatJet.orig[fatjets[0].idx].particleNetMD_Xbb + t._FatJet.orig[fatjets[0].idx].particleNetMD_Xcc + t._FatJet.orig[fatjets[0].idx].particleNetMD_Xqq - pnmd2prong_ddtmap(t._FatJet.orig[fatjets[0].idx])
 
-        jettriggerSF = get_correction(jettriggerSF_file,
+        pnmd2prong = t._FatJet.orig[fatjets[0].idx].particleNetMD_Xbb + t._FatJet.orig[fatjets[0].idx].particleNetMD_Xcc + t._FatJet.orig[fatjets[0].idx].particleNetMD_Xqq
+
+        jettriggerSF = get_correction(syst_file["triggerweights"],
             f"fatjet_triggerSF{era}",
-            params = {"pt": lambda fj : fj.p4.Pt(), "msd" : lambda fj : fj.msoftdrop, "systematic" : "nominal", },
+            params = {"pt": lambda fj : fj.p4.Pt(), "msd" : lambda fj : fj.msoftdrop , },#"systematic" : "key",},
+            systParam="systematic",
+            systNomName="nominal", systVariations=("stat_up","stat_dn"),
+            systName="triggerSF",
             sel=noSel,
         )
 
+        puReweight = get_correction(syst_file["pileup"][era], 
+            "Collisions%s_UltraLegacy_goldenJSON"%("".join(era[-2:])),
+            params={"NumTrueInteractions": lambda nTrueInt : nTrueInt},
+            systParam="weights", 
+            systNomName="nominal", systName="pu", systVariations=("up", "down"),
+            sel=noSel,
+        ) 
+
+        if "WJetsToQQ" in sample or "WJetsToLNu" in sample:
+            
+            qcdWkfactor = get_correction(syst_file["NLOVkfactors"],
+                "ULW_MLMtoFXFX",
+                 params={"vpt" : lambda w : w.pt,},
+                 systNomName="nominal",
+                 sel=noSel,
+            )
+
+            nloWkfactor = get_correction(syst_file["NLOVkfactors"],
+                "W_FixedOrderComponent",
+                 params={"vpt" : lambda w : w.pt,},
+                 systParam="systematic",
+                 systNomName="nominal", systVariations=("d1K_NLO_up","d2K_NLO_up","d3K_NLO_up","d1kappa_EW_up","W_d2kappa_EW_up","W_d3kappa_EW_up","d1K_NLO_down","d2K_NLO_down","d3K_NLO_down","d1kappa_EW_down","W_d2kappa_EW_down","W_d3kappa_EW_down"),
+                 sel=noSel,
+            )
+
+        if "ZJetsToQQ" in sample or "DYJetsToLL" in sample:
+
+            qcdZkfactor = get_correction(syst_file["NLOVkfactors"],
+                "ULZ_MLMtoFXFX",
+                 params={"vpt" : lambda w : w.pt,},
+                 systNomName="nominal",
+                 sel=noSel,
+            )
+
+            nloZkfactor = get_correction(syst_file["NLOVkfactors"],
+                "Z_FixedOrderComponent",
+                 params={"vpt" : lambda w : w.pt,},
+                 systParam="systematic",
+                 systNomName="nominal", systVariations=("d1K_NLO_up","d2K_NLO_up","d3K_NLO_up","d1kappa_EW_up","Z_d2kappa_EW_up","Z_d3kappa_EW_up","d1K_NLO_down","d2K_NLO_down","d3K_NLO_down","d1kappa_EW_down","Z_d2kappa_EW_down","Z_d3kappa_EW_down"),
+                 sel=noSel,
+            )
+
         if self.isMC(sample):
-            trigweightedJetSel = filterJetSel.refine("weightedJetSel",cut=1, weight=jettriggerSF(fatjets[0]))
-        else:
-            trigweightedJetSel = filterJetSel.refine("weightedJetSel",cut=1, weight=1)
-        #pnmd2prong_ddt = (fatjets[0].particleNetMD_Xbb + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xqq) - pnmd2prong_ddtmap(fatjets[0])
- 
-        '''
-        #sf = get_correction("msdcorr.json","msdraw_onebin", )#)params={"pt": lambda obj : obj.pt,})
-        n2b1ddt = get_correction("/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/runs/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt.json",
-            "ddtmap_5pct_n2",
-            params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) }, 
-            sel=noSel 
-        )
-        n2b1ddt_smoothed = get_correction("/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/runs/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt_smoothed.json",
-            "ddtmap_5pct_n2_smoothed",
-            params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) }, 
-            sel=noSel 
-        )
-        '''
+            noSel = noSel.refine("trigweight",weight=jettriggerSF(fatjets[0]))
+            noSel = noSel.refine("puweight",weight=puReweight(t.Pileup_nTrueInt))
 
-        #n2b1ddt = get_scalefactor("jet","/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/24May23_v1/results_parquet_correctionlib/n2b1_ddtmap_rho_pt_smoothed.json","ddtmap_5pct_n2_smoothed",params = {"pt": lambda fj : fj[0].p4.Pt(), "rho" : lambda fj : 2*:)
-        hasTriggerObj  = noSel.refine("hasTriggerObj", cut=[op.rng_len(triggerObj) > 0] )
-        hasBtaggedAK4 =  hasTriggerObj.refine("hasBtaggedAK4", cut=[op.rng_len(jets) > 0] )  
-        ''' 
-        noEle     = hasBtaggedAK4.refine("noEle", cut=[op.rng_len(electrons) == 0] )  
-        noTau     = noEle.refine("noTau", cut=[op.rng_len(taus) == 0] )  
+            if "18" not in era:
+                noSel = noSel.refine("L1prefireweight",op.systematic(t.L1PreFiringWeight_Nom, name="L1PreFiring", up=t.L1PreFiringWeight_Up, down=t.L1PreFiringWeight_Dn))
 
-        oneMuon     = noTau.refine("oneMuon", cut=[op.rng_len(muons) == 1] )  
+            if "WJetsToQQ" in sample or "WJetsToLNu" in sample:
+                noSel = noSel.refine("nloWkfactor",weight=nloWkfactor(w_by_status[0]))
+                noSel = noSel.refine("qcdWkfactor",weight=qcdWkfactor(w_by_status[0]))
+            if "ZJetsToQQ" in sample or "DYJetsToLL" in sample:
+                noSel = noSel.refine("nloZkfactor",weight=nloZkfactor(w_by_status[0]))
+                noSel = noSel.refine("qcdZkfactor",weight=qcdZkfactor(w_by_status[0]))
 
-        deltaRfj = oneMuon.refine("deltaRfj",cut=op.deltaR(jets[0].p4,fatjets[0].p4) > 0.8)
-        ptcut = deltaRfj.refine("ptcut",cut=fatjets[0].p4.Pt() > 300)
-        CR_cut = ptcut.refine("CR_cut", cut=[op.deltaR(muons[0].p4,fatjets[0].p4) > 2*np.pi/3] )  
-        '''
-
+            jetSel = noSel.refine("passJetHLT", cut=1, autoSyst=True)
+            filterJetSel = jetSel.refine("passFilterJet",cut=1)
+            muSel = noSel.refine("passMuHLT", cut=1, autoSyst=True)
+            filterMuSel = muSel.refine("passFilterMu",cut=1)
 
 	########################
 	###   SR selection   ###
 	########################
-        SR_pt_cut = trigweightedJetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > sr_pt_cut)
+
+        #sr_cut_dict = {
+        #    "fj_pt_cut" : fatjets[0].p4.Pt() > sr_pt_cut,
+        #    "fj_eta_cut" : op.abs(fatjets[0].p4.Eta()) < 2.5)
+        #
+        #}
+
+        SR_pt_cut = filterJetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > sr_pt_cut)
         SR_eta_cut = SR_pt_cut.refine("fj_eta_cut",cut=op.abs(fatjets[0].p4.Eta()) < 2.5)
         SR_msd_cut = SR_eta_cut.refine("fj_msd_cut",cut=fatjets[0].msoftdrop>40)
-        SR_rho_cut = SR_msd_cut.refine("fj_rho_cut",cut=op.AND(2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -5.5,2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) <-2.))
+        SR_rho_cut = SR_msd_cut.refine("fj_rho_cut",cut=op.AND(2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -7,2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) <-1.))
         SR_id_cut = SR_rho_cut.refine("id_cut",cut=[fatjets[0].jetId & (1 << 1) !=0])
-        SR_electron_cut = SR_id_cut.refine("el_cut",cut=[op.rng_len(electrons) == 0])
+        SR_antiak4btagMediumOppHem_cut = SR_id_cut.refine("SR_antiak4btagMediumOppHem_cut",cut=[ak4_jet_opp_hemisphere.btagDeepB < btagWPs[era]["M"]])
+        SR_electron_cut = SR_antiak4btagMediumOppHem_cut.refine("el_cut",cut=[op.rng_len(electrons) == 0])
         SR_muon_cut = SR_electron_cut.refine("mu_cut",cut=[op.rng_len(loose_muons) == 0])
         SR_tau_cut = SR_muon_cut.refine("tau_cut",cut=[op.rng_len(taus) == 0]) 
-        if "ZJetsToQQ" in sample or "WJetsToQQ" in sample or "VectorZPrime" in sample:
-            SR_Vmatched = SR_tau_cut.refine("fj_Vmatched",cut=Vgen_matched)
+        if "ZJetsToQQ" in sample or "WJetsToQQ" in sample or "VectorZPrime" in sample or "HToBB" in sample:
+            SR_Vmatched = SR_tau_cut.refine("fj_Vmatched",cut=op.AND(Vgen_matched,Vgen_quality_criterion_pt,Vgen_quality_criterion_msd))
         else:
             SR_Vmatched = SR_tau_cut.refine("fj_Vmatched",cut=1) 
+
+        self.yield_object.addYields(filterJetSel,"starting","test")
+        self.yield_object.addYields(SR_pt_cut,"pt_cut","test")
  
         SR_cut = SR_Vmatched
 
@@ -366,7 +467,7 @@ class zprlegacy(NanoAODHistoModule):
         CR2_mu_pfRelIso04_all_cut = CR2_mu_eta_cut.refine("CR2_mu_pfRelIso04_all_cut",cut=loose_muons[0].pfRelIso04_all<0.15)
         CR2_mu_tightId_cut = CR2_mu_pfRelIso04_all_cut.refine("CR2_mu_tightId_cut",cut=loose_muons[0].tightId)
         CR2_muonDphiAK8 = CR2_mu_tightId_cut.refine("CR2_muonDphiAK8",cut=op.abs(op.deltaPhi(loose_muons[0].p4, fatjets[0].p4))>2*np.pi/3)
-        CR2_ak4btagMedium08 = CR2_muonDphiAK8.refine("CR2_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagCSVV2>0.8838))
+        CR2_ak4btagMedium08 = CR2_muonDphiAK8.refine("CR2_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagDeepB>btagWPs[era]["M"]))
         CR2_MET = CR2_ak4btagMedium08.refine("CR2_MET",t.MET.pt>40)
         CR2_electron_cut = CR2_MET.refine("CR2_electron_cut",cut=[op.rng_len(electrons) == 0])
         CR2_mu_cutloose = CR2_electron_cut.refine("CR2_mu_cutloose",cut=[op.rng_len(loose_muons) == 1])
@@ -422,12 +523,13 @@ class zprlegacy(NanoAODHistoModule):
         plots.append(SR_yields)
         SR_yields.add(noSel, title ='inclusive')
         SR_yields.add(filterJetSel, title= 'filters')
-        SR_yields.add(trigweightedJetSel, title= 'trigweightedJetSel')
+        #SR_yields.add(trigweightedJetSel, title= 'trigweightedJetSel')
         SR_yields.add(jetSel, title ='trigger')
         SR_yields.add(SR_pt_cut, title= 'fj_pt')
         SR_yields.add(SR_eta_cut, title= 'fj_eta')
         SR_yields.add(SR_msd_cut, title= 'fj_msd')
         SR_yields.add(SR_rho_cut, title= 'fj_rho')
+        SR_yields.add(SR_antiak4btagMediumOppHem_cut, title ='SR_antiak4btagMediumOppHem_cut')
         SR_yields.add(SR_electron_cut, title= 'no_electron')
         SR_yields.add(SR_muon_cut, title= 'no_muon')
         SR_yields.add(SR_tau_cut, title= 'no_tau')
@@ -450,20 +552,20 @@ class zprlegacy(NanoAODHistoModule):
             )
         ###new way: use fatjets, not loose_fatjets 
         mvaVariables = {
-                "weight"            :   noSel.weight,
-                "pt"                :   fatjets[0].p4.Pt(),
-                "eta"               :   fatjets[0].p4.Eta(),
-                "msd"               :   fatjets[0].msoftdrop,
-                "jetId"             :   fatjets[0].jetId,
-                "n2b1"              :   fatjets[0].n2b1,
-                "pnmd2prong_ddt"    :   pnmd2prong_ddt,
-                "particleNetMD_Xqq" :   fatjets[0].particleNetMD_Xqq,
-                "particleNetMD_Xcc" :   fatjets[0].particleNetMD_Xcc,
-                "particleNetMD_Xbb" :   fatjets[0].particleNetMD_Xbb,
-                "particleNetMD_QCD" :   fatjets[0].particleNetMD_QCD,
+            "weight"            :   noSel.weight,
+            "pt"                :   fatjets[0].p4.Pt(),
+            "eta"               :   fatjets[0].p4.Eta(),
+            "msd"               :   fatjets[0].msoftdrop,
+            "jetId"             :   fatjets[0].jetId,
+            "n2b1"              :   fatjets[0].n2b1,
+            "pnmd2prong_ddt"    :   pnmd2prong_ddt,
+            "particleNetMD_Xqq" :   fatjets[0].particleNetMD_Xqq,
+            "particleNetMD_Xcc" :   fatjets[0].particleNetMD_Xcc,
+            "particleNetMD_Xbb" :   fatjets[0].particleNetMD_Xbb,
+            "particleNetMD_QCD" :   fatjets[0].particleNetMD_QCD,
         }
         if do_genmatch:
-            mvaVariables["is_Vmatched"]    = Vgen_matched
+            mvaVariables["is_Vmatched"]    = op.AND(Vgen_matched, Vgen_quality_criterion_pt, Vgen_quality_criterion_msd)
             mvaVariables["q1_flavor"]      = q_from_w[0].pdgId
             mvaVariables["q2_flavor"]      = q_from_w[1].pdgId
         if self.isMC(sample):
@@ -475,38 +577,8 @@ class zprlegacy(NanoAODHistoModule):
             mvaVariables["msd_jmsDown"] =  t._FatJet["jmsdown"]     [fatjets[0].idx].msoftdrop
             mvaVariables["msd_jmrUp"]   =  t._FatJet["jmrup"]       [fatjets[0].idx].msoftdrop
             mvaVariables["msd_jmrDown"] =  t._FatJet["jmrdown"]     [fatjets[0].idx].msoftdrop
-        '''
-        ###old way: use loose_fatjets
-        mvaVariables = {
-                "weight"            :   noSel.weight,
-                "pt"                :   loose_fatjets[0].p4.Pt(),
-                "eta"               :   loose_fatjets[0].p4.Eta(),
-                "msd"               :   loose_fatjets[0].msoftdrop,
-                "jetId"             :   loose_fatjets[0].jetId,
-                "n2b1"              :   loose_fatjets[0].n2b1,
-                "pnmd2prong_ddt"    :   loose_fatjets_pnmd2prong_ddt,
-                #"n2b1_ddt"          :   loose_fatjets[0].n2b1 - n2b1ddt(loose_fatjets[0]) ,
-                #"n2b1_ddt_smoothed" :   loose_fatjets[0].n2b1 - n2b1ddt_smoothed(loose_fatjets[0]) ,
-                #"rho"               :   2*op.log(loose_fatjets[0].msoftdrop/loose_fatjets[0].pt),
-                "particleNetMD_Xqq" :   loose_fatjets[0].particleNetMD_Xqq,
-                "particleNetMD_Xcc" :   loose_fatjets[0].particleNetMD_Xcc,
-                "particleNetMD_Xbb" :   loose_fatjets[0].particleNetMD_Xbb,
-                "particleNetMD_QCD" :   loose_fatjets[0].particleNetMD_QCD,
-        }
-        if do_genmatch:
-            mvaVariables["is_Vmatched"]    = Vgen_matched
-            mvaVariables["q1_flavor"]      = q_from_w[0].pdgId
-            mvaVariables["q2_flavor"]      = q_from_w[1].pdgId
-        if self.isMC(sample):
-            mvaVariables["msd_jesUp"]   =  t._FatJet["jesTotaldown"][loose_fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jesDown"] =  t._FatJet["jesTotalup"][loose_fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jerUp"]   =  t._FatJet["jerup"][loose_fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jerDown"] =  t._FatJet["jerdown"][loose_fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jmsUp"]   =  t._FatJet["jmsup"][loose_fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jmsDown"] =  t._FatJet["jmsdown"][loose_fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jmrUp"]   =  t._FatJet["jmrup"][loose_fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jmrDown"] =  t._FatJet["jmrdown"][loose_fatjets[0].idx].msoftdrop
-        '''
+
+
         ### Save mvaVariables to be retrieved later in the postprocessor and saved in a parquet file ###
        
         if self.args.SR:
@@ -514,23 +586,14 @@ class zprlegacy(NanoAODHistoModule):
             prefix="SR_"
             if self.args.mvaSkim:
                 from bamboo.plots import Skim
-                parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt>500,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-                plots.append(Skim("signal_region1", mvaVariables, parquet_cut))
-                parquet_cut2 = noSel.refine("parquet_cut2", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=500,fatjets[0].pt>400,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-                plots.append(Skim("signal_region2", mvaVariables, parquet_cut2))
-                parquet_cut3 = noSel.refine("parquet_cut3", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=400,fatjets[0].pt>350,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-                plots.append(Skim("signal_region3", mvaVariables, parquet_cut3))
-                parquet_cut4 = noSel.refine("parquet_cut4", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=350,fatjets[0].pt>300,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-                plots.append(Skim("signal_region4", mvaVariables, parquet_cut4))
-                parquet_cut5 = noSel.refine("parquet_cut5", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=300,fatjets[0].pt>250,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-                plots.append(Skim("signal_region5", mvaVariables, parquet_cut5))
-                parquet_cut6 = noSel.refine("parquet_cut6", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=250,fatjets[0].pt>210,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-                plots.append(Skim("signal_region6", mvaVariables, parquet_cut6))
-                parquet_cut7 = noSel.refine("parquet_cut7", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt<=210,fatjets[0].pt>180,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0)])
-                plots.append(Skim("signal_region7", mvaVariables, parquet_cut7))
+                
+                parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt>170,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0), ak4_jet_opp_hemisphere.btagDeepB < btagWPs[era]["M"]])
+                plots.append(Skim("signal_region", mvaVariables, parquet_cut))
+
         elif self.args.CR1:
             selection = CR1_cut
             prefix="CR1_" 
+
         elif self.args.CR2:
             selection = CR2_cut
             prefix="CR2_"
@@ -538,9 +601,17 @@ class zprlegacy(NanoAODHistoModule):
                 from bamboo.plots import Skim
                 plots.append(Skim("CR2", mvaVariables, selection))
  
-        selection_pass = selection.refine("pass_pnmd2prong_1pctddt",cut = [pnmd2prong_ddt >= 0.])
-        selection_fail = selection.refine("fail_pnmd2prong_1pctddt",cut = [pnmd2prong_ddt  < 0.])
+        for iptbin, (pt_low, pt_high) in enumerate(pt_bins):
+            pt_sel = op.AND(fatjets[0].pt > pt_low, fatjets[0].pt <= pt_high)
 
+            ### Cut based on PN-MD 2prong (DDT'd)            
+            plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_ddt_pass", fatjets[0].msoftdrop, selection.refine(f"ptbin{iptbin}_pnmd2prong_ddt_pass",cut=op.AND(pt_sel,pnmd2prong_ddt>0.)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_ddt_pass", xTitle="Jet m_{SD} (GeV) Pass PN-MD DDT 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
+            plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_ddt_fail", fatjets[0].msoftdrop, selection.refine(f"ptbin{iptbin}_pnmd2prong_ddt_fail",cut=op.AND(pt_sel,pnmd2prong_ddt<=0.)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_ddt_fail", xTitle="Jet m_{SD} (GeV) Fail PN-MD DDT 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
+
+            plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_0p05_pass", fatjets[0].msoftdrop, selection.refine(f"ptbin{iptbin}_pnmd2prong_pass",cut=op.AND(pt_sel,pnmd2prong>0.93)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_pass", xTitle="Jet m_{SD} (GeV) Pass PN-MD 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
+            plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_0p05_fail", fatjets[0].msoftdrop, selection.refine(f"ptbin{iptbin}_pnmd2prong_fail",cut=op.AND(pt_sel,pnmd2prong<=0.93)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_fail", xTitle="Jet m_{SD} (GeV) Fail PN-MD 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
+
+        inclusive_pt_sel = op.AND(fatjets[0].pt > 525, fatjets[0].pt <= 1200)
         pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
         #### ParticleNet-MD plots
         plots.append(Plot.make1D(prefix+"particlenet_2prong_MD", pnMD_2prong, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD ZPrime binary score", xTitle="ParticleNet-MD 2prong score"))
@@ -554,8 +625,6 @@ class zprlegacy(NanoAODHistoModule):
         plots.append(Plot.make1D(prefix+"particlenet_QCD_MD", fatjets[0].particleNetMD_QCD, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD QCD score", xTitle="ParticleNet-MD QCD score"))
         #### Jet kinematics 
         plots.append(Plot.make1D(prefix+"FatjetMsd", fatjets[0].msoftdrop, selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} (GeV)"))
-        plots.append(Plot.make1D(prefix+"FatjetMsd_pass", fatjets[0].msoftdrop, selection_pass, EquidistantBinning(25,40.,400.), title="FatJet msd", xTitle="FatJet m_{SD} (GeV)"))
-        plots.append(Plot.make1D(prefix+"FatjetMsd_fail", fatjets[0].msoftdrop, selection_fail, EquidistantBinning(25,40.,400.), title="FatJet msd", xTitle="FatJet m_{SD} (GeV)"))
         plots.append(Plot.make1D(prefix+"FatJetPt", fatjets[0].p4.Pt(), selection, EquidistantBinning(25,200.,1400.) if self.args.CR2 else EquidistantBinning(25,400,1400.), title="FatJet pT", xTitle="FatJet p_{T} (GeV)"))
         plots.append(Plot.make1D(prefix+"FatJetEta", fatjets[0].p4.Eta(), selection, EquidistantBinning(25,-2.5,2.5), title="FatJet #eta", xTitle="FatJet #eta"))
         plots.append(Plot.make1D(prefix+"FatJetRho", 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt), selection, EquidistantBinning(25,-5.5,-2), title="FatJet #rho", xTitle="FatJet #rho"))
@@ -568,7 +637,10 @@ class zprlegacy(NanoAODHistoModule):
             plots.append(Plot.make1D(prefix+"muonpt",loose_muons[0].pt, selection, EquidistantBinning(20,51.,300.),title= "Candidate muon pt", xTitle="Muon p_{T} (GeV)" ))
             plots.append(Plot.make1D(prefix+"muoneta",loose_muons[0].p4.Eta(), selection, EquidistantBinning(20,-2.1,2.1),title= "Candidate muon eta", xTitle="Muon #eta" ))
             plots.append(Plot.make1D(prefix+"pfRelIso04_all",loose_muons[0].pfRelIso04_all, selection, EquidistantBinning(20,0.,.4),title= "MuonpfRelIso04_all", xTitle="Muon relative isolation (0.4)" ))
-        print("helloxx")
+        #print("helloxx")
+        plots.extend(self.yield_object.returnPlots())
+
+
         return plots
 
     def postProcess(self, taskList, config=None, workdir=None, resultsdir=None):
@@ -582,88 +654,46 @@ class zprlegacy(NanoAODHistoModule):
         import math
 
 
-
-        ########################################################################################################
-        ######## save a TTree with invariant mass of gg and bb for the different categories#####################
-        ########################################################################################################
-        import os.path
-        from bamboo.plots import Skim
-        skims = [ap for ap in self.plotList if isinstance(ap, Skim)]
-        if self.args.mvaEval and skims:
-            from bamboo.analysisutils import loadPlotIt
-            p_config, samples, _, systematics, legend = loadPlotIt(config, [], eras=self.args.eras[1], workdir=workdir, resultsdir=resultsdir, readCounters=self.readCounters, vetoFileAttributes=self.__class__.CustomSampleAttributes)
-            try:
-                from bamboo.root import gbl
-                import pandas as pd
-                for skim in skims:
-                    frames = []
-                    for smp in samples:
-                        for cb in (smp.files if hasattr(smp, "files") else [smp]):  # could be a helper in plotit
-                            tree = cb.tFile.Get(skim.treeName)
-                            if not tree:
-                               print( f"KEY TTree {skim.treeName} does not exist, we are gonna skip this {smp}\n")
-                            else:
-                               cols = gbl.ROOT.RDataFrame(cb.tFile.Get(skim.treeName)).AsNumpy()
-                               cols["weight"] *= cb.scale
-                               cols["process"] = [smp.name]*len(cols["weight"])
-                               frames.append(pd.DataFrame(cols))
-                    df = pd.concat(frames)
-                    print(df)
-                    for col in df.columns:
-                        if "process" in col: continue
-                        df[col] = df[col].astype('float16')
-                    df["process"] = pd.Categorical(df["process"], categories=pd.unique(df["process"]), ordered=False)
-                    pqoutname = os.path.join(resultsdir, f"{skim.name}.parquet")
-                    df.to_parquet(pqoutname)
-                    del df
-                    logger.info(f"Dataframe for skim {skim.name} saved to {pqoutname}")
-            except ImportError as ex:
-                logger.error("Could not import pandas, no dataframes will be saved")
-
         ########################################################################################################
         ######## save a parquet file with the variables needed for MVA training ################################
         ########################################################################################################
         #mvaSkim
+        from bamboo.plots import Skim
+        skims = [ap for ap in self.plotList if isinstance(ap, Skim)]
         if self.args.mvaSkim and skims:
             from bamboo.analysisutils import loadPlotIt
             p_config, samples, _, systematics, legend = loadPlotIt(config, [], eras=self.args.eras[1], workdir=workdir, resultsdir=resultsdir, readCounters=self.readCounters, vetoFileAttributes=self.__class__.CustomSampleAttributes)
             try:
-                from bamboo.root import gbl
+
+                
+                import os
                 import pandas as pd
+                import pyarrow as pa
+                import pyarrow.parquet as pq
+                from bamboo.root import gbl
+                
+                # Assuming `skims`, `samples`, `resultsdir` are defined
+                
                 for skim in skims:
-                    frames = []
-                    for smp in samples:
-                        print("cacca")
-                        #if not "QCD" in smp.name: continue
-                        print(smp.name)
-                        for cb in (smp.files if hasattr(smp, "files") else [smp]):  # could be a helper in plotit
+                    for smp_idx, smp in enumerate(samples):
+                        for cb_idx, cb in enumerate(smp.files if hasattr(smp, "files") else [smp]):
                             tree = cb.tFile.Get(skim.treeName)
                             if not tree:
-                               print( f"KEY TTree {skim.treeName} does not exist, we are gonna skip this {smp}\n")
+                                print(f"KEY TTree {skim.treeName} does not exist, we are gonna skip this {smp}\n")
                             else:
-                               cols = gbl.ROOT.RDataFrame(cb.tFile.Get(skim.treeName)).AsNumpy()
-                               #for key,val in cols.items():
-                               #    if "process" in key: continue
-                               #    cols[key] = val.astype(np.float16)
-                               cols["weight"] *= cb.scale
-                               cols["process"] = [smp.name]*len(cols["weight"])
-                               frames.append(pd.DataFrame(cols))
-                               #print("cols",type(cols["pt"]))
-                               print("cols",type(cols["pt"][0]))
-                            #break
-                    df = pd.concat(frames)
-                    #for col in df.columns:
-                    #    if "process" in col: continue
-                    #    df[col] = df[col].astype('float16')
-                    #print(df)
-                    #print(df["pt"].dtype)
-                    df["process"] = pd.Categorical(df["process"], categories=pd.unique(df["process"]), ordered=False)
-                    #csvoutname = os.path.join(resultsdir, f"{skim.name}.csv.gzip")
-                    #df.to_csv(csvoutname,)
-                    pqoutname = os.path.join(resultsdir, f"{skim.name}.parquet")
-                    df.to_parquet(pqoutname,)
-                    del df
-                    logger.info(f"Dataframe for skim {skim.name} saved to {pqoutname}")
+                                cols = gbl.ROOT.RDataFrame(cb.tFile.Get(skim.treeName)).AsNumpy()
+                                cols["weight"] *= cb.scale
+                                cols["process"] = [smp.name] * len(cols["weight"])
+                                df_chunk = pd.DataFrame(cols)
+                                df_chunk["process"] = pd.Categorical(df_chunk["process"], categories=pd.unique(df_chunk["process"]), ordered=False)
+                
+                                # Generate a unique filename for each sample and callback
+                                pq_filename = os.path.join(resultsdir, f"{skim.name}_{smp.name}_{cb_idx}.parquet")
+                                df_chunk.to_parquet(pq_filename, index=False)
+                
+                                print(f"Written {pq_filename}")
+                                del df_chunk  # Free memory immediately after writing
+                
             except ImportError as ex:
                 logger.error("Could not import pandas, no dataframes will be saved")
 
