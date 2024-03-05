@@ -228,7 +228,7 @@ class zprlegacy(NanoAODHistoModule):
             pt_bins = ((525,575),(575,625),(625,700),(700,800),(800,1200))
 
         filters = [t.Flag.goodVertices,t.Flag.globalSuperTightHalo2016Filter,t.Flag.HBHENoiseFilter,t.Flag.HBHENoiseIsoFilter,t.Flag.EcalDeadCellTriggerPrimitiveFilter, t.Flag.BadPFMuonFilter, t.Flag.BadPFMuonDzFilter, t.Flag.eeBadScFilter, t.Flag.ecalBadCalibFilter]
-        isoMuFilterMask = 0xA
+        #isoMuFilterMask = 0xA
 
         if self.isMC(sample):
             noSel = noSel.refine("mcWeight", weight=t.genWeight, autoSyst=True)
@@ -243,8 +243,8 @@ class zprlegacy(NanoAODHistoModule):
 
         plots = []
 
-        triggerObj = op.select(t.TrigObj, lambda trgObj: op.AND( trgObj.id == 13,
-			(trgObj.filterBits & isoMuFilterMask) )) 
+        #triggerObj = op.select(t.TrigObj, lambda trgObj: op.AND( trgObj.id == 13,
+        #			(trgObj.filterBits & isoMuFilterMask) )) 
 
 
         loose_muons = op.sort(op.select(t.Muon, lambda mu : op.AND(
@@ -302,11 +302,17 @@ class zprlegacy(NanoAODHistoModule):
                                         2*op.log(fj.msoftdrop/fj.pt)<-1,
                                         #fj.subJetIdx1 > -1,
 					)), lambda fj : -(fj.particleNetMD_Xqq+fj.particleNetMD_Xcc+fj.particleNetMD_Xbb))
+        jidx = fatjets[0].idx
 
-        msdraw = op.switch(op.AND(fatjets[0].subJet1.isValid,fatjets[1].subJet2.isValid),
-                            op.invariant_mass(fatjets[0].subJet1.p4() * (1-fatjets[0].subJet1.rawFactor), fatjets[0].subJet2.p4() * (1-fatjets[0].subJet2.rawFactor)),
-                            op.c_float(0.)
-            )
+
+        ##Case 1: subJet1 is valid and subJet2 is not valid (it's never the case that subJet2 is valid and subJet1 is invalid)
+        ##Case 2: both subJet1 and subJet2 are valid
+        ##Case 3: neither subJet is valid
+        msdraw = op.multiSwitch(
+             (op.AND(fatjets[0].subJet1.isValid,op.NOT(fatjets[0].subJet2.isValid)), op.sqrt(op.invariant_mass(fatjets[0].subJet1.p4*(1-fatjets[0].subJet1.rawFactor), fatjets[0].subJet1.p4*(1-fatjets[0].subJet1.rawFactor) ))),
+             (op.AND(fatjets[0].subJet1.isValid,fatjets[0].subJet2.isValid), op.invariant_mass(fatjets[0].subJet1.p4 * (1-fatjets[0].subJet1.rawFactor), fatjets[0].subJet2.p4 * (1-fatjets[0].subJet2.rawFactor))), 
+             op.c_float(-99.)
+        )
         msoftdrop = fatjets[0].msoftdrop
         msdfjcorr = msdraw / (1 - fatjets[0].rawFactor)
         from bamboo import treedecorators as btd
@@ -317,15 +323,15 @@ class zprlegacy(NanoAODHistoModule):
         from bamboo.scalefactors import get_scalefactor, get_correction
         massSF = get_correction(syst_file["msdcorr"],
             "msdfjcorr",
-            params = {"mdivpt" : lambda fj : fj.msdfjcorr/fj.pt, 
+            #params = {"mdivpt" : lambda fj : fj.msdfjcorr/fj.pt, 
+            params = {"mdivpt" : lambda fj : msdbranch[fj.idx]/fj.pt, 
                       "logpt" : lambda fj : op.log(fj.pt),
                       "eta"   : lambda fj : fj.eta, 
                      },
             sel = noSel,
         )
-        corrected_mass = msdfjcorr * massSF(fatjets[0])
-
-
+        corrected_msoftdrop = op.product(msdfjcorr, massSF(fatjets[0]))
+        corrected_msd = op.map(t.FatJet, lambda fj: op.switch(op.rng_len(fatjets) > 0 , corrected_msoftdrop, -99))
 
 	#btagged AK4
         jets = op.sort(op.select(t.Jet, lambda j : op.AND(
@@ -357,30 +363,19 @@ class zprlegacy(NanoAODHistoModule):
             dr_to_q1 = op.deltaR(q_from_w[0].p4, fatjets[0].p4)
             dr_to_q2 = op.deltaR(q_from_w[1].p4, fatjets[0].p4)
             Vgen_quality_criterion_pt = ((fatjets[0].pt - w_by_status[0].pt)/w_by_status[0].pt) < 0.5
-            Vgen_quality_criterion_msd = ((fatjets[0].msoftdrop - w_by_status[0].mass)/w_by_status[0].mass) < 0.3
+            Vgen_quality_criterion_msd = ((corrected_msd[fatjets[0].idx] - w_by_status[0].mass)/w_by_status[0].mass) < 0.3
 
 
         ddtmap_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ddt_maps.json"
 
         pnmd2prong_ddtmap = get_correction(ddtmap_file,
             f"ddtmap_PNMD_pctl0.05_QCD_{era}" ,
-            params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(fj.msoftdrop/fj.pt) },
+            params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(corrected_msd[fj.idx]/fj.pt) },
             sel=noSel,
         )
         jidx = fatjets[0].idx
-        pnmd2prong_ddt = t._FatJet.orig[jidx].particleNetMD_Xbb + t._FatJet.orig[jidx].particleNetMD_Xcc + t._FatJet.orig[jidx].particleNetMD_Xqq - pnmd2prong_ddtmap(t._FatJet.orig[jidx])
-
+        pnmd2prong_ddt = t._FatJet.orig[jidx].particleNetMD_Xbb + t._FatJet.orig[jidx].particleNetMD_Xcc + t._FatJet.orig[jidx].particleNetMD_Xqq - pnmd2prong_ddtmap(fatjets[0])
         pnmd2prong = t._FatJet.orig[jidx].particleNetMD_Xbb + t._FatJet.orig[jidx].particleNetMD_Xcc + t._FatJet.orig[jidx].particleNetMD_Xqq
-
-        #subjet1 = op.select(t.SubJets, lambda s :
-         
-        #subjets = op.select(t.SubJet, lambda sj : sj.
-        #subjet1_idx = fatjets[0].particleNetMD_Xbb
-        #subjet2_idx = fatjets[0].subJetIdx2
-        #subjet1 = t.SubJet[subjet1_idx].p4
-        #subjet2 = t.SubJet[subjet2_idx].p4
-
-
 
         puReweight = get_correction(syst_file["pileup"][era], 
             "Collisions%s_UltraLegacy_goldenJSON"%("".join(era[-2:])),
@@ -392,7 +387,7 @@ class zprlegacy(NanoAODHistoModule):
         if self.args.SR:
             jettriggerSF = get_correction(syst_file["triggerweights"],
                 f"fatjet_triggerSF{era}",
-                params = {"pt": lambda fj : fj.p4.Pt(), "msd" : lambda fj : fj.msoftdrop , },#"systematic" : "key",},
+                params = {"pt": lambda fj : fj.p4.Pt(), "msd" : lambda fj : corrected_msd[fj.idx] , },#"systematic" : "key",},
                 systParam="systematic",
                 systNomName="nominal", systVariations=("stat_up","stat_dn"),
                 systName="triggerSF",
@@ -513,10 +508,10 @@ class zprlegacy(NanoAODHistoModule):
         #    "fj_eta_cut" : op.abs(fatjets[0].p4.Eta()) < 2.5)
         #
         #}
-        SR_pt_cut = SR_subjet_cut.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > sr_pt_cut)
+        SR_pt_cut = filterJetSel.refine("fj_pt_cut",cut=fatjets[0].p4.Pt() > sr_pt_cut)
         SR_eta_cut = SR_pt_cut.refine("fj_eta_cut",cut=op.abs(fatjets[0].p4.Eta()) < 2.5)
-        SR_msd_cut = SR_eta_cut.refine("fj_msd_cut",cut=fatjets[0].msoftdrop>40)
-        SR_rho_cut = SR_msd_cut.refine("fj_rho_cut",cut=op.AND(2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -7,2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) <-1.))
+        SR_msd_cut = SR_eta_cut.refine("fj_msd_cut",cut=corrected_msd[fatjets[0].idx]>40)
+        SR_rho_cut = SR_msd_cut.refine("fj_rho_cut",cut=op.AND(2*op.log(corrected_msd[fatjets[0].idx]/fatjets[0].pt) > -8,2*op.log(corrected_msd[fatjets[0].idx]/fatjets[0].pt) <-1.))
         SR_id_cut = SR_rho_cut.refine("id_cut",cut=[fatjets[0].jetId & (1 << 1) !=0])
         SR_antiak4btagMediumOppHem_cut = SR_id_cut.refine("SR_antiak4btagMediumOppHem_cut",cut=[ak4_jet_opp_hemisphere.btagDeepB < btagWPs[era]["M"]])
         SR_electron_cut = SR_antiak4btagMediumOppHem_cut.refine("el_cut",cut=[op.rng_len(electrons) == 0])
@@ -527,8 +522,8 @@ class zprlegacy(NanoAODHistoModule):
         else:
             SR_Vmatched = SR_tau_cut.refine("fj_Vmatched",cut=1) 
 
-        self.yield_object.addYields(filterJetSel,"starting","test")
-        self.yield_object.addYields(SR_pt_cut,"pt_cut","test")
+        #self.yield_object.addYields(filterJetSel,"starting","test")
+        #self.yield_object.addYields(SR_pt_cut,"pt_cut","test")
  
         SR_cut = SR_Vmatched
 
@@ -537,7 +532,7 @@ class zprlegacy(NanoAODHistoModule):
         #######################
         CR1_jpt_cut = filterMuSel.refine("CR1_jpt_cut",cut=fatjets[0].p4.Pt() > 500)
         CR1_jeta_cut = CR1_jpt_cut.refine("CR1_jeta_cut",cut=op.abs(fatjets[0].p4.Eta())<2.5)
-        CR1_jmsd_cut = CR1_jeta_cut.refine("CR1_jmsd_cut",cut=fatjets[0].msoftdrop > 40)
+        CR1_jmsd_cut = CR1_jeta_cut.refine("CR1_jmsd_cut",cut=corrected_msd[fatjets[0].idx] > 40)
         CR1_jrho_cut = CR1_jmsd_cut.refine("CR1_jrho_cut",cut=op.AND(2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -7,2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) <-1.))
         CR1_id_cut = CR1_jrho_cut.refine("CR1_id_cut",cut=[fatjets[0].jetId & (1 << 1) !=0])
         #CR1_mu_cut = CR1_id_cut.refine("CR1_mu_cut",cut=[op.rng_len(loose_muons) == 1])
@@ -552,19 +547,20 @@ class zprlegacy(NanoAODHistoModule):
         #######################
         ###  CR2 selection  ###
         #######################
-        Wleptonic_candidate = op.sum(loose_muons[0].p4,t.MET.p4)
+        Wleptonic_candidate = op.sum(candidatemuons[0].p4,t.MET.p4)
         CR2_jpt_cut = filterMuSel.refine("CR2_jpt_cut",cut=fatjets[0].p4.Pt() > 200)
         CR2_jeta_cut = CR2_jpt_cut.refine("CR2_jeta_cut",cut=op.abs(fatjets[0].p4.Eta())<2.5)
-        CR2_jmsd_cut = CR2_jeta_cut.refine("CR2_jmsd_cut",cut=fatjets[0].msoftdrop > 40)
-        CR2_mu_pt_cut = CR2_jmsd_cut.refine("CR2_mu_pt_cut",cut=loose_muons[0].pt > 53)
-        CR2_mu_eta_cut = CR2_mu_pt_cut.refine("CR2_mu_eta_cut",cut=op.abs(loose_muons[0].p4.Eta()) < 2.1)
-        CR2_mu_pfRelIso04_all_cut = CR2_mu_eta_cut.refine("CR2_mu_pfRelIso04_all_cut",cut=loose_muons[0].pfRelIso04_all<0.15)
-        CR2_mu_tightId_cut = CR2_mu_pfRelIso04_all_cut.refine("CR2_mu_tightId_cut",cut=loose_muons[0].tightId)
-        CR2_muonDphiAK8 = CR2_mu_tightId_cut.refine("CR2_muonDphiAK8",cut=op.abs(op.deltaPhi(loose_muons[0].p4, fatjets[0].p4))>2*np.pi/3)
+        CR2_jmsd_cut = CR2_jeta_cut.refine("CR2_jmsd_cut",cut=corrected_msd[fatjets[0].idx] > 40)
+        CR2_mu_pt_cut = CR2_jmsd_cut.refine("CR2_mu_pt_cut",cut=candidatemuons[0].pt > 53)
+        CR2_mu_eta_cut = CR2_mu_pt_cut.refine("CR2_mu_eta_cut",cut=op.abs(candidatemuons[0].p4.Eta()) < 2.1)
+        CR2_mu_pfRelIso04_all_cut = CR2_mu_eta_cut.refine("CR2_mu_pfRelIso04_all_cut",cut=candidatemuons[0].pfRelIso04_all<0.15)
+        CR2_mu_tightId_cut = CR2_mu_pfRelIso04_all_cut.refine("CR2_mu_tightId_cut",cut=candidatemuons[0].tightId)
+        CR2_muonDphiAK8 = CR2_mu_tightId_cut.refine("CR2_muonDphiAK8",cut=op.abs(op.deltaPhi(candidatemuons[0].p4, fatjets[0].p4))>2*np.pi/3)
         CR2_ak4btagMedium08 = CR2_muonDphiAK8.refine("CR2_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagDeepB>btagWPs[era]["M"]))
         CR2_MET = CR2_ak4btagMedium08.refine("CR2_MET",t.MET.pt>40)
         CR2_electron_cut = CR2_MET.refine("CR2_electron_cut",cut=[op.rng_len(electrons) == 0])
-        CR2_mu_cutloose = CR2_electron_cut.refine("CR2_mu_cutloose",cut=[op.rng_len(loose_muons) == 1])
+        CR2_tau_cut = CR2_electron_cut.refine("CR2_tau_cut",cut=[op.rng_len(taus) == 0])
+        CR2_mu_cutloose = CR2_tau_cut.refine("CR2_mu_cutloose",cut=[op.rng_len(candidatemuons) == 1])
         CR2_Wleptonic_cut = CR2_mu_cutloose.refine("CR2_Wleptonic_cut",cut=Wleptonic_candidate.Pt()>200)
         CR2_cut = CR2_Wleptonic_cut
 
@@ -574,61 +570,64 @@ class zprlegacy(NanoAODHistoModule):
         # CR_cut = muonDphiAK8.refine("CR_cut", cut=[op.AND(hasTriggerObj,hasBtaggedAK4,noEle,oneMuon,muonDphiAK8)] ) 
 
         ### these commands create the .tex file with the efficiency table ###
-        CR2_yields = CutFlowReport("CR2_yields", printInLog=True,)# recursive=True)
-        plots.append(CR2_yields)
-        CR2_yields.add(noSel, title ='TEST')
-        CR2_yields.add(muSel, title= 'trigger')
-        CR2_yields.add(filterMuSel, title= 'filters')
-        CR2_yields.add(CR2_jpt_cut, title= 'CR2_jpt_cut')
-        CR2_yields.add(CR2_jeta_cut, title= 'CR2_jeta_cut')
-        CR2_yields.add(CR2_jmsd_cut, title= 'CR2_jmsd_cut')
-        CR2_yields.add(CR2_mu_pt_cut, title= 'CR2_mu_pt_cut')
-        CR2_yields.add(CR2_mu_eta_cut, title= 'CR2_mu_eta_cut')
-        CR2_yields.add(CR2_mu_pfRelIso04_all_cut, title= 'CR2_mu_pfRelIso04_all_cut')
-        CR2_yields.add(CR2_mu_tightId_cut, title= 'CR2_mu_tightId_cut')
-        #CR2_yields.add(CR2_jrho_cut, title= 'CR2_jrho_cut')
-        #CR2_yields.add(CR2_mu_cut, title= 'CR2_mu_cut')
-        CR2_yields.add(CR2_muonDphiAK8, title= 'CR2_muonDphiAK8')
-        CR2_yields.add(CR2_ak4btagMedium08, title= 'CR2_ak4btagMedium08')
-        CR2_yields.add(CR2_MET, title= 'CR2_MET')
-        CR2_yields.add(CR2_electron_cut, title= 'CR2_electron_cut')
-        CR2_yields.add(CR2_mu_cutloose, title= 'CR2_mu_cutloose')
-        CR2_yields.add(CR2_Wleptonic_cut, title= 'CR2_Wleptonic_cut')
+
+        if self.args.CR2:
+            CR2_yields = CutFlowReport("CR2_yields", printInLog=True,)# recursive=True)
+            plots.append(CR2_yields)
+            CR2_yields.add(noSel, title ='TEST')
+            CR2_yields.add(muSel, title= 'trigger')
+            CR2_yields.add(filterMuSel, title= 'filters')
+            CR2_yields.add(CR2_jpt_cut, title= 'CR2_jpt_cut')
+            CR2_yields.add(CR2_jeta_cut, title= 'CR2_jeta_cut')
+            CR2_yields.add(CR2_jmsd_cut, title= 'CR2_jmsd_cut')
+            CR2_yields.add(CR2_mu_pt_cut, title= 'CR2_mu_pt_cut')
+            CR2_yields.add(CR2_mu_eta_cut, title= 'CR2_mu_eta_cut')
+            CR2_yields.add(CR2_mu_pfRelIso04_all_cut, title= 'CR2_mu_pfRelIso04_all_cut')
+            CR2_yields.add(CR2_mu_tightId_cut, title= 'CR2_mu_tightId_cut')
+            #CR2_yields.add(CR2_jrho_cut, title= 'CR2_jrho_cut')
+            #CR2_yields.add(CR2_mu_cut, title= 'CR2_mu_cut')
+            CR2_yields.add(CR2_muonDphiAK8, title= 'CR2_muonDphiAK8')
+            CR2_yields.add(CR2_ak4btagMedium08, title= 'CR2_ak4btagMedium08')
+            CR2_yields.add(CR2_MET, title= 'CR2_MET')
+            CR2_yields.add(CR2_electron_cut, title= 'CR2_electron_cut')
+            CR2_yields.add(CR2_mu_cutloose, title= 'CR2_mu_cutloose')
+            CR2_yields.add(CR2_Wleptonic_cut, title= 'CR2_Wleptonic_cut')
         
 
-
-        CR1_yields = CutFlowReport("CR1_yields", printInLog=True,)# recursive=True)
-        plots.append(CR1_yields)
-        CR1_yields.add(noSel, title ='TEST')
-        CR1_yields.add(muSel, title= 'trigger')
-        CR1_yields.add(filterMuSel, title= 'filters')
-        CR1_yields.add(CR1_jpt_cut, title= 'CR1_jpt_cut')
-        CR1_yields.add(CR1_jeta_cut, title= 'CR1_jeta_cut')
-        CR1_yields.add(CR1_jmsd_cut, title= 'CR1_jmsd_cut')
-        CR1_yields.add(CR1_jrho_cut, title= 'CR1_jrho_cut')
-        CR1_yields.add(CR1_id_cut, title= 'CR1_id_cut')
-        #CR1_yields.add(CR1_mu_cut, title= 'CR1_mu_cut')
-        CR1_yields.add(CR1_muonDphiAK8, title= 'CR1_muonDphiAK8')
-        CR1_yields.add(CR1_ak4btagMedium08, title= 'CR1_ak4btagMedium08')
-        CR1_yields.add(CR1_electron_cut, title= 'CR1_electron_cut')
-        CR1_yields.add(CR1_mu_ncut, title= 'CR1_mu_ncut')
-        CR1_yields.add(CR1_tau_cut, title= 'CR1_tau_cut')
-
-        SR_yields = CutFlowReport("SR_yields", printInLog=True,)# recursive=True)
-        plots.append(SR_yields)
-        SR_yields.add(noSel, title ='inclusive')
-        SR_yields.add(filterJetSel, title= 'filters')
-        #SR_yields.add(trigweightedJetSel, title= 'trigweightedJetSel')
-        SR_yields.add(jetSel, title ='trigger')
-        SR_yields.add(SR_pt_cut, title= 'fj_pt')
-        SR_yields.add(SR_eta_cut, title= 'fj_eta')
-        SR_yields.add(SR_msd_cut, title= 'fj_msd')
-        SR_yields.add(SR_rho_cut, title= 'fj_rho')
-        SR_yields.add(SR_antiak4btagMediumOppHem_cut, title ='SR_antiak4btagMediumOppHem_cut')
-        SR_yields.add(SR_electron_cut, title= 'no_electron')
-        SR_yields.add(SR_muon_cut, title= 'no_muon')
-        SR_yields.add(SR_tau_cut, title= 'no_tau')
-        SR_yields.add(SR_Vmatched, title= 'fj_vmatched')
+        if self.args.CR1:
+            CR1_yields = CutFlowReport("CR1_yields", printInLog=True,)# recursive=True)
+            plots.append(CR1_yields)
+            CR1_yields.add(noSel, title ='TEST')
+            CR1_yields.add(muSel, title= 'trigger')
+            CR1_yields.add(filterMuSel, title= 'filters')
+            CR1_yields.add(CR1_jpt_cut, title= 'CR1_jpt_cut')
+            CR1_yields.add(CR1_jeta_cut, title= 'CR1_jeta_cut')
+            CR1_yields.add(CR1_jmsd_cut, title= 'CR1_jmsd_cut')
+            CR1_yields.add(CR1_jrho_cut, title= 'CR1_jrho_cut')
+            CR1_yields.add(CR1_id_cut, title= 'CR1_id_cut')
+            #CR1_yields.add(CR1_mu_cut, title= 'CR1_mu_cut')
+            CR1_yields.add(CR1_muonDphiAK8, title= 'CR1_muonDphiAK8')
+            CR1_yields.add(CR1_ak4btagMedium08, title= 'CR1_ak4btagMedium08')
+            CR1_yields.add(CR1_electron_cut, title= 'CR1_electron_cut')
+            CR1_yields.add(CR1_mu_ncut, title= 'CR1_mu_ncut')
+            CR1_yields.add(CR1_tau_cut, title= 'CR1_tau_cut')
+ 
+        if self.args.SR:
+            SR_yields = CutFlowReport("SR_yields", printInLog=True,)# recursive=True)
+            plots.append(SR_yields)
+            SR_yields.add(noSel, title ='inclusive')
+            SR_yields.add(filterJetSel, title= 'filters')
+            #SR_yields.add(trigweightedJetSel, title= 'trigweightedJetSel')
+            SR_yields.add(jetSel, title ='trigger')
+            SR_yields.add(SR_pt_cut, title= 'fj_pt')
+            SR_yields.add(SR_eta_cut, title= 'fj_eta')
+            SR_yields.add(SR_msd_cut, title= 'fj_msd')
+            SR_yields.add(SR_rho_cut, title= 'fj_rho')
+            SR_yields.add(SR_antiak4btagMediumOppHem_cut, title ='SR_antiak4btagMediumOppHem_cut')
+            SR_yields.add(SR_electron_cut, title= 'no_electron')
+            SR_yields.add(SR_muon_cut, title= 'no_muon')
+            SR_yields.add(SR_tau_cut, title= 'no_tau')
+            SR_yields.add(SR_Vmatched, title= 'fj_vmatched')
 
          
         mvaVariables = {
@@ -636,9 +635,10 @@ class zprlegacy(NanoAODHistoModule):
             "pt"                :   fatjets[0].p4.Pt(),
             "eta"               :   fatjets[0].p4.Eta(),
             "msd"               :   fatjets[0].msoftdrop,
+            "corr_msd"          :   corrected_msd[fatjets[0].idx],
             "jetId"             :   fatjets[0].jetId,
             "n2b1"              :   fatjets[0].n2b1,
-            "pnmd2prong_ddt"    :   pnmd2prong_ddt,
+            #"pnmd2prong_ddt"    :   pnmd2prong_ddt,
             "particleNetMD_Xqq" :   fatjets[0].particleNetMD_Xqq,
             "particleNetMD_Xcc" :   fatjets[0].particleNetMD_Xcc,
             "particleNetMD_Xbb" :   fatjets[0].particleNetMD_Xbb,
@@ -648,15 +648,15 @@ class zprlegacy(NanoAODHistoModule):
             mvaVariables["is_Vmatched"]    = op.AND(Vgen_matched, Vgen_quality_criterion_pt, Vgen_quality_criterion_msd)
             mvaVariables["q1_flavor"]      = q_from_w[0].pdgId
             mvaVariables["q2_flavor"]      = q_from_w[1].pdgId
-        if self.isMC(sample):
-            mvaVariables["msd_jesUp"]   =  t._FatJet["jesTotalup"]  [fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jesDown"] =  t._FatJet["jesTotaldown"][fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jerUp"]   =  t._FatJet["jerup"]       [fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jerDown"] =  t._FatJet["jerdown"]     [fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jmsUp"]   =  t._FatJet["jmsup"]       [fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jmsDown"] =  t._FatJet["jmsdown"]     [fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jmrUp"]   =  t._FatJet["jmrup"]       [fatjets[0].idx].msoftdrop
-            mvaVariables["msd_jmrDown"] =  t._FatJet["jmrdown"]     [fatjets[0].idx].msoftdrop
+        #if self.isMC(sample):
+        #    mvaVariables["msd_jesUp"]   =  t._FatJet["jesTotalup"]  [fatjets[0].idx].msoftdrop
+        #    mvaVariables["msd_jesDown"] =  t._FatJet["jesTotaldown"][fatjets[0].idx].msoftdrop
+        #    mvaVariables["msd_jerUp"]   =  t._FatJet["jerup"]       [fatjets[0].idx].msoftdrop
+        #    mvaVariables["msd_jerDown"] =  t._FatJet["jerdown"]     [fatjets[0].idx].msoftdrop
+        #    mvaVariables["msd_jmsUp"]   =  t._FatJet["jmsup"]       [fatjets[0].idx].msoftdrop
+        #    mvaVariables["msd_jmsDown"] =  t._FatJet["jmsdown"]     [fatjets[0].idx].msoftdrop
+        #    mvaVariables["msd_jmrUp"]   =  t._FatJet["jmrup"]       [fatjets[0].idx].msoftdrop
+        #    mvaVariables["msd_jmrDown"] =  t._FatJet["jmrdown"]     [fatjets[0].idx].msoftdrop
 
 
         ### Save mvaVariables to be retrieved later in the postprocessor and saved in a parquet file ###
@@ -667,7 +667,7 @@ class zprlegacy(NanoAODHistoModule):
             if self.args.mvaSkim:
                 from bamboo.plots import Skim
                 
-                parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt>170,fatjets[0].msoftdrop>10.,op.rng_len(fatjets)>0), ak4_jet_opp_hemisphere.btagDeepB < btagWPs[era]["M"]])
+                parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(loose_muons) == 0,op.rng_len(taus) == 0,fatjets[0].pt>170,corrected_msd[fatjets[0].idx]>5.,op.rng_len(fatjets)>0), ak4_jet_opp_hemisphere.btagDeepB < btagWPs[era]["M"]])
                 plots.append(Skim("signal_region", mvaVariables, parquet_cut))
 
         elif self.args.CR1:
@@ -705,6 +705,7 @@ class zprlegacy(NanoAODHistoModule):
             plots.append(Plot.make1D(prefix+"particlenet_qq_MD_vs_QCD", fatjets[0].particleNetMD_Xqq/(fatjets[0].particleNetMD_Xqq+fatjets[0].particleNetMD_QCD), selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD qq score", xTitle="ParticleNet-MD qq vs QCD"))
             plots.append(Plot.make1D(prefix+"particlenet_QCD_MD", fatjets[0].particleNetMD_QCD, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD QCD score", xTitle="ParticleNet-MD QCD score"))
             #### Jet kinematics 
+            plots.append(Plot.make1D(prefix+"FatjetMsd_corrected", corrected_msd[fatjets[0].idx], selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} corrected (GeV)"))
             plots.append(Plot.make1D(prefix+"FatjetMsd", fatjets[0].msoftdrop, selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} (GeV)"))
             plots.append(Plot.make1D(prefix+"FatJetPt", fatjets[0].p4.Pt(), selection, EquidistantBinning(25,200.,1400.) if self.args.CR2 else EquidistantBinning(25,400,1400.), title="FatJet pT", xTitle="FatJet p_{T} (GeV)"))
             plots.append(Plot.make1D(prefix+"FatJetEta", fatjets[0].p4.Eta(), selection, EquidistantBinning(25,-2.5,2.5), title="FatJet #eta", xTitle="FatJet #eta"))
@@ -723,7 +724,7 @@ class zprlegacy(NanoAODHistoModule):
             plots.append(Plot.make1D(prefix+"_pnmd2prong_0p05_pass",fatjets[0].msoftdrop, selection.refine("pnmd2prong_0p05_pass",cut=op.AND(selection,pnmd2prong>0.93)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Pass PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Pass PN-MD 5%)" ))
             plots.append(Plot.make1D(prefix+"_pnmd2prong_0p05_fail",fatjets[0].msoftdrop, selection.refine("pnmd2prong_0p05_fail",cut=op.AND(selection,pnmd2prong<=0.93)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Fail PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Fail PN-MD 5%)" ))
         #print("helloxx")
-        plots.extend(self.yield_object.returnPlots())
+        #plots.extend(self.yield_object.returnPlots())
 
 
         return plots
