@@ -8,48 +8,48 @@ samples:
   JetHT_Run2017B:
     files: file_paths/2017/JetHT_Run2017B.txt
     era: '2017'
-    split: -20
+    split: -10
     group: data
     certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
   JetHT_Run2017C:
     files: file_paths/2017/JetHT_Run2017C.txt
     era: '2017'
-    split: -20
+    split: -10
     group: data
     certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
   JetHT_Run2017D:
     files: file_paths/2017/JetHT_Run2017D.txt
     era: '2017'
-    split: -20
+    split: -10
     group: data
     certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
   JetHT_Run2017E:
     files: file_paths/2017/JetHT_Run2017E.txt
     era: '2017'
-    split: -20
+    split: -10
     group: data
     certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
   JetHT_Run2017F:
     files: file_paths/2017/JetHT_Run2017F.txt
     era: '2017'
-    split: -20
+    split: -10
     group: data
     certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
-  DYJetsToLL_HT-200To400:
-    cross-section: 38.35
-    files: file_paths/2017/DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
-    era: '2017'
-    type: mc
-    generated-events: genEventSumw
-    split: -20
-    group: DYJetsToLL
+  #DYJetsToLL_HT-100To400:
+  #  cross-section: 38.35
+  #  files: file_paths/2017/DYJetsToLL_M-50_HT-100to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
+  #  era: '2017'
+  #  type: mc
+  #  generated-events: genEventSumw
+  #  split: -10
+  #  group: DYJetsToLL
   DYJetsToLL_HT-400To600:
     cross-section: 5.217
     files: file_paths/2017/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: DYJetsToLL
   DYJetsToLL_HT-600To800:
     cross-section: 1.267
@@ -57,7 +57,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: DYJetsToLL
   DYJetsToLL_HT-800To1200:
     cross-section: 0.5682
@@ -65,7 +65,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: DYJetsToLL
   DYJetsToLL_HT-1200To2500:
     cross-section: 0.1332
@@ -73,7 +73,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: DYJetsToLL
   #DYJetsToLL_HT-2500ToInf:
   #  cross-section: 0.002978 
@@ -81,7 +81,7 @@ samples:
   #  era: '2017'
   #  type: mc
   #  generated-events: genEventSumw
-  #  split: -20
+  #  split: -10
   #  group: DYJetsToLL
   WJetsToQQ_HT-600to800:
     cross-section: 59.06
@@ -89,7 +89,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: WJetsToQQ
   WJetsToQQ_HT-800toInf:
     cross-section: 28.75
@@ -97,7 +97,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: WJetsToQQ
   ZJetsToQQ_HT-600to800:
     cross-section: 25.41
@@ -105,7 +105,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: ZJetsToQQ
   ZJetsToQQ_HT-800toInf:
     cross-section: 12.91
@@ -113,7 +113,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: ZJetsToQQ
   QCD_HT300to500:
     cross-section: 347700.0
@@ -121,7 +121,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: QCD
   QCD_HT500to700:
     cross-section: 30330.0
@@ -129,7 +129,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: QCD
   QCD_HT700to1000:
     cross-section: 6412.0
@@ -137,7 +137,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: QCD
   QCD_HT1000to1500:
     cross-section: 1118.0
@@ -145,7 +145,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: QCD
   QCD_HT1500to2000:
     cross-section: 108.5
@@ -153,7 +153,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: QCD
   QCD_HT2000toInf:
     cross-section: 21.94
@@ -161,7 +161,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: QCD
   VectorZPrimeToQQ_M50:
     cross-section: 1.466e+01
@@ -169,7 +169,7 @@ samples:
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -20
+    split: -10
     #legend: "m_{Z'} = 50 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -182,7 +182,7 @@ samples:
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -20
+    split: -10
     #legend: "m_{Z'} = 75 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -195,7 +195,7 @@ samples:
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -20
+    split: -10
     #legend: "m_{Z'} = 100 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -208,7 +208,7 @@ samples:
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -20
+    split: -10
     #legend: "m_{Z'} = 125 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -221,7 +221,7 @@ samples:
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -20
+    split: -10
     #legend: "m_{Z'} = 150 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -234,7 +234,7 @@ samples:
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -20
+    split: -10
     #legend: "m_{Z'} = 175 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -247,7 +247,7 @@ samples:
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -20
+    split: -10
     #legend: "m_{Z'} = 200 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -260,7 +260,7 @@ samples:
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -20
+    split: -10
     #legend: "m_{Z'} = 225 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -273,7 +273,7 @@ samples:
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -20
+    split: -10
     #legend: "m_{Z'} = 250 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -286,7 +286,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: TTbar
   TTToHadronic: 
     cross-section: 303.8527975
@@ -294,7 +294,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: TTbar
   TTToSemiLeptonic:
     cross-section: 306.137405
@@ -302,23 +302,23 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: TTbar
-  WJetsToLNu_HT200to400:
-    cross-section: 336.5
-    files: file_paths/2017/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8.txt
-    era: '2017'
-    type: mc
-    generated-events: genEventSumw
-    split: -20
-    group: WJetsToLNu
+  #WJetsToLNu_HT200to400:
+  #  cross-section: 336.5
+  #  files: file_paths/2017/WJetsToLNu_HT-100To400_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+  #  era: '2017'
+  #  type: mc
+  #  generated-events: genEventSumw
+  #  split: -10
+  #  group: WJetsToLNu
   WJetsToLNu_HT400to600:
     cross-section: 45.12
     files: file_paths/2017/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8.txt
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: WJetsToLNu
   WJetsToLNu_HT600to800:
     cross-section: 10.99
@@ -326,7 +326,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: WJetsToLNu
   WJetsToLNu_HT800to1200:
     cross-section: 4.938
@@ -334,7 +334,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: WJetsToLNu
   WJetsToLNu_HT1200to2500:
     cross-section: 1.155
@@ -342,7 +342,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: WJetsToLNu
   WJetsToLNu_HT2500toInf:
     cross-section: 0.02625
@@ -350,7 +350,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: WJetsToLNu
   ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
     cross-section: 35.6
@@ -358,7 +358,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: SingleTop
   ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
     cross-section: 35.6
@@ -366,7 +366,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: SingleTop
   ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
     cross-section: 81.42
@@ -374,7 +374,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: 20
+    split: -10
     group: SingleTop
   ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
     cross-section: 136.82
@@ -382,7 +382,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: SingleTop
   GluGluHToBB:
     cross-section : 0.27 #CHECK???
@@ -390,7 +390,7 @@ samples:
     era: '2017'
     type: mc
     generated-events: genEventSumw
-    split: -20
+    split: -10
     group: HiggsToBB
   
 plotIt:

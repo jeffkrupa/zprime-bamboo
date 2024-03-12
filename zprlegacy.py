@@ -27,15 +27,21 @@ v_PDGID = {
     "VectorZPrime" : 55,
     "TTbar" : 23,
     "SingleTop" : 23,
+    "TTbar_matched" : 23,
+    "TTbar_unmatched" : 23,
+    "SingleTop_matched" : 23,
+    "SingleTop_unmatched" : 23,
 }
 
 syst_file = {
     "triggerweights" :  f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/fatjet_triggerSF.json",
     "MUO" : { 
         "2017" : "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2017_UL/muon_Z.json.gz",
+        "2018" : "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz",
     },
     "pileup" : {
         "2017" : "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/LUM/2017_UL/puWeights.json.gz",
+        "2018" : "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz",
     },
     "NLOVkfactors" : "/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ULvjets_corrections.json",
     "msdcorr" : f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/msdcorr.json",
@@ -368,13 +374,13 @@ class zprlegacy(NanoAODHistoModule):
 
         ddtmap_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ddt_maps.json"
 
-        pnmd2prong_ddtmap = get_correction(ddtmap_file,
-            f"ddtmap_PNMD_pctl0.05_QCD_{era}" ,
-            params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(corrected_msd[fj.idx]/fj.pt) },
-            sel=noSel,
-        )
+        #pnmd2prong_ddtmap = get_correction(ddtmap_file,
+        #    f"ddtmap_PNMD_pctl0.05_QCD_{era}" ,
+        #    params = {"pt": lambda fj : fj.p4.Pt(), "rho" : lambda fj : 2*op.log(corrected_msd[fj.idx]/fj.pt) },
+        #    sel=noSel,
+        #)
         jidx = fatjets[0].idx
-        pnmd2prong_ddt = t._FatJet.orig[jidx].particleNetMD_Xbb + t._FatJet.orig[jidx].particleNetMD_Xcc + t._FatJet.orig[jidx].particleNetMD_Xqq - pnmd2prong_ddtmap(fatjets[0])
+        #pnmd2prong_ddt = t._FatJet.orig[jidx].particleNetMD_Xbb + t._FatJet.orig[jidx].particleNetMD_Xcc + t._FatJet.orig[jidx].particleNetMD_Xqq - pnmd2prong_ddtmap(fatjets[0])
         pnmd2prong = t._FatJet.orig[jidx].particleNetMD_Xbb + t._FatJet.orig[jidx].particleNetMD_Xcc + t._FatJet.orig[jidx].particleNetMD_Xqq
 
         puReweight = get_correction(syst_file["pileup"][era], 
@@ -455,7 +461,7 @@ class zprlegacy(NanoAODHistoModule):
                  sel=noSel,
             )
 
-        if self.args.SR and ("ZJetsToQQ" in sample or "DYJetsToLL" in sample):
+        if "ZJetsToQQ" in sample or "DYJetsToLL" in sample:
 
             qcdZkfactor = get_correction(syst_file["NLOVkfactors"],
                 "ULZ_MLMtoFXFX",
@@ -490,9 +496,9 @@ class zprlegacy(NanoAODHistoModule):
             if "WJetsToQQ" in sample or "WJetsToLNu" in sample:
                 noSel = noSel.refine("nloWkfactor",weight=nloWkfactor(w_by_status[0]))
                 noSel = noSel.refine("qcdWkfactor",weight=qcdWkfactor(w_by_status[0]))
-            #if "ZJetsToQQ" in sample or "DYJetsToLL" in sample:
-            #    noSel = noSel.refine("nloZkfactor",weight=nloZkfactor(w_by_status[0]))
-            #    noSel = noSel.refine("qcdZkfactor",weight=qcdZkfactor(w_by_status[0]))
+            if "ZJetsToQQ" in sample or "DYJetsToLL" in sample:
+                noSel = noSel.refine("nloZkfactor",weight=nloZkfactor(w_by_status[0]))
+                noSel = noSel.refine("qcdZkfactor",weight=qcdZkfactor(w_by_status[0]))
 
             jetSel = noSel.refine("passJetHLT",)
             filterJetSel = jetSel.refine("passFilterJet",)
@@ -562,7 +568,17 @@ class zprlegacy(NanoAODHistoModule):
         CR2_tau_cut = CR2_electron_cut.refine("CR2_tau_cut",cut=[op.rng_len(taus) == 0])
         CR2_mu_cutloose = CR2_tau_cut.refine("CR2_mu_cutloose",cut=[op.rng_len(candidatemuons) == 1])
         CR2_Wleptonic_cut = CR2_mu_cutloose.refine("CR2_Wleptonic_cut",cut=Wleptonic_candidate.Pt()>200)
+ 
+        #if "subprocess" in sampleCfg:
+        #    subProc = sampleCfg["subprocess"]
+        #    if "_matched" in subProc: 
+        #        CR2_cut = CR2_Wleptonic_cut.refine("CR2_matching",cut=op.AND(Vgen_matched,Vgen_quality_criterion_pt,Vgen_quality_criterion_msd))
+        #    elif "_unmatched" in subProc:
+        #        CR2_cut = CR2_Wleptonic_cut.refine("CR2_matching",cut=op.NOT(op.AND(Vgen_matched,Vgen_quality_criterion_pt,Vgen_quality_criterion_msd)))
+        #
+        #else:
         CR2_cut = CR2_Wleptonic_cut
+        
 
 
 
@@ -679,39 +695,45 @@ class zprlegacy(NanoAODHistoModule):
             prefix="CR2_"
             if self.args.mvaSkim:
                 from bamboo.plots import Skim
+                #parquet_cut = noSel.refine("parquet_cut", cut=[op.AND(op.rng_len(electrons) == 0,op.rng_len(taus) == 0,fatjets[0].pt>170,corrected_msd[fatjets[0].idx]>5.,op.rng_len(fatjets)>0),op.rng_len(candidatemuons)>0])
                 plots.append(Skim("CR2", mvaVariables, selection))
- 
-        if self.args.SR: 
-            for iptbin, (pt_low, pt_high) in enumerate(pt_bins):
-                pt_sel = op.AND(fatjets[0].pt > pt_low, fatjets[0].pt <= pt_high)
-    
-                ### Cut based on PN-MD 2prong (DDT'd)            
-                plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_ddt_pass", fatjets[0].msoftdrop, selection.refine(f"ptbin{iptbin}_pnmd2prong_ddt_pass",cut=op.AND(pt_sel,pnmd2prong_ddt>0.)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_ddt_pass", xTitle="Jet m_{SD} (GeV) Pass PN-MD DDT 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
-                plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_ddt_fail", fatjets[0].msoftdrop, selection.refine(f"ptbin{iptbin}_pnmd2prong_ddt_fail",cut=op.AND(pt_sel,pnmd2prong_ddt<=0.)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_ddt_fail", xTitle="Jet m_{SD} (GeV) Fail PN-MD DDT 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
-    
-                plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_0p05_pass", fatjets[0].msoftdrop, selection.refine(f"ptbin{iptbin}_pnmd2prong_pass",cut=op.AND(pt_sel,pnmd2prong>0.93)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_pass", xTitle="Jet m_{SD} (GeV) Pass PN-MD 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
-                plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_0p05_fail", fatjets[0].msoftdrop, selection.refine(f"ptbin{iptbin}_pnmd2prong_fail",cut=op.AND(pt_sel,pnmd2prong<=0.93)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_fail", xTitle="Jet m_{SD} (GeV) Fail PN-MD 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
-    
-            inclusive_pt_sel = op.AND(fatjets[0].pt > sr_pt_cut, fatjets[0].pt <= 1200)
-            pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
-            #### ParticleNet-MD plots
-            plots.append(Plot.make1D(prefix+"particlenet_2prong_MD", pnMD_2prong, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD ZPrime binary score", xTitle="ParticleNet-MD 2prong score"))
-            plots.append(Plot.make1D(prefix+"particlenet_2prong_MD_ddt", pnmd2prong_ddt, selection, EquidistantBinning(25,-1.,0.1), title="ParticleNet-MD ZPrime binary score ddt", xTitle="ParticleNet-MD 2prong score (DDT)"))
-            plots.append(Plot.make1D(prefix+"particlenet_bb_MD", fatjets[0].particleNetMD_Xbb, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD bb score", xTitle="ParticleNet-MD bb score"))
-            plots.append(Plot.make1D(prefix+"particlenet_cc_MD", fatjets[0].particleNetMD_Xcc, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD cc score", xTitle="ParticleNet-MD cc score"))
-            plots.append(Plot.make1D(prefix+"particlenet_qq_MD", fatjets[0].particleNetMD_Xqq, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD qq score", xTitle="ParticleNet-MD qq score"))
-            plots.append(Plot.make1D(prefix+"particlenet_bb_MD_vs_QCD", fatjets[0].particleNetMD_Xbb/(fatjets[0].particleNetMD_Xbb+fatjets[0].particleNetMD_QCD), selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD bb score", xTitle="ParticleNet-MD bb vs QCD"))
-            plots.append(Plot.make1D(prefix+"particlenet_cc_MD_vs_QCD", fatjets[0].particleNetMD_Xcc/(fatjets[0].particleNetMD_Xcc+fatjets[0].particleNetMD_QCD), selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD cc score", xTitle="ParticleNet-MD cc vs QCD"))
-            plots.append(Plot.make1D(prefix+"particlenet_qq_MD_vs_QCD", fatjets[0].particleNetMD_Xqq/(fatjets[0].particleNetMD_Xqq+fatjets[0].particleNetMD_QCD), selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD qq score", xTitle="ParticleNet-MD qq vs QCD"))
-            plots.append(Plot.make1D(prefix+"particlenet_QCD_MD", fatjets[0].particleNetMD_QCD, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD QCD score", xTitle="ParticleNet-MD QCD score"))
-            #### Jet kinematics 
-            plots.append(Plot.make1D(prefix+"FatjetMsd_corrected", corrected_msd[fatjets[0].idx], selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} corrected (GeV)"))
-            plots.append(Plot.make1D(prefix+"FatjetMsd", fatjets[0].msoftdrop, selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} (GeV)"))
-            plots.append(Plot.make1D(prefix+"FatJetPt", fatjets[0].p4.Pt(), selection, EquidistantBinning(25,200.,1400.) if self.args.CR2 else EquidistantBinning(25,400,1400.), title="FatJet pT", xTitle="FatJet p_{T} (GeV)"))
-            plots.append(Plot.make1D(prefix+"FatJetEta", fatjets[0].p4.Eta(), selection, EquidistantBinning(25,-2.5,2.5), title="FatJet #eta", xTitle="FatJet #eta"))
-            plots.append(Plot.make1D(prefix+"FatJetRho", 2*op.log(fatjets[0].msoftdrop/fatjets[0].pt), selection, EquidistantBinning(25,-5.5,-2), title="FatJet #rho", xTitle="FatJet #rho"))
-            plots.append(Plot.make1D(prefix+"FatJetN2",  fatjets[0].n2b1, selection, EquidistantBinning(25,0,0.5), title="FatJet N2", xTitle="FatJet N_{2}"))
+
+        #plots.append(Plot.make1D(prefix+f"TEST", corrected_msd[fatjets[0].idx], selection, EquidistantBinning(62,40.,350.), title="test",xTitle="test")) 
+        ##### PT-BINNED PLOTS 
+        for iptbin, (pt_low, pt_high) in enumerate(pt_bins):
+            pt_sel = op.AND(fatjets[0].pt > pt_low, fatjets[0].pt <= pt_high)
+
+            ### Cut based on PN-MD 2prong (DDT'd)            
+            #plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_ddt_pass", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_pnmd2prong_ddt_pass",cut=op.AND(pt_sel,pnmd2prong_ddt>0.)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_ddt_pass", xTitle="Jet m_{SD} (GeV) Pass PN-MD DDT 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
+            #plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_ddt_fail", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_pnmd2prong_ddt_fail",cut=op.AND(pt_sel,pnmd2prong_ddt<=0.)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_ddt_fail", xTitle="Jet m_{SD} (GeV) Fail PN-MD DDT 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
+
+            plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_0p05_pass", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_pnmd2prong_pass",cut=op.AND(pt_sel,pnmd2prong>0.93)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_pass", xTitle="Jet m_{SD} (GeV) Pass PN-MD 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
+            plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_0p05_fail", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_pnmd2prong_fail",cut=op.AND(pt_sel,pnmd2prong<=0.93)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_fail", xTitle="Jet m_{SD} (GeV) Fail PN-MD 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
+            plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_n2_0p05_pass", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_n2_pass",cut=op.AND(pt_sel,fatjets[0].n2b1<0.19)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_n2_pass", xTitle="Jet m_{SD} (GeV) Pass N_{2} (%i < p_{T} < %i)"%(pt_low, pt_high)))
+            plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_n2_0p05_fail", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_n2_fail",cut=op.AND(pt_sel,fatjets[0].n2b1>=0.19)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_n2_fail", xTitle="Jet m_{SD} (GeV) Fail N_{2} (%i < p_{T} < %i)"%(pt_low, pt_high)))
+   
      
+        #####INCLUSIVE PLOTS 
+        inclusive_pt_sel = op.AND(fatjets[0].pt > sr_pt_cut, fatjets[0].pt <= 1200)
+        pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
+        #### ParticleNet-MD plots
+        plots.append(Plot.make1D(prefix+"particlenet_2prong_MD", pnMD_2prong, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD ZPrime binary score", xTitle="ParticleNet-MD 2prong score"))
+        #plots.append(Plot.make1D(prefix+"particlenet_2prong_MD_ddt", pnmd2prong_ddt, selection, EquidistantBinning(25,-1.,0.1), title="ParticleNet-MD ZPrime binary score ddt", xTitle="ParticleNet-MD 2prong score (DDT)"))
+        plots.append(Plot.make1D(prefix+"particlenet_bb_MD", fatjets[0].particleNetMD_Xbb, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD bb score", xTitle="ParticleNet-MD bb score"))
+        plots.append(Plot.make1D(prefix+"particlenet_cc_MD", fatjets[0].particleNetMD_Xcc, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD cc score", xTitle="ParticleNet-MD cc score"))
+        plots.append(Plot.make1D(prefix+"particlenet_qq_MD", fatjets[0].particleNetMD_Xqq, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD qq score", xTitle="ParticleNet-MD qq score"))
+        plots.append(Plot.make1D(prefix+"particlenet_bb_MD_vs_QCD", fatjets[0].particleNetMD_Xbb/(fatjets[0].particleNetMD_Xbb+fatjets[0].particleNetMD_QCD), selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD bb score", xTitle="ParticleNet-MD bb vs QCD"))
+        plots.append(Plot.make1D(prefix+"particlenet_cc_MD_vs_QCD", fatjets[0].particleNetMD_Xcc/(fatjets[0].particleNetMD_Xcc+fatjets[0].particleNetMD_QCD), selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD cc score", xTitle="ParticleNet-MD cc vs QCD"))
+        plots.append(Plot.make1D(prefix+"particlenet_qq_MD_vs_QCD", fatjets[0].particleNetMD_Xqq/(fatjets[0].particleNetMD_Xqq+fatjets[0].particleNetMD_QCD), selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD qq score", xTitle="ParticleNet-MD qq vs QCD"))
+        plots.append(Plot.make1D(prefix+"particlenet_QCD_MD", fatjets[0].particleNetMD_QCD, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD QCD score", xTitle="ParticleNet-MD QCD score"))
+        #### Jet kinematics 
+        plots.append(Plot.make1D(prefix+"FatjetMsd_corrected", corrected_msd[fatjets[0].idx], selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} corrected (GeV)"))
+        plots.append(Plot.make1D(prefix+"FatjetMsd", fatjets[0].msoftdrop, selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} (GeV)"))
+        plots.append(Plot.make1D(prefix+"FatJetPt", fatjets[0].p4.Pt(), selection, EquidistantBinning(25,200.,1400.) if self.args.CR2 else EquidistantBinning(25,400,1400.), title="FatJet pT", xTitle="FatJet p_{T} (GeV)"))
+        plots.append(Plot.make1D(prefix+"FatJetEta", fatjets[0].p4.Eta(), selection, EquidistantBinning(25,-2.5,2.5), title="FatJet #eta", xTitle="FatJet #eta"))
+        plots.append(Plot.make1D(prefix+"FatJetRho", 2*op.log(corrected_msd[fatjets[0].idx]/fatjets[0].pt), selection, EquidistantBinning(25,-5.5,-2), title="FatJet #rho", xTitle="FatJet #rho"))
+        plots.append(Plot.make1D(prefix+"FatJetN2",  fatjets[0].n2b1, selection, EquidistantBinning(25,0,0.5), title="FatJet N2", xTitle="FatJet N_{2}"))
+ 
 
         if self.args.CR1 or self.args.CR2: 
             #### Muon kinematics 
@@ -719,13 +741,15 @@ class zprlegacy(NanoAODHistoModule):
             plots.append(Plot.make1D(prefix+"pfRelIso04_all",candidatemuons[0].pfRelIso04_all, selection, EquidistantBinning(20,0.,.4),title= "MuonpfRelIso04_all", xTitle="Muon relative isolation (0.4)" ))
             plots.append(Plot.make1D(prefix+"_mujetpt",fatjets[0].p4.Pt(), selection,EquidistantBinning(20,500.,1000.),title= "Jet p_{T} (GeV)", xTitle="Jet p_{T} (GeV)" ))
             plots.append(Plot.make1D(prefix+"_mujetmsd",fatjets[0].msoftdrop, selection,EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV)", xTitle="Jet m_{SD} (GeV)" ))
-            plots.append(Plot.make1D(prefix+"_pnmd2prong_ddt_pass",fatjets[0].msoftdrop, selection.refine("pnmd2prong_ddt_pass",cut=op.AND(selection,pnmd2prong_ddt>0.)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Pass PN-MD DDT)", xTitle="Jet m_{SD} (GeV) (Pass PN-MD DDT)" ))
-            plots.append(Plot.make1D(prefix+"_pnmd2prong_ddt_fail",fatjets[0].msoftdrop, selection.refine("pnmd2prong_ddt_fail",cut=op.AND(selection,pnmd2prong_ddt<=0.)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Fail PN-MD DDT)", xTitle="Jet m_{SD} (GeV) (Fail PN-MD DDT)" ))
-            plots.append(Plot.make1D(prefix+"_pnmd2prong_0p05_pass",fatjets[0].msoftdrop, selection.refine("pnmd2prong_0p05_pass",cut=op.AND(selection,pnmd2prong>0.93)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Pass PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Pass PN-MD 5%)" ))
-            plots.append(Plot.make1D(prefix+"_pnmd2prong_0p05_fail",fatjets[0].msoftdrop, selection.refine("pnmd2prong_0p05_fail",cut=op.AND(selection,pnmd2prong<=0.93)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Fail PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Fail PN-MD 5%)" ))
+            plots.append(Plot.make1D(prefix+"_mujetmsd_corrected",corrected_msd[fatjets[0].idx], selection,EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV)", xTitle="Jet m_{SD} (GeV)" ))
+            #plots.append(Plot.make1D(prefix+"_pnmd2prong_ddt_pass",corrected_msd[fatjets[0].idx], selection.refine("pnmd2prong_ddt_pass",cut=op.AND(selection,pnmd2prong_ddt>0.)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Pass PN-MD DDT)", xTitle="Jet m_{SD} (GeV) (Pass PN-MD DDT)" ))
+            #plots.append(Plot.make1D(prefix+"_pnmd2prong_ddt_fail",corrected_msd[fatjets[0].idx], selection.refine("pnmd2prong_ddt_fail",cut=op.AND(selection,pnmd2prong_ddt<=0.)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Fail PN-MD DDT)", xTitle="Jet m_{SD} (GeV) (Fail PN-MD DDT)" ))
+            plots.append(Plot.make1D(prefix+"_pnmd2prong_0p05_pass",corrected_msd[fatjets[0].idx], selection.refine("pnmd2prong_0p05_pass",cut=op.AND(selection,pnmd2prong>0.93)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Pass PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Pass PN-MD 5%)" ))
+            plots.append(Plot.make1D(prefix+"_pnmd2prong_0p05_fail",corrected_msd[fatjets[0].idx], selection.refine("pnmd2prong_0p05_fail",cut=op.AND(selection,pnmd2prong<=0.93)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Fail PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Fail PN-MD 5%)" ))
+            plots.append(Plot.make1D(prefix+"_n2_0p05_pass",corrected_msd[fatjets[0].idx], selection.refine("n2_0p05_pass",cut=op.AND(selection,fatjets[0].n2b1<0.19)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Pass PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Pass PN-MD 5%)" ))
+            plots.append(Plot.make1D(prefix+"_n2_0p05_fail",corrected_msd[fatjets[0].idx], selection.refine("n2_0p05_fail",cut=op.AND(selection,fatjets[0].n2b1>=0.19)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Fail PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Fail PN-MD 5%)" ))
         #print("helloxx")
         #plots.extend(self.yield_object.returnPlots())
-
 
         return plots
 

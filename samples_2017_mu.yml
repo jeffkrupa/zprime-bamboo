@@ -35,22 +35,22 @@ samples:
     split: -20
     group: data
     certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
-  #DYJetsToLL_HT-200To400:
-  #  cross-section: 38.35
-  #  files: file_paths/2017/DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
-  #  era: '2017'
-  #  type: mc
-  #  generated-events: genEventSumw
-  #  split: -20
-  #  group: DYJetsToLL
-  #DYJetsToLL_HT-400To600:
-  #  cross-section: 5.217
-  #  files: file_paths/2017/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
-  #  era: '2017'
-  #  type: mc
-  #  generated-events: genEventSumw
-  #  split: -20
-  #  group: DYJetsToLL
+  DYJetsToLL_HT-200To400:
+    cross-section: 38.35
+    files: file_paths/2017/DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -20
+    group: DYJetsToLL
+  DYJetsToLL_HT-400To600:
+    cross-section: 5.217
+    files: file_paths/2017/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -20
+    group: DYJetsToLL
   DYJetsToLL_HT-600To800:
     cross-section: 1.267
     files: file_paths/2017/DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8.txt
