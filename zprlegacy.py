@@ -20,17 +20,20 @@ logger = logging.getLogger(__name__)
 v_PDGID = {
     "HiggsToBB" : 25,
     "GluGluHToBB" : 25,
-    "DYJetsToLL" : 24,
     "WJetsToLNu" : 24,
-    "ZJetsToQQ" : 24,
-    "WJetsToQQ" : 23,
-    "VectorZPrime" : 55,
-    "TTbar" : 23,
-    "SingleTop" : 23,
-    "TTbar_matched" : 23,
-    "TTbar_unmatched" : 23,
-    "SingleTop_matched" : 23,
-    "SingleTop_unmatched" : 23,
+    "WJetsToQQ" : 24,
+    "DYJetsToLL" : 23,
+    "ZJetsToQQ" : 23,
+    "ZJetsToCC" : 23,
+    "ZJetsToBB" : 23,
+    "VectorZPrimeToQQ" : 55,
+    "VectorZPrimeToBB" : 55,
+    #"TTbar" : 24,
+    #"SingleTop" : 24,
+    #"TTbar_matched" : 24,
+    #"TTbar_unmatched" : 24,
+    #"SingleTop_matched" : 24,
+    #"SingleTop_unmatched" : 24,
 }
 
 syst_file = {
@@ -44,6 +47,7 @@ syst_file = {
         "2018" : "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz",
     },
     "NLOVkfactors" : "/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ULvjets_corrections.json",
+    "EWHiggsCorrections" : "/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/EWHiggsCorrections.json",
     "msdcorr" : f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/msdcorr.json",
 }
 
@@ -123,6 +127,7 @@ class zprlegacy(NanoAODHistoModule):
         parser.add_argument("--CR1", action="store_true", default=False, help="Make CR1")
         parser.add_argument("--CR2", action="store_true", default=False, help="Make CR2")
         parser.add_argument("--arbitration", action="store", required=True, help="Arbitration of jets.")
+        parser.add_argument("--split_signal_region", action="store_true", required=False, help="Flag to split SR into high and low bvl lscore.")
         #### Till now we don't need --mvaEval since we don't have a MVA model ####
 
     def __init__(self, args):
@@ -210,8 +215,10 @@ class zprlegacy(NanoAODHistoModule):
     def definePlots(self,t, noSel, sample=None, sampleCfg=None):
         from bamboo.plots import Plot, EquidistantBinning, CutFlowReport
         from bamboo import treefunctions as op
-        try: 
+        try:
             do_genmatch = any(sampleCfg["group"] in x for x in v_PDGID.keys())
+            if "VectorZPrime" in sampleCfg["group"]: do_genmatch = True
+ 
         except:
             do_genmatch = True
         print("do_genmatch",do_genmatch,"sample",sample)
@@ -293,19 +300,19 @@ class zprlegacy(NanoAODHistoModule):
 	#AK8 (highest pt or second highest pt, depending on number of fatjets left)
         if self.args.arbitration == "pt":
             fatjets = op.sort(op.select(t.FatJet, lambda fj : op.AND(
-					fj.pt > 100.,
+					fj.pt > 200.,
 					op.abs(fj.eta) < 2.5,
-                                        2*op.log(fj.msoftdrop/fj.pt)>-8, 
-                                        2*op.log(fj.msoftdrop/fj.pt)<-1,
+                                        #2*op.log(fj.msoftdrop/fj.pt)>-8, 
+                                        #2*op.log(fj.msoftdrop/fj.pt)<-1,
                                         #fj.subJetIdx1 > -1,
 					)), lambda fj : -fj.pt)
 
         elif self.args.arbitration == "2prong":
             fatjets = op.sort(op.select(t.FatJet, lambda fj : op.AND(
-					fj.pt > 100.,
+					fj.pt > 200.,
 					op.abs(fj.eta) < 2.5,
-                                        2*op.log(fj.msoftdrop/fj.pt)>-8, 
-                                        2*op.log(fj.msoftdrop/fj.pt)<-1,
+                                        #2*op.log(fj.msoftdrop/fj.pt)>-8, 
+                                        #2*op.log(fj.msoftdrop/fj.pt)<-1,
                                         #fj.subJetIdx1 > -1,
 					)), lambda fj : -(fj.particleNetMD_Xqq+fj.particleNetMD_Xcc+fj.particleNetMD_Xbb))
         jidx = fatjets[0].idx
@@ -354,23 +361,47 @@ class zprlegacy(NanoAODHistoModule):
                                         op.abs(j.eta) < 5.0,
                                         j.jetId & (1 << 1) != 0, #tight id
                                         j.puId > 0,
-                                        )), lambda j : -j.pt)[:4]
+                                        )), lambda j : -j.pt)[:]
 
-        ak4_jet_opp_hemisphere = op.sort(op.select(ak4_jets, lambda j : op.deltaPhi(j.p4,fatjets[0].p4) > np.pi/2), lambda j : -j.btagDeepB)[0]
+        
+
+        ak4_jet_opp_hemisphere = op.sort(op.select(ak4_jets[:4], lambda j : op.deltaPhi(j.p4,fatjets[0].p4) > np.pi/2), lambda j : -j.btagDeepB)[0]
           
         
+        if "TT" in sample or "SingleTop" in sample:
+            print("Running ", sample)
+            top_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.abs(p.pdgId) == 6,p.statusFlags & 2**GEN_FLAGS["IsLastCopy"])), lambda p: -p.status)
 
         if do_genmatch:
             genQuarks = op.select(t.GenPart, lambda q: op.AND(op.abs(q.pdgId) >= 1, op.abs(q.pdgId) <= 5))
-            w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.OR(op.abs(p.pdgId) == 23,op.abs(p.pdgId) == 24,op.abs(p.pdgId) == 25, op.abs(p.pdgId) == 55),p.statusFlags & 2**GEN_FLAGS["IsLastCopy"])),
-                                  lambda p: -p.status)
+            if "VectorZPrime" in sample:
+                w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.abs(p.pdgId) == 55,p.statusFlags & 2**GEN_FLAGS["IsLastCopy"],p.statusFlags & 2**GEN_FLAGS["FromHardProcess"])),lambda p: -p.status)
+            elif "ZJetsTo" in sample or "DYJets" in sample:
+                w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.abs(p.pdgId) == 23,p.statusFlags & 2**GEN_FLAGS["IsLastCopy"],p.statusFlags & 2**GEN_FLAGS["FromHardProcess"])),lambda p: -p.status)
+            elif "WJetsTo" in sample or "WJetsLNu" in sample or "ST" in sample or "TTTo" in sample:
+                w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.abs(p.pdgId) == 24,p.statusFlags & 2**GEN_FLAGS["IsLastCopy"],p.statusFlags & 2**GEN_FLAGS["FromHardProcess"])),lambda p: -p.status)
+            elif "HiggsToBB" in sampleCfg["group"]:
+                w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.abs(p.pdgId) == 25,p.statusFlags & 2**GEN_FLAGS["IsLastCopy"],p.statusFlags & 2**GEN_FLAGS["FromHardProcess"])), lambda p: -p.status)
+            #else: 
+            #    m_pdgid = v_PDGID[sampleCfg["group"]]
+            #print("m_pdgid",m_pdgid)
+            #w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.OR(op.abs(p.pdgId) == 23,op.abs(p.pdgId) == 24,op.abs(p.pdgId) == 25, op.abs(p.pdgId) == 55),p.statusFlags & 2**GEN_FLAGS["IsLastCopy"])), lambda p: -p.status)
+            #w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.abs(p.pdgId) == 24,p.statusFlags & 2**GEN_FLAGS["IsLastCopy"])),
+            #                      lambda p: -p.status)
             q_from_w = op.select(genQuarks, lambda q : q.parent.idx == w_by_status[0].idx)
-            Vgen_matched = op.rng_count(q_from_w, lambda q: op.deltaR(q.p4, fatjets[0].p4) < 0.8) == 2
+            Vgen_matched = op.rng_count(q_from_w, lambda q: op.deltaR(q.p4, fatjets[0].p4) < 0.8) == 2 
+            if self.args.split_signal_region:
+                if "ZJetsToBB" in sampleCfg["group"] or "VectorZPrimeToBB" in sampleCfg["group"]:
+                    Vgen_matched = op.AND(Vgen_matched, op.rng_count(q_from_w, lambda q: op.abs(q.pdgId) == 5) == 2)
+                elif "ZJetsToCC" in sampleCfg["group"] or "VectorZPrimeToCC" in sampleCfg["group"]:
+                    Vgen_matched = op.AND(Vgen_matched, op.rng_count(q_from_w, lambda q: op.abs(q.pdgId) == 4) == 2)
+                elif "ZJetsToQQ" in sampleCfg["group"] or "VectorZPrimeToQQ" in sampleCfg["group"]:
+                    Vgen_matched = op.AND(Vgen_matched, op.rng_count(q_from_w, lambda q: op.abs(q.pdgId)  < 4) == 2)
             dr_to_q1 = op.deltaR(q_from_w[0].p4, fatjets[0].p4)
             dr_to_q2 = op.deltaR(q_from_w[1].p4, fatjets[0].p4)
             Vgen_quality_criterion_pt = ((fatjets[0].pt - w_by_status[0].pt)/w_by_status[0].pt) < 0.5
             Vgen_quality_criterion_msd = ((corrected_msd[fatjets[0].idx] - w_by_status[0].mass)/w_by_status[0].mass) < 0.3
-
+            
 
         ddtmap_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ddt_maps.json"
 
@@ -382,6 +413,7 @@ class zprlegacy(NanoAODHistoModule):
         jidx = fatjets[0].idx
         #pnmd2prong_ddt = t._FatJet.orig[jidx].particleNetMD_Xbb + t._FatJet.orig[jidx].particleNetMD_Xcc + t._FatJet.orig[jidx].particleNetMD_Xqq - pnmd2prong_ddtmap(fatjets[0])
         pnmd2prong = t._FatJet.orig[jidx].particleNetMD_Xbb + t._FatJet.orig[jidx].particleNetMD_Xcc + t._FatJet.orig[jidx].particleNetMD_Xqq
+        pnmdbvl = t._FatJet.orig[jidx].particleNetMD_Xbb/(t._FatJet.orig[jidx].particleNetMD_Xbb + t._FatJet.orig[jidx].particleNetMD_Xcc + t._FatJet.orig[jidx].particleNetMD_Xqq)
 
         puReweight = get_correction(syst_file["pileup"][era], 
             "Collisions%s_UltraLegacy_goldenJSON"%("".join(era[-2:])),
@@ -461,7 +493,7 @@ class zprlegacy(NanoAODHistoModule):
                  sel=noSel,
             )
 
-        if "ZJetsToQQ" in sample or "DYJetsToLL" in sample:
+        if "ZJets" in sample or "DYJetsToLL" in sample:
 
             qcdZkfactor = get_correction(syst_file["NLOVkfactors"],
                 "ULZ_MLMtoFXFX",
@@ -477,6 +509,26 @@ class zprlegacy(NanoAODHistoModule):
                  systNomName="nominal", systVariations=("d1K_NLO_up","d2K_NLO_up","d3K_NLO_up","d1kappa_EW_up","Z_d2kappa_EW_up","Z_d3kappa_EW_up","d1K_NLO_down","d2K_NLO_down","d3K_NLO_down","d1kappa_EW_down","Z_d2kappa_EW_down","Z_d3kappa_EW_down"),
                  sel=noSel,
             )
+
+        if "HiggsToBB" in sampleCfg["group"]:
+            
+            nloVBFkfactor = get_correction(syst_file["EWHiggsCorrections"],
+                 "VBF_EW",
+                 params={"hpt" : lambda w : w.pt,},
+                 sel=noSel,
+            )
+
+            nloVHkfactor = get_correction(syst_file["EWHiggsCorrections"],
+                 "VH_EW",
+                 params={"hpt" : lambda w : w.pt,},
+                 sel=noSel,
+            )
+            nlottHkfactor = get_correction(syst_file["EWHiggsCorrections"],
+                 "ttH_EW",
+                 params={"hpt" : lambda w : w.pt,},
+                 sel=noSel,
+            )
+
 
         if self.isMC(sample):
             if self.args.SR:
@@ -496,9 +548,19 @@ class zprlegacy(NanoAODHistoModule):
             if "WJetsToQQ" in sample or "WJetsToLNu" in sample:
                 noSel = noSel.refine("nloWkfactor",weight=nloWkfactor(w_by_status[0]))
                 noSel = noSel.refine("qcdWkfactor",weight=qcdWkfactor(w_by_status[0]))
-            if "ZJetsToQQ" in sample or "DYJetsToLL" in sample:
+            if "ZJets" in sample or "DYJetsToLL" in sample:
                 noSel = noSel.refine("nloZkfactor",weight=nloZkfactor(w_by_status[0]))
                 noSel = noSel.refine("qcdZkfactor",weight=qcdZkfactor(w_by_status[0]))
+            if "VBF" in sample:
+                noSel = noSel.refine("nloHkfactor",weight=nloVBFkfactor(w_by_status[0])) 
+            if "WplusH" in sample or "WminusH" in sample or "ZH" in sample:
+                noSel = noSel.refine("nloHkfactor",weight=nloVHkfactor(w_by_status[0]))  
+            if "ttH" in sample:
+                noSel = noSel.refine("nloHkfactor",weight=nlottHkfactor(w_by_status[0]))  
+            if "TT" in sample:
+                toppt_weight1 = op.exp(0.0615-0.0005*op.min(op.max(top_by_status[0].pt,0.),500.))
+                toppt_weight2 = op.exp(0.0615-0.0005*op.min(op.max(top_by_status[1].pt,0.),500.))
+                noSel = noSel.refine("ttreweight",weight=op.sqrt(op.product(toppt_weight1,toppt_weight2)))
 
             jetSel = noSel.refine("passJetHLT",)
             filterJetSel = jetSel.refine("passFilterJet",)
@@ -523,20 +585,22 @@ class zprlegacy(NanoAODHistoModule):
         SR_electron_cut = SR_antiak4btagMediumOppHem_cut.refine("el_cut",cut=[op.rng_len(electrons) == 0])
         SR_muon_cut = SR_electron_cut.refine("mu_cut",cut=[op.rng_len(loose_muons) == 0])
         SR_tau_cut = SR_muon_cut.refine("tau_cut",cut=[op.rng_len(taus) == 0]) 
-        if "ZJetsToQQ" in sample or "WJetsToQQ" in sample or "VectorZPrime" in sample or "HToBB" in sample:
+        if "ZJetsToQQ" in sample or "ZJetsToBB" in sample or "WJetsToQQ" in sample or "VectorZPrime" in sample or "HiggsToBB" in sampleCfg["group"]:
+            print("adding matching to cut")
             SR_Vmatched = SR_tau_cut.refine("fj_Vmatched",cut=op.AND(Vgen_matched,Vgen_quality_criterion_pt,Vgen_quality_criterion_msd))
         else:
             SR_Vmatched = SR_tau_cut.refine("fj_Vmatched",cut=1) 
-
+        SR_MET = SR_Vmatched.refine("MET_cut",cut=[t.MET.pt < 140.])
+        SR_nak4jets = SR_MET.refine("SR_nak4jets",cut=[op.rng_len(ak4_jets) < 6]) 
         #self.yield_object.addYields(filterJetSel,"starting","test")
         #self.yield_object.addYields(SR_pt_cut,"pt_cut","test")
  
-        SR_cut = SR_Vmatched
-
+        SR_cut = SR_nak4jets
+        #SR_cut = SR_Vmatched
         #######################
         ###  CR1 selection  ###
         #######################
-        CR1_jpt_cut = filterMuSel.refine("CR1_jpt_cut",cut=fatjets[0].p4.Pt() > 500)
+        CR1_jpt_cut = filterMuSel.refine("CR1_jpt_cut",cut=fatjets[0].p4.Pt() > 400)
         CR1_jeta_cut = CR1_jpt_cut.refine("CR1_jeta_cut",cut=op.abs(fatjets[0].p4.Eta())<2.5)
         CR1_jmsd_cut = CR1_jeta_cut.refine("CR1_jmsd_cut",cut=corrected_msd[fatjets[0].idx] > 40)
         CR1_jrho_cut = CR1_jmsd_cut.refine("CR1_jrho_cut",cut=op.AND(2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) > -7,2*op.log(fatjets[0].msoftdrop/fatjets[0].pt) <-1.))
@@ -568,16 +632,26 @@ class zprlegacy(NanoAODHistoModule):
         CR2_tau_cut = CR2_electron_cut.refine("CR2_tau_cut",cut=[op.rng_len(taus) == 0])
         CR2_mu_cutloose = CR2_tau_cut.refine("CR2_mu_cutloose",cut=[op.rng_len(candidatemuons) == 1])
         CR2_Wleptonic_cut = CR2_mu_cutloose.refine("CR2_Wleptonic_cut",cut=Wleptonic_candidate.Pt()>200)
- 
-        #if "subprocess" in sampleCfg:
-        #    subProc = sampleCfg["subprocess"]
-        #    if "_matched" in subProc: 
-        #        CR2_cut = CR2_Wleptonic_cut.refine("CR2_matching",cut=op.AND(Vgen_matched,Vgen_quality_criterion_pt,Vgen_quality_criterion_msd))
-        #    elif "_unmatched" in subProc:
-        #        CR2_cut = CR2_Wleptonic_cut.refine("CR2_matching",cut=op.NOT(op.AND(Vgen_matched,Vgen_quality_criterion_pt,Vgen_quality_criterion_msd)))
-        #
-        #else:
-        CR2_cut = CR2_Wleptonic_cut
+        print(sampleCfg) 
+        if self.args.CR2 and "subprocess" in sampleCfg.keys():
+            #top = op.sort(op.select(t.GenPart, lambda p : op.AND(op.abs(p.pdgId) == 6, p.statusFlags & 2**GEN_FLAGS["IsLastCopy"],p.statusFlags & 2**GEN_FLAGS["FromHardProcess"])),lambda p: op.deltaR(p.p4, fatjets[0].p4))[0] 
+            w = op.sort(op.select(t.GenPart, lambda p : op.AND(op.abs(p.pdgId) == 24, p.statusFlags & 2**GEN_FLAGS["IsLastCopy"])),lambda p: op.deltaR(p.p4, fatjets[0].p4))[0]
+            genQuarks = op.select(t.GenPart, lambda q: op.AND(op.abs(q.pdgId) >= 1, op.abs(q.pdgId) <= 5))
+            q_from_w = op.select(genQuarks, lambda q : q.parent.idx == w.idx)
+            Vgen_matched = op.rng_count(q_from_w, lambda q: op.deltaR(q.p4, fatjets[0].p4) < 0.8) == 2
+
+            Vgen_quality_criterion_pt = ((fatjets[0].pt - w.pt)/w.pt) < 0.5
+            Vgen_quality_criterion_msd = ((corrected_msd[fatjets[0].idx] - w.mass)/w.mass) < 0.3
+
+            #Vgen_matched = op.deltaR(w_from_top.p4, fatjets[0].p4) < 0.8
+            subProc = sampleCfg["subprocess"]
+            if "_matched" in subProc: 
+                CR2_matching_cut = CR2_Wleptonic_cut.refine("CR2_matching",cut=op.AND(Vgen_matched,Vgen_quality_criterion_pt,Vgen_quality_criterion_msd))
+            elif "_unmatched" in subProc:
+                CR2_matching_cut = CR2_Wleptonic_cut.refine("CR2_matching",cut=op.NOT(op.AND(Vgen_matched,Vgen_quality_criterion_pt,Vgen_quality_criterion_msd)))
+            CR2_cut = CR2_matching_cut
+        else:
+            CR2_cut = CR2_Wleptonic_cut
         
 
 
@@ -608,7 +682,9 @@ class zprlegacy(NanoAODHistoModule):
             CR2_yields.add(CR2_electron_cut, title= 'CR2_electron_cut')
             CR2_yields.add(CR2_mu_cutloose, title= 'CR2_mu_cutloose')
             CR2_yields.add(CR2_Wleptonic_cut, title= 'CR2_Wleptonic_cut')
-        
+            #print("sampleCfg[subprocess]",sampleCfg["subprocess"])
+            if "subprocess" in sampleCfg.keys():  
+                CR2_yields.add(CR2_matching_cut, title= 'CR2_matching')
 
         if self.args.CR1:
             CR1_yields = CutFlowReport("CR1_yields", printInLog=True,)# recursive=True)
@@ -644,6 +720,8 @@ class zprlegacy(NanoAODHistoModule):
             SR_yields.add(SR_muon_cut, title= 'no_muon')
             SR_yields.add(SR_tau_cut, title= 'no_tau')
             SR_yields.add(SR_Vmatched, title= 'fj_vmatched')
+            SR_yields.add(SR_MET, title= 'met')
+            SR_yields.add(SR_nak4jets, title= 'met')
 
          
         mvaVariables = {
@@ -707,17 +785,28 @@ class zprlegacy(NanoAODHistoModule):
             #plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_ddt_pass", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_pnmd2prong_ddt_pass",cut=op.AND(pt_sel,pnmd2prong_ddt>0.)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_ddt_pass", xTitle="Jet m_{SD} (GeV) Pass PN-MD DDT 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
             #plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_ddt_fail", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_pnmd2prong_ddt_fail",cut=op.AND(pt_sel,pnmd2prong_ddt<=0.)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_ddt_fail", xTitle="Jet m_{SD} (GeV) Fail PN-MD DDT 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
 
+            ### One SR
             plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_0p05_pass", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_pnmd2prong_pass",cut=op.AND(pt_sel,pnmd2prong>0.93)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_pass", xTitle="Jet m_{SD} (GeV) Pass PN-MD 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
             plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_0p05_fail", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_pnmd2prong_fail",cut=op.AND(pt_sel,pnmd2prong<=0.93)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_fail", xTitle="Jet m_{SD} (GeV) Fail PN-MD 2prong (%i < p_{T} < %i)"%(pt_low, pt_high)))
+
+
+            if self.args.split_signal_region:
+                ### Two SRs
+            
+                plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_0p05_pass_lowbvl", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_pnmd2prong_pass_lowbvl",cut=op.AND(pt_sel,pnmd2prong>0.93,pnmdbvl<=0.5)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_pass_lowbvl", xTitle="Jet m_{SD} (GeV) Pass PN-MD 2prong, Low bvl (%i < p_{T} < %i)"%(pt_low, pt_high)))
+                plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_pnmd2prong_0p05_pass_highbvl", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_pnmd2prong_pass_highbvl",cut=op.AND(pt_sel,pnmd2prong>0.93,pnmdbvl>0.5)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_pnmd2prong_pass_highbvl", xTitle="Jet m_{SD} (GeV) Pass PN-MD 2prong, High bvl (%i < p_{T} < %i)"%(pt_low, pt_high)))
+
+
+            ### N2
             plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_n2_0p05_pass", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_n2_pass",cut=op.AND(pt_sel,fatjets[0].n2b1<0.19)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_n2_pass", xTitle="Jet m_{SD} (GeV) Pass N_{2} (%i < p_{T} < %i)"%(pt_low, pt_high)))
             plots.append(Plot.make1D(prefix+f"ptbin{iptbin}_n2_0p05_fail", corrected_msd[fatjets[0].idx], selection.refine(f"ptbin{iptbin}_n2_fail",cut=op.AND(pt_sel,fatjets[0].n2b1>=0.19)), EquidistantBinning(62,40.,350.), title=f"ptbin{iptbin}_n2_fail", xTitle="Jet m_{SD} (GeV) Fail N_{2} (%i < p_{T} < %i)"%(pt_low, pt_high)))
    
      
         #####INCLUSIVE PLOTS 
         inclusive_pt_sel = op.AND(fatjets[0].pt > sr_pt_cut, fatjets[0].pt <= 1200)
-        pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
+        #pnMD_2prong = fatjets[0].particleNetMD_Xqq + fatjets[0].particleNetMD_Xcc + fatjets[0].particleNetMD_Xbb
         #### ParticleNet-MD plots
-        plots.append(Plot.make1D(prefix+"particlenet_2prong_MD", pnMD_2prong, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD ZPrime binary score", xTitle="ParticleNet-MD 2prong score"))
+        plots.append(Plot.make1D(prefix+"particlenet_2prong_MD", pnmd2prong, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD ZPrime binary score", xTitle="ParticleNet-MD 2prong score"))
         #plots.append(Plot.make1D(prefix+"particlenet_2prong_MD_ddt", pnmd2prong_ddt, selection, EquidistantBinning(25,-1.,0.1), title="ParticleNet-MD ZPrime binary score ddt", xTitle="ParticleNet-MD 2prong score (DDT)"))
         plots.append(Plot.make1D(prefix+"particlenet_bb_MD", fatjets[0].particleNetMD_Xbb, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD bb score", xTitle="ParticleNet-MD bb score"))
         plots.append(Plot.make1D(prefix+"particlenet_cc_MD", fatjets[0].particleNetMD_Xcc, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD cc score", xTitle="ParticleNet-MD cc score"))
@@ -728,11 +817,17 @@ class zprlegacy(NanoAODHistoModule):
         plots.append(Plot.make1D(prefix+"particlenet_QCD_MD", fatjets[0].particleNetMD_QCD, selection, EquidistantBinning(25,0.,1.), title="ParticleNet-MD QCD score", xTitle="ParticleNet-MD QCD score"))
         #### Jet kinematics 
         plots.append(Plot.make1D(prefix+"FatjetMsd_corrected", corrected_msd[fatjets[0].idx], selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} corrected (GeV)"))
+        if self.args.split_signal_region:
+            plots.append(Plot.make1D(prefix+"FatjetMsd_corrected_passbvl", corrected_msd[fatjets[0].idx], selection.refine("lowbvl",cut=op.AND(pnmd2prong>0.93,pnmdbvl>0.5)), EquidistantBinning(62,40.,350.), title="FatJet corrected msd low bvl", xTitle="FatJet m_{SD} corrected High bvl (GeV)"))
+            plots.append(Plot.make1D(prefix+"FatjetMsd_corrected_failbvl", corrected_msd[fatjets[0].idx], selection.refine("highbvl",cut=op.AND(pnmd2prong>0.93,pnmdbvl<=0.5)), EquidistantBinning(62,40.,350.), title="FatJet corrected msd high bvl", xTitle="FatJet m_{SD} corrected Low bvl (GeV)"))
+
         plots.append(Plot.make1D(prefix+"FatjetMsd", fatjets[0].msoftdrop, selection, EquidistantBinning(25,40.,400.), title="FatJet pT", xTitle="FatJet m_{SD} (GeV)"))
         plots.append(Plot.make1D(prefix+"FatJetPt", fatjets[0].p4.Pt(), selection, EquidistantBinning(25,200.,1400.) if self.args.CR2 else EquidistantBinning(25,400,1400.), title="FatJet pT", xTitle="FatJet p_{T} (GeV)"))
         plots.append(Plot.make1D(prefix+"FatJetEta", fatjets[0].p4.Eta(), selection, EquidistantBinning(25,-2.5,2.5), title="FatJet #eta", xTitle="FatJet #eta"))
         plots.append(Plot.make1D(prefix+"FatJetRho", 2*op.log(corrected_msd[fatjets[0].idx]/fatjets[0].pt), selection, EquidistantBinning(25,-5.5,-2), title="FatJet #rho", xTitle="FatJet #rho"))
         plots.append(Plot.make1D(prefix+"FatJetN2",  fatjets[0].n2b1, selection, EquidistantBinning(25,0,0.5), title="FatJet N2", xTitle="FatJet N_{2}"))
+        plots.append(Plot.make1D(prefix+"MET",  t.MET.pt, selection, EquidistantBinning(25,0,200), title="MET", xTitle="MET (GeV)"))
+        plots.append(Plot.make1D(prefix+"nAK4",  op.rng_len(ak4_jets), selection, EquidistantBinning(10,0,10), title="nAK4jets", xTitle="Number of AK4 jets"))
  
 
         if self.args.CR1 or self.args.CR2: 
@@ -746,8 +841,8 @@ class zprlegacy(NanoAODHistoModule):
             #plots.append(Plot.make1D(prefix+"_pnmd2prong_ddt_fail",corrected_msd[fatjets[0].idx], selection.refine("pnmd2prong_ddt_fail",cut=op.AND(selection,pnmd2prong_ddt<=0.)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Fail PN-MD DDT)", xTitle="Jet m_{SD} (GeV) (Fail PN-MD DDT)" ))
             plots.append(Plot.make1D(prefix+"_pnmd2prong_0p05_pass",corrected_msd[fatjets[0].idx], selection.refine("pnmd2prong_0p05_pass",cut=op.AND(selection,pnmd2prong>0.93)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Pass PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Pass PN-MD 5%)" ))
             plots.append(Plot.make1D(prefix+"_pnmd2prong_0p05_fail",corrected_msd[fatjets[0].idx], selection.refine("pnmd2prong_0p05_fail",cut=op.AND(selection,pnmd2prong<=0.93)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Fail PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Fail PN-MD 5%)" ))
-            plots.append(Plot.make1D(prefix+"_n2_0p05_pass",corrected_msd[fatjets[0].idx], selection.refine("n2_0p05_pass",cut=op.AND(selection,fatjets[0].n2b1<0.19)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Pass PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Pass PN-MD 5%)" ))
-            plots.append(Plot.make1D(prefix+"_n2_0p05_fail",corrected_msd[fatjets[0].idx], selection.refine("n2_0p05_fail",cut=op.AND(selection,fatjets[0].n2b1>=0.19)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Fail PN-MD 5%)", xTitle="Jet m_{SD} (GeV) (Fail PN-MD 5%)" ))
+            plots.append(Plot.make1D(prefix+"_n2_0p05_pass",corrected_msd[fatjets[0].idx], selection.refine("n2_0p05_pass",cut=op.AND(selection,fatjets[0].n2b1<0.19)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Pass N_{2} 5%)", xTitle="Jet m_{SD} (GeV) (Pass N_{2} 5%)" ))
+            plots.append(Plot.make1D(prefix+"_n2_0p05_fail",corrected_msd[fatjets[0].idx], selection.refine("n2_0p05_fail",cut=op.AND(selection,fatjets[0].n2b1>=0.19)),EquidistantBinning(40,40.,240.),title= "Jet m_{SD} (GeV) (Fail N_{2} 5%)", xTitle="Jet m_{SD} (GeV) (Fail N_{2} 5%)" ))
         #print("helloxx")
         #plots.extend(self.yield_object.returnPlots())
 
