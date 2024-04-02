@@ -508,7 +508,55 @@ samples:
 #    type: mc
 #    generated-events: genEventSumw
 #    split: -10
-#    group: HiggsToBB
+#
+  ttHToBB:
+    cross-section : 0.2912 #CHECK???
+    files: file_paths/2017/ttHtoBB.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -10
+    group: HiggsToBB
+  VBFHToBB:
+    cross-section : 2.2498257  #CHECK???
+    files: file_paths/2017/VBFHToBB.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -10
+    group: HiggsToBB
+  ZHToBB:
+    cross-section : 0.32600108  #CHECK???
+    files: file_paths/2017/ZHToBB.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -10
+    group: HiggsToBB
+  ggZHToBB:
+    cross-section : 0.0250890  #CHECK???
+    files: file_paths/2017/ggZHToBB.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -10
+    group: HiggsToBB
+  WminusH_HToBB:
+    cross-section : 0.21348075 #CHECK???
+    files: file_paths/2017/WminusHToBB.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -10
+    group: HiggsToBB
+  WplusH_HToBB:
+    cross-section : 0.3421500999 #CHECK???
+    files: file_paths/2017/WplusHToBB.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -10
+    g    group: HiggsToBB
   
 plotIt:
   configuration:

@@ -4,8 +4,8 @@ import os,subprocess
 os.system("rm tmp_files.txt")
 
 file_database = "file_database.yaml"
-processes = ["JetHT"] #["JetHT","WJetsToLNu","SingleTop","Higgs","SingleMuon","DYJetsToLL","JetHT","QCD_HT","WJetsToQQ", "ZJetsToQQ","VectorZPrime","TTToHadronic","TTToSemiLeptonic","TTTo2L2Nu",]
-year = "2017"
+processes = ["JetHT"] #["Higgs", "JetHT","WJetsToLNu","SingleTop","Higgs","SingleMuon","DYJetsToLL","JetHT","QCD_HT","WJetsToQQ", "ZJetsToQQ","VectorZPrime","TTToHadronic","TTToSemiLeptonic","TTTo2L2Nu",]
+year = "2016"
 
 if __name__ == "__main__":
     with open(file_database,"r") as file:
@@ -31,3 +31,4 @@ if __name__ == "__main__":
             #    os.system(f"awk \'NR%10==0\' ../file_paths/{year}/{sp_name}_tmp.txt > ../file_paths/{year}/{sp_name}.txt")
             #    os.system(f"rm ../file_paths/{year}/{sp_name}_tmp.txt")
             os.system(f"sed -i '/SingleMuon_Run2017E\/220108_001102\/0000\/nano_data2017_184.root/d' ../file_paths/{year}/{sp_name}.txt")
+            os.system(f"sed -i 'bad/d' ../file_paths/{year}/{sp_name}.txt")
