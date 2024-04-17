@@ -54,8 +54,7 @@ syst_file = {
         "2016APV" : "/eos/project/c/contrast/public/cl/www/zprime/bamboo/15Apr24-SR-2016APV-btagWPs/results/btveff.json",
         "2016"    : "/eos/project/c/contrast/public/cl/www/zprime/bamboo/15Apr24-SR-2016-btagWPs/results/btveff.json",
         "2017"    : "/eos/project/c/contrast/public/cl/www/zprime/bamboo/15Apr24-SR-btagWPs/results/btveff.json",
-        "2018"    : "/eos/project/c/contrast/public/cl/www/zprime/bamboo/15Apr24-SR-btagWPs/results/btveff.json",
-        #"2018"    : "/eos/project/c/contrast/public/cl/www/zprime/bamboo/15Apr24-SR-2018-btagWPs/results/btveff.json",
+        "2018"    : "/eos/project/c/contrast/public/cl/www/zprime/bamboo/15Apr24-SR-2018-btagWPs/results/btveff.json",
     },
     "pileup" : {
         "2016APV" : "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/LUM/2016preVFP_UL/puWeights.json.gz",
@@ -452,7 +451,7 @@ class zprlegacy(NanoAODHistoModule):
 
         
 
-        ak4_jet_opp_hemisphere = op.sort(op.select(ak4_jets[:4], lambda j : op.deltaPhi(j.p4,fatjets[0].p4) > np.pi/2), lambda j : -j.btagDeepB)[0]
+        ak4_jet_opp_hemisphere = op.sort(op.select(ak4_jets[:4], lambda j : op.deltaPhi(j.p4,fatjets[0].p4) > np.pi/2), lambda j : -j.btagDeepFlavB)[0]
           
         
         if "TT" in sample or "SingleTop" in sample:
@@ -665,20 +664,19 @@ class zprlegacy(NanoAODHistoModule):
             muSel = noSel.refine("passMuHLT",)
             filterMuSel = muSel.refine("passFilterMu",)
 
-            btvSF_b     = lambda wp, flav : get_bTagSF_fixWP(syst_file["BTV"][era],"deepJet", "M", 5, noSel, syst_prefix="btagSF_",
+            btvSF     = lambda wp, flav : get_bTagSF_fixWP(syst_file["BTV"][era],"deepJet", wp, flav, noSel, syst_prefix="btagSF_",
                     decorr_eras=True, era=year_key, decorr_wps=True,
             )
-            btvSF_c     = lambda wp, flav : get_bTagSF_fixWP(syst_file["BTV"][era],"deepJet", "M", 4, noSel, syst_prefix="btagSF_",
-                    decorr_eras=True, era=year_key, decorr_wps=True,
-            )
-            btvSF_light = lambda wp, flav : get_bTagSF_fixWP(syst_file["BTV"][era],"deepJet", "M", 0, noSel, syst_prefix="btagSF_",
-                    decorr_eras=True, era=year_key, decorr_wps=True,
-            )
+            #btvSF_c     = lambda wp, flav : get_bTagSF_fixWP(syst_file["BTV"][era],"deepJet", "M", 4, noSel, syst_prefix="btagSF_",
+            #        decorr_eras=True, era=year_key, decorr_wps=True,
+            #)
+            #btvSF_light = lambda wp, flav : get_bTagSF_fixWP(syst_file["BTV"][era],"deepJet", "M", 0, noSel, syst_prefix="btagSF_",
+            #        decorr_eras=True, era=year_key, decorr_wps=True,
+            #)
  
-            print("SETTING ERA TO 2017 FOR DUMMY REASON")
             btvEff_b = { 
                 "M": get_correction(syst_file["BTVeff"][era], 
-                     f"MCeff_2017_UL",
+                     f"MCeff_{era}_UL",
                      params={  "eta" : lambda w : op.abs(w.eta), 
                                "flavor" : 5,
                                "pt" : lambda w : w.pt,
@@ -689,7 +687,7 @@ class zprlegacy(NanoAODHistoModule):
             }
             btvEff_c = { 
                 "M": get_correction(syst_file["BTVeff"][era], 
-                     f"MCeff_2017_UL",
+                     f"MCeff_{era}_UL",
                      params={  "eta" : lambda w : op.abs(w.eta), 
                                "flavor" : 4,
                                "pt" : lambda w : w.pt,
@@ -700,7 +698,7 @@ class zprlegacy(NanoAODHistoModule):
             }
             btvEff_light = { 
                 "M": get_correction(syst_file["BTVeff"][era], 
-                     f"MCeff_2017_UL",
+                     f"MCeff_{era}_UL",
                      params={  "eta" : lambda w : op.abs(w.eta), 
                                "flavor" : 0,
                                "pt" : lambda w : w.pt,
@@ -716,17 +714,17 @@ class zprlegacy(NanoAODHistoModule):
             if self.args.SR:
                 #btvWeight = makeBtagWeightItFit(ak4_jets, btvSF)
                 btvWeight_b = makeBtagWeightMeth1a(ak4_jets, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
-                    btvSF_b, btvEff_b)
+                    btvSF, btvEff_b)
                 btvWeight_c = makeBtagWeightMeth1a(ak4_jets, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
-                    btvSF_c, btvEff_c)
+                    btvSF, btvEff_c)
                 btvWeight_light = makeBtagWeightMeth1a(ak4_jets, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
-                    btvSF_light, btvEff_light)
+                    btvSF, btvEff_light)
             elif self.args.CR1 or self.args.CR2:
                 #btvWeight = makeBtagWeightItFit(jets_away, btvSF)
                 btvWeight_b = makeBtagWeightMeth1a(jets_away, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
-                    btvSF_b, btvEff_b)
+                    btvSF, btvEff_b)
                 btvWeight_c = makeBtagWeightMeth1a(jets_away, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
-                    btvSF_c, btvEff_c)
+                    btvSF, btvEff_c)
                 btvWeight_light = makeBtagWeightMeth1a(jets_away, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
                     btvSF, btvEff_light)
   
@@ -747,9 +745,9 @@ class zprlegacy(NanoAODHistoModule):
         if self.isMC(sample):
             btvWeight_b_min = op.min(op.c_float(5.),btvWeight_b)
             btvWeight_light_min = op.min(op.c_float(5.),btvWeight_light)
-            SR_antiak4btagMediumOppHem_cut = SR_id_cut.refine("SR_antiak4btagMediumOppHem_cut",cut=[ak4_jet_opp_hemisphere.btagDeepB < btagWPs[era]["M"]],weight=[btvWeight_b,btvWeight_light])
+            SR_antiak4btagMediumOppHem_cut = SR_id_cut.refine("SR_antiak4btagMediumOppHem_cut",cut=[ak4_jet_opp_hemisphere.btagDeepFlavB < btagWPs[era]["M"]],weight=[btvWeight_b,btvWeight_light])
         else: 
-            SR_antiak4btagMediumOppHem_cut = SR_id_cut.refine("SR_antiak4btagMediumOppHem_cut",cut=[ak4_jet_opp_hemisphere.btagDeepB < btagWPs[era]["M"]])
+            SR_antiak4btagMediumOppHem_cut = SR_id_cut.refine("SR_antiak4btagMediumOppHem_cut",cut=[ak4_jet_opp_hemisphere.btagDeepFlavB < btagWPs[era]["M"]])
         SR_electron_cut = SR_antiak4btagMediumOppHem_cut.refine("el_cut",cut=[op.rng_len(electrons) == 0])
         SR_muon_cut = SR_electron_cut.refine("mu_cut",cut=[op.rng_len(loose_muons) == 0])
         #SR_tau_cut_dz = SR_muon_cut.refine("tau_cut_dz",cut=[op.rng_len(taus_dz) == 0]) 
@@ -778,9 +776,9 @@ class zprlegacy(NanoAODHistoModule):
         CR1_muonDphiAK8 = CR1_id_cut.refine("CR1_muonDphiAK8",cut=op.deltaPhi(candidatemuons[0].p4, fatjets[0].p4) > 2.*np.pi/3.)
         #CR1_muonDphiAK8 = CR1_mu_cut.refine("CR1_muonDphiAK8",cut=op.rng_any(t.Muon[0], lambda mu : op.abs(op.deltaPhi(mu.p4, fatjets[0].p4))>2*np.pi/3))
         if self.isMC(sample):
-            CR1_ak4btagMedium08 = CR1_muonDphiAK8.refine("CR1_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagDeepB>btagWPs[era]["M"]),weight=[btvWeight_b, btvWeight_c, btvWeight_light])
+            CR1_ak4btagMedium08 = CR1_muonDphiAK8.refine("CR1_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagDeepFlavB>btagWPs[era]["M"]),weight=[btvWeight_b, btvWeight_c, btvWeight_light])
         else:
-            CR1_ak4btagMedium08 = CR1_muonDphiAK8.refine("CR1_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagDeepB>btagWPs[era]["M"]))
+            CR1_ak4btagMedium08 = CR1_muonDphiAK8.refine("CR1_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagDeepFlavB>btagWPs[era]["M"]))
         CR1_electron_cut = CR1_ak4btagMedium08.refine("CR1_electron_cut",cut=[op.rng_len(electrons) == 0])
         CR1_mu_ncut = CR1_electron_cut.refine("CR1_mu_ncut",cut=[op.rng_len(candidatemuons) == 1])
         CR1_tau_cut = CR1_mu_ncut.refine("CR1_tau_cut",cut=[op.rng_len(taus) == 0]) 
@@ -799,9 +797,9 @@ class zprlegacy(NanoAODHistoModule):
         CR2_mu_tightId_cut = CR2_mu_pfRelIso04_all_cut.refine("CR2_mu_tightId_cut",cut=candidatemuons[0].tightId)
         CR2_muonDphiAK8 = CR2_mu_tightId_cut.refine("CR2_muonDphiAK8",cut=op.abs(op.deltaPhi(candidatemuons[0].p4, fatjets[0].p4))>2*np.pi/3)
         if self.isMC(sample):
-            CR2_ak4btagMedium08 = CR2_muonDphiAK8.refine("CR2_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagDeepB>btagWPs[era]["M"]),weight=[btvWeight_b, btvWeight_c, btvWeight_light])
+            CR2_ak4btagMedium08 = CR2_muonDphiAK8.refine("CR2_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagDeepFlavB>btagWPs[era]["M"]),weight=[btvWeight_b, btvWeight_c, btvWeight_light])
         else: 
-            CR2_ak4btagMedium08 = CR2_muonDphiAK8.refine("CR2_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagDeepB>btagWPs[era]["M"]))
+            CR2_ak4btagMedium08 = CR2_muonDphiAK8.refine("CR2_ak4btagMedium08",cut=op.rng_any(jets_away, lambda j : j.btagDeepFlavB>btagWPs[era]["M"]))
         CR2_MET = CR2_ak4btagMedium08.refine("CR2_MET",t.MET.pt>40)
         CR2_electron_cut = CR2_MET.refine("CR2_electron_cut",cut=[op.rng_len(electrons) == 0])
         CR2_tau_cut = CR2_electron_cut.refine("CR2_tau_cut",cut=[op.rng_len(taus) == 0])
