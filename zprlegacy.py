@@ -440,6 +440,17 @@ class zprlegacy(NanoAODHistoModule):
 					)), lambda j : -j.pt)[:]
 
         jets_away = op.select(jets, lambda j : op.deltaR(fatjets[0].p4, j.p4)  > 0.8) 
+        eta    = 2.4 if '2016' in era else 2.5
+        pt     = 20. if '2016' in era else 30.
+        jet_ID = { '2016APV' : lambda j : j.jetId & 4, 
+                   '2016': lambda j : j.jetId & 4,
+                   '2017'        : lambda j : j.jetId & 4,
+                   '2018'        : lambda j : j.jetId & 4}
+
+        all_btag_candidates = op.select(t.Jet, lambda j : op.AND(
+                                        j.pt > 30.,
+                                        op.abs(j.eta)< eta, 
+                                        jet_ID[era]))     
 
         #https://github.com/jennetd/hbb-coffea/blob/UL2022/boostedhiggs/vbfprocessor.py#L263-L268
         ak4_jets = op.sort(op.select(t.Jet, lambda j : op.AND(
@@ -713,11 +724,11 @@ class zprlegacy(NanoAODHistoModule):
             #)
             if self.args.SR:
                 #btvWeight = makeBtagWeightItFit(ak4_jets, btvSF)
-                btvWeight_b = makeBtagWeightMeth1a(ak4_jets, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
+                btvWeight_b = makeBtagWeightMeth1a(all_btag_candidates, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
                     btvSF, btvEff_b)
-                btvWeight_c = makeBtagWeightMeth1a(ak4_jets, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
+                btvWeight_c = makeBtagWeightMeth1a(all_btag_candidates, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
                     btvSF, btvEff_c)
-                btvWeight_light = makeBtagWeightMeth1a(ak4_jets, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
+                btvWeight_light = makeBtagWeightMeth1a(all_btag_candidates, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
                     btvSF, btvEff_light)
             elif self.args.CR1 or self.args.CR2:
                 #btvWeight = makeBtagWeightItFit(jets_away, btvSF)
