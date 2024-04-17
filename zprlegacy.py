@@ -724,11 +724,14 @@ class zprlegacy(NanoAODHistoModule):
             #)
             if self.args.SR:
                 #btvWeight = makeBtagWeightItFit(ak4_jets, btvSF)
-                btvWeight_b = makeBtagWeightMeth1a(all_btag_candidates, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
+                bjets = op.select(all_btag_candidates, lambda j : j.hadronFlavour==5)
+                btvWeight_b = makeBtagWeightMeth1a(bjets, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
                     btvSF, btvEff_b)
-                btvWeight_c = makeBtagWeightMeth1a(all_btag_candidates, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
+                cjets = op.select(all_btag_candidates, lambda j : j.hadronFlavour==4)
+                btvWeight_c = makeBtagWeightMeth1a(cjets, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
                     btvSF, btvEff_c)
-                btvWeight_light = makeBtagWeightMeth1a(all_btag_candidates, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
+                ljets = op.select(all_btag_candidates, lambda j : j.hadronFlavour==0)
+                btvWeight_light = makeBtagWeightMeth1a(ljets, "btagDeepFlavB", ["M"], {"M": btagWPs[era]["M"]},
                     btvSF, btvEff_light)
             elif self.args.CR1 or self.args.CR2:
                 #btvWeight = makeBtagWeightItFit(jets_away, btvSF)
@@ -756,7 +759,7 @@ class zprlegacy(NanoAODHistoModule):
         if self.isMC(sample):
             btvWeight_b_min = op.min(op.c_float(5.),btvWeight_b)
             btvWeight_light_min = op.min(op.c_float(5.),btvWeight_light)
-            SR_antiak4btagMediumOppHem_cut = SR_id_cut.refine("SR_antiak4btagMediumOppHem_cut",cut=[ak4_jet_opp_hemisphere.btagDeepFlavB < btagWPs[era]["M"]],weight=[btvWeight_b,btvWeight_light])
+            SR_antiak4btagMediumOppHem_cut = SR_id_cut.refine("SR_antiak4btagMediumOppHem_cut",cut=[ak4_jet_opp_hemisphere.btagDeepFlavB < btagWPs[era]["M"]],weight=[btvWeight_b,btvWeight_c,btvWeight_light])
         else: 
             SR_antiak4btagMediumOppHem_cut = SR_id_cut.refine("SR_antiak4btagMediumOppHem_cut",cut=[ak4_jet_opp_hemisphere.btagDeepFlavB < btagWPs[era]["M"]])
         SR_electron_cut = SR_antiak4btagMediumOppHem_cut.refine("el_cut",cut=[op.rng_len(electrons) == 0])
