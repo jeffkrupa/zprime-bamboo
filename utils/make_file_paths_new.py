@@ -4,12 +4,13 @@ import os,subprocess
 os.system("rm tmp_files.txt")
 
 file_database = "file_database.yaml"
-processes = ["JetHT"] #["Higgs", "JetHT","WJetsToLNu","SingleTop","Higgs","SingleMuon","DYJetsToLL","JetHT","QCD_HT","WJetsToQQ", "ZJetsToQQ","VectorZPrime","TTToHadronic","TTToSemiLeptonic","TTTo2L2Nu",]
-year = "2016"
+processes = ["Diboson"] #["JetHT"] #["Higgs", "JetHT","WJetsToLNu","SingleTop","Higgs","SingleMuon","DYJetsToLL","JetHT","QCD_HT","WJetsToQQ", "ZJetsToQQ","VectorZPrime","TTToHadronic","TTToSemiLeptonic","TTTo2L2Nu",]
+year = "2016APV"
 
 if __name__ == "__main__":
     with open(file_database,"r") as file:
       paths = yaml.safe_load(file)
+      print(paths["Diboson"])
       for process in processes: 
         entries = paths[process][year]
         for subp, path in entries.items():
