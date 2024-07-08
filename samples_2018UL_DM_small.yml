@@ -1,0 +1,91 @@
+tree: Events
+dbcache: "2018_UL.db"
+eras:
+  '2018':
+    luminosity: 59830.00
+samples:
+  TTToSemiLeptonic:
+    cross-section: 306.137405
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_TTbar_TTToSemiLeptonic.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: TTToSemiLeptonic
+
+
+
+
+plotIt:
+  configuration:
+    width: 800
+    height: 600
+    luminosity-label: '%1$.2f fb^{-1} (13 TeV)'
+    experiment: CMS
+    extra-label: Work in progress
+    luminosity-error: 0.027
+    show-overflow: true
+    error-fill-style: 3154
+    error-fill-color: "#ee556270"
+    ratio-fit-error-fill-style: 1001
+    ratio-fit-error-fill-color: "#aa556270"
+    ratio-fit-line-color: "#0B486B"
+  legend:
+    position: [0.7, 0.6, 0.91, 0.91]
+  groups:
+    data:
+      legend: Data
+    # signal:
+    #   legend: Signal
+    DY:
+      legend: DY
+      fill-color: "#F9D01A"
+    Diboson_WW:
+      legend: Diboson_WW
+      fill-color: "#224BE3"
+    Diboson_WZ:
+      legend: Diboson_WZ
+      fill-color: "#2288E3"
+    Diboson_ZZ:
+      legend: Diboson_ZZ
+      fill-color: "#22DDE3"
+    TTToHadronic:
+      legend: TTToHadronic
+      fill-color: "#51ed6b"
+    TTTo2L2Nu:
+      legend: TTTo2L2Nu
+      fill-color: "#8ded51"
+    TTToSemiLeptonic:
+      legend: TTToSemiLeptonic
+      fill-color: "#5eb329"
+    WJetsToQQ:
+      legend: WJetsToQQ
+      fill-color: "#B722E3"
+    WJetsToLNu:
+      legend: WJetsToLNu
+      fill-color: "#7D22E3"
+    ZJetsToQQ:
+      legend: ZJetsToQQ
+      fill-color: "#F91AEB"
+    SingleTop:
+      legend: SingleTop
+      fill-color: "#F48841"
+    DY:
+      legend: DY
+      fill-color: "#F4EA10"
+    QCD:
+      legend: QCD
+      fill-color: "#F1425A"
+
+  plotdefaults:
+    no-data: False
+    y-axis: Events
+    log-y: both
+    y-axis-show-zero: True
+    save-extensions: [pdf, png]
+    show-ratio: True
+    sort-by-yields: True
+    rebins: 4
+
+
+

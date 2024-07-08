@@ -1,0 +1,440 @@
+tree: Events
+dbcache: "2018_UL.db"
+eras:
+  '2018':
+    luminosity: 59830.00
+samples:
+  SingleMuon_Run2018A:
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_SingleMu2018_SingleMuon_Run2018A.txt
+    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
+    era: '2018'
+    type: data
+    split: 20
+    group: data
+  SingleMuon_Run2018B:
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_SingleMu2018_SingleMuon_Run2018B.txt
+    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
+    era: '2018'
+    type: data
+    split: 20
+    group: data
+  SingleMuon_Run2018C:
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_SingleMu2018_SingleMuon_Run2018C.txt
+    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
+    era: '2018'
+    type: data
+    split: 20
+    group: data
+  SingleMuon_Run2018D:
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_SingleMu2018_SingleMuon_Run2018C.txt
+    certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
+    era: '2018'
+    type: data
+    split: 20
+    group: data
+
+  TTToSemiLeptonic:
+    cross-section: 306.137405
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_TTbar_TTToSemiLeptonic.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: TTToSemiLeptonic
+  TTTo2L2Nu:
+    cross-section: 77.1097975
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_TTbar_TTTo2L2Nu.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: TTTo2L2Nu
+  TTToHadronic:
+    cross-section: 303.8527975
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_TTbar_TTToHadronic.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: TTToHadronic
+
+  Diboson_ZZ:
+    cross-section: 12.14
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_Diboson_ZZ.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: Diboson_ZZ
+  Diboson_WW:
+    cross-section: 75.83
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_Diboson_WW.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: Diboson_WW
+  Diboson_WZ:
+    cross-section: 27.56
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_Diboson_WZ.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: Diboson_WZ
+
+  WJetsToQQ_HT-400to600:
+    cross-section: 277.0
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_WJetsToQQ_WJetsToQQ_HT-400to600.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: WJetsToQQ
+  WJetsToQQ_HT-600to800:
+    cross-section: 59.06
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_WJetsToQQ_WJetsToQQ_HT-600to800.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: WJetsToQQ
+  WJetsToQQ_HT-800toInf:
+    cross-section: 28.75
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_WJetsToQQ_WJetsToQQ_HT-800toInf.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: WJetsToQQ
+
+  WJetsToLNu_HT-70To100:
+    cross-section: 1270.0
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_WJetsToLNu_WJetsToLNu_HT-70To100.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: WJetsToLNu
+  WJetsToLNu_HT-100To200:
+    cross-section: 1252.0
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_WJetsToLNu_WJetsToLNu_HT-100To200.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: WJetsToLNu
+  WJetsToLNu_HT-200To400:
+    cross-section: 336.5
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_WJetsToLNu_WJetsToLNu_HT-200To400.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: WJetsToLNu   
+  WJetsToLNu_HT-400To600:
+    cross-section: 45.12
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_WJetsToLNu_WJetsToLNu_HT-400To600.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: WJetsToLNu  
+  WJetsToLNu_HT-600To800:
+    cross-section: 10.99
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_WJetsToLNu_WJetsToLNu_HT-600To800.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: WJetsToLNu  
+  WJetsToLNu_HT-800To1200:
+    cross-section: 4.938
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_WJetsToLNu_WJetsToLNu_HT-800To1200.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: WJetsToLNu  
+  WJetsToLNu_HT-1200To2500:
+    cross-section: 1.155
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_WJetsToLNu_WJetsToLNu_HT-1200To2500.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: WJetsToLNu 
+  WJetsToLNu_HT-2500ToInf:
+    cross-section: 0.02625
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_WJetsToLNu_WJetsToLNu_HT-2500ToInf.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: WJetsToLNu 
+
+
+  ZJetsToQQ_HT-400to600:
+    cross-section: 114.5
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_ZJetsToQQ_ZJetsToQQ_HT-400to600.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: ZJetsToQQ
+  ZJetsToQQ_HT-600to800:
+    cross-section: 25.41
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_ZJetsToQQ_ZJetsToQQ_HT-600to800.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: ZJetsToQQ
+  ZJetsToQQ_HT-800toInf:
+    cross-section: 12.91
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_ZJetsToQQ_ZJetsToQQ_HT-800toInf.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: ZJetsToQQ
+
+  DYJetsToLL_Pt-50To100:
+    cross-section: 398.8
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_DYJetsToLL_DYJetsToLL_Pt-50To100.txt 
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: DY
+  DYJetsToLL_Pt-100To250:
+    cross-section: 93.61
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_DYJetsToLL_DYJetsToLL_Pt-100To250.txt 
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: DY
+  DYJetsToLL_Pt-250To400:
+    cross-section: 3.67
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_DYJetsToLL_DYJetsToLL_Pt-250To400.txt 
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: DY
+  DYJetsToLL_Pt-400To650:
+    cross-section: 0.5
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_DYJetsToLL_DYJetsToLL_Pt-400To650.txt 
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: DY
+  DYJetsToLL_Pt-650ToInf:
+    cross-section: 0.04704
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_DYJetsToLL_DYJetsToLL_Pt-650ToInf.txt 
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: DY    
+
+  SingleTop_ST_s-channel_4f_leptonDecays:
+    cross-section: 1.188915
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_SingleTop_ST_s-channel_4f_leptonDecays.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: SingleTop
+  SingleTop_ST_tW_antitop_5f_inclusiveDecays:
+    cross-section: 32.51
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_SingleTop_ST_tW_antitop_5f_inclusiveDecays.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: SingleTop
+  # SingleTop_ST_tW_antitop_5f_NoFullyHadronicDecays:
+  #   cross-section: 10.89085
+  #   era: '2018'
+  #   type: mc
+  #   files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_SingleTop_ST_tW_antitop_5f_NoFullyHadronicDecays.txt
+  #   generated-events: genEventSumw
+  #   split: 20
+  #   group: SingleTop
+  SingleTop_ST_tW_top_5f_inclusiveDecays:
+    cross-section: 32.45
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_SingleTop_ST_tW_top_5f_inclusiveDecays.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: SingleTop
+  # SingleTop_ST_tW_top_5f_NoFullyHadronicDecays:
+  #   cross-section: 10.87075
+  #   era: '2018'
+  #   type: mc
+  #   files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_SingleTop_ST_tW_top_5f_NoFullyHadronicDecays.txt
+  #   generated-events: genEventSumw
+  #   split: 20
+  #   group: SingleTop
+  
+  QCD_Pt_170to300:
+    cross-section: 103500.0
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_QCD_QCD_Pt_170to300.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: QCD
+  QCD_Pt_300to470:
+    cross-section: 6833.0
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_QCD_QCD_Pt_300to470.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: QCD
+  QCD_Pt_470to600:
+    cross-section: 549.5
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_QCD_QCD_Pt_470to600.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: QCD
+  QCD_Pt_600to800:
+    cross-section: 156.5
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_QCD_QCD_Pt_600to800.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: QCD
+  QCD_Pt_800to1000:
+    cross-section: 26.22
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_QCD_QCD_Pt_800to1000.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: QCD
+  QCD_Pt_1000to1400:
+    cross-section: 7.475
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_QCD_QCD_Pt_1000to1400.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: QCD
+  QCD_Pt_1400to1800:
+    cross-section: 0.6482
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_QCD_QCD_Pt_1400to1800.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: QCD
+  QCD_Pt_1800to2400:
+    cross-section: 0.08742
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_QCD_QCD_Pt_1800to2400.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: QCD
+  QCD_Pt_2400to3200:
+    cross-section: 0.005237
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_QCD_QCD_Pt_2400to3200.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: QCD
+  QCD_Pt_3200toInf:
+    cross-section: 0.0001353
+    files: /eos/user/a/atalierc/samples_DM/all_samples_2018_DM/file_2018_v2_2_QCD_QCD_Pt_3200toInf.txt
+    era: '2018'
+    type: mc
+    generated-events: genEventSumw
+    split: 20
+    group: QCD
+
+
+
+
+plotIt:
+  configuration:
+    width: 800
+    height: 600
+    luminosity-label: '%1$.2f fb^{-1} (13 TeV)'
+    experiment: CMS
+    extra-label: Work in progress
+    luminosity-error: 0.027
+    show-overflow: true
+    error-fill-style: 3154
+    error-fill-color: "#ee556270"
+    ratio-fit-error-fill-style: 1001
+    ratio-fit-error-fill-color: "#aa556270"
+    ratio-fit-line-color: "#0B486B"
+  legend:
+    position: [0.7, 0.6, 0.91, 0.91]
+  groups:
+    data:
+      legend: Data
+    # signal:
+    #   legend: Signal
+    DY:
+      legend: DY
+      fill-color: "#F9D01A"
+    Diboson_WW:
+      legend: Diboson_WW
+      fill-color: "#224BE3"
+    Diboson_WZ:
+      legend: Diboson_WZ
+      fill-color: "#2288E3"
+    Diboson_ZZ:
+      legend: Diboson_ZZ
+      fill-color: "#22DDE3"
+    TTToHadronic:
+      legend: TTToHadronic
+      fill-color: "#51ed6b"
+    TTTo2L2Nu:
+      legend: TTTo2L2Nu
+      fill-color: "#8ded51"
+    TTToSemiLeptonic:
+      legend: TTToSemiLeptonic
+      fill-color: "#5eb329"
+    WJetsToQQ:
+      legend: WJetsToQQ
+      fill-color: "#B722E3"
+    WJetsToLNu:
+      legend: WJetsToLNu
+      fill-color: "#7D22E3"
+    ZJetsToQQ:
+      legend: ZJetsToQQ
+      fill-color: "#F91AEB"
+    SingleTop:
+      legend: SingleTop
+      fill-color: "#F48841"
+    DY:
+      legend: DY
+      fill-color: "#F4EA10"
+    QCD:
+      legend: QCD
+      fill-color: "#F1425A"
+
+  plotdefaults:
+    no-data: False
+    y-axis: Events
+    log-y: both
+    y-axis-show-zero: True
+    save-extensions: [pdf, png]
+    show-ratio: True
+    sort-by-yields: True
+    rebins: 4
+
+
+

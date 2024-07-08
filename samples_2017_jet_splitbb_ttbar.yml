@@ -1,0 +1,137 @@
+tree: Events
+dbcache: "2018_UL.db"
+eras:
+  '2017':
+    luminosity: 41480.0
+
+samples:
+#  TTTo2L2Nu: 
+#    cross-section: 77.10979749999998 
+#    files: file_paths/2017/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8.txt
+#    era: '2017'
+#    type: mc
+#    generated-events: genEventSumw
+#    split: -10
+#    group: TTbar
+#  TTToHadronic: 
+#    cross-section: 303.8527975
+#    files: file_paths/2017/TTToHadronic_TuneCP5_13TeV-powheg-pythia8.txt
+#    era: '2017'
+#    type: mc
+#    generated-events: genEventSumw
+#    split: -10
+#    group: TTbar
+  WJetsToQQ_HT-800toInf:
+    cross-section: 28.75
+    files: file_paths/2017/WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -10
+    group: WJetsToQQ
+    order: 3
+  TTToSemiLeptonic:
+    cross-section: 306.137405
+    files: file_paths/2017/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8.txt
+    era: '2017'
+    type: mc
+    generated-events: genEventSumw
+    split: -10
+    group: TTbar
+plotIt:
+  configuration:
+    width: 800
+    height: 800
+    luminosity-label: '%1$.2f fb^{-1} (13 TeV)'
+    experiment: CMS
+    extra-label: Work in progress
+    luminosity-error: 0.027
+    show-overflow: true
+    error-fill-style: 3154
+    error-fill-color: "#ee556270"
+    ratio-fit-error-fill-style: 1001
+    ratio-fit-error-fill-color: "#aa556270"
+    ratio-fit-line-color: "#0B486B"
+  legend:
+    position: [0.7, 0.6, 0.91, 0.91]
+  groups:
+    data:
+      legend: Data
+    JetHT:
+      legend: Data
+    # signal:
+    #   legend: Signal
+    SingleTop:
+      legend: t
+      fill-color: "#ffac12"
+    Diboson_WW:
+      legend: Diboson_WW
+      fill-color: "#224BE3"
+    Diboson_WZ:
+      legend: Diboson_WZ
+      fill-color: "#2288E3"
+    Diboson_ZZ:
+      legend: Diboson_ZZ
+      fill-color: "#22DDE3"
+    Diboson:
+      legend: Diboson
+      fill-color: "#22DDE3"
+
+    TTbar:
+      legend: \mathrm{t\bar{t}}
+      fill-color: "#da96ff"
+    #TTToHadronic:
+    #  legend: TTToHadronic
+    #  fill-color: "#f595b4"
+    #TTToSemiLeptonic:
+    #  legend: TTToSemiLeptonic
+    #  fill-color: "#ff96f1"
+    WJetsToQQ:
+      legend: W(qq')
+      fill-color: "#B722E3"
+    WJetsToLNu:
+      legend: W(\ell\nu)
+      fill-color: "#ffcc66"
+    HiggsToBB:
+      legend: H(bb)
+      fill-color: "#C30010"
+    ZJetsToQQ:
+      legend: Z(qq)
+      fill-color: "#51ed6b"
+    #ZJetsToCC:
+    #  legend: Z(cc)
+    #  fill-color: "#eda532"
+    ZJetsToBB:
+      legend: Z(bb)
+      fill-color: "#6782a8"
+    #SingleTop:
+    #  legend: SingleTop
+    #  fill-color: "#F48841"
+    DYJetsToLL:
+      legend: DY
+      fill-color: "#ffabc3"
+    QCD:
+      legend: QCD multijet
+      fill-color: "#10b7f4"
+    DY:
+      legend: DY
+      fill-color: "#F9D01A"
+
+  plotdefaults:
+    no-data: False
+    y-axis: Events
+    log-y: both
+    y-axis-show-zero: True
+    save-extensions: [png,pdf]
+    show-ratio: True
+    sort-by-yields: True
+    rebins: 4
+    legend-columns: 1
+    #labels : ["A","B","C","D"]
+    #legend-position: [0.6,0.6,1.2,0.9] 
+    #    x1 : 0.5
+    #    x2 : 0.8
+    #    y1 : 0.5
+    #    y2 : 0.8
+  
+
