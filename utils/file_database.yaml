@@ -1,0 +1,688 @@
+JetHT: 
+  is_mc : False
+  split : -30
+  cut : "&&(event%10==0)"
+  is_blinded : True
+  "2016APV":
+    JetHT_Run2016B_ver2_HIPM:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/JetHT2016/JetHT/JetHT_Run2016B_ver2_HIPM/220701_193532/0000
+    JetHT_Run2016C_HIPM:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/JetHT2016/JetHT/JetHT_Run2016C_HIPM/220701_193745/0000
+    - /store/group/lpcpfnano/rkansal/v2_3/2016/JetHT2016/JetHT/JetHT_Run2016C_HIPM/240313_161416/0000
+    JetHT_Run2016D_HIPM:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/JetHT2016/JetHT/JetHT_Run2016D_HIPM/220701_193811/0000
+    JetHT_Run2016E_HIPM:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/JetHT2016/JetHT/JetHT_Run2016E_HIPM/220701_193836/0000
+    JetHT_Run2016F_HIPM: 
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/JetHT2016/JetHT/JetHT_Run2016F_HIPM/220701_193559/0000
+  "2016" :  
+    JetHT_Run2016F:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/JetHT2016/JetHT/JetHT_Run2016F/220701_193506/0000
+    JetHT_Run2016G:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/JetHT2016/JetHT/JetHT_Run2016G/220701_193626/0000
+    JetHT_Run2016H:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/JetHT2016/JetHT/JetHT_Run2016H/220801_140806/0000
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/JetHT2016/JetHT/JetHT_Run2016H/220701_193717/0000 
+  "2017" : 
+    JetHT_Run2017B : 
+    - /store/group/lpcpfnano/cmantill/v2_3/2017/JetHT2017/JetHT/JetHT_Run2017B/220701_194050/0000
+    - /store/group/lpcpfnano/rkansal/v2_3/2017/JetHT2017/JetHT/JetHT_Run2017B/240313_161752/0000
+    JetHT_Run2017C : 
+    - /store/group/lpcpfnano/cmantill/v2_3/2017/JetHT2017/JetHT/JetHT_Run2017C/220701_194023/0000
+    JetHT_Run2017D : 
+    - /store/group/lpcpfnano/cmantill/v2_3/2017/JetHT2017/JetHT/JetHT_Run2017D/220701_193930/0000
+    - /store/group/lpcpfnano/rkansal/v2_3/2017/JetHT2017/JetHT/JetHT_Run2017D/240313_161628/0000
+    JetHT_Run2017E : 
+    #- /store/group/lpcpfnano/dryu/v2_3_2/2017/JetHT2017/JetHT/JetHT_Run2017E/240226_233643/0000
+    - /store/group/lpcpfnano/cmantill/v2_3/2017/JetHT2017/JetHT/JetHT_Run2017E/220701_193905/0000
+    - /store/group/lpcpfnano/rkansal/v2_3/2017/JetHT2017/JetHT/JetHT_Run2017E/240313_161541/0000 
+    JetHT_Run2017F : 
+    - /store/group/lpcpfnano/cmantill/v2_3/2017/JetHT2017/JetHT/JetHT_Run2017F/220701_193956/0000
+    - /store/group/lpcpfnano/cmantill/v2_3/2017/JetHT2017/JetHT/JetHT_Run2017F/220701_193956/0001
+    - /store/group/lpcpfnano/rkansal/v2_3/2017/JetHT2017/JetHT/JetHT_Run2017F/240313_161657/0000
+  "2018" : 
+    JetHT_Run2018A : 
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/JetHT2018/JetHT/JetHT_Run2018A/220701_194145/0000
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/JetHT2018/JetHT/JetHT_Run2018A/220701_194145/0001 
+    JetHT_Run2018B : 
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/JetHT2018/JetHT/JetHT_Run2018B/220701_194212/0000
+    JetHT_Run2018C :
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/JetHT2018/JetHT/JetHT_Run2018C/220701_194237/0000
+    - /store/group/lpcpfnano/rkansal/v2_3/2018/JetHT2018/JetHT/JetHT_Run2018C/240313_164852/0000
+    JetHT_Run2018D : 
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/JetHT2018/JetHT/JetHT_Run2018D/220801_141548/0000
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/JetHT2018/JetHT/JetHT_Run2018D/220801_141548/0001
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/JetHT2018/JetHT/JetHT_Run2018D/220801_141548/0002
+    - /store/group/lpcpfnano/rkansal/v2_3/2018/JetHT2018/JetHT/JetHT_Run2018D/240313_164019/0000/
+SingleMuon: 
+  is_mc : False
+  split : -30
+  cut : ""
+  is_blinded : False
+  "2016APV":
+    SingleMuon_Run2016B_ver2_HIPM:
+    - /store/user/lpcpfnano/dryu/v2_2_1/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016B_ver2_HIPM/220108_003536/0000
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016B_ver2_HIPM/230610_145537/0000
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016B_ver2_HIPM/230620_214931/0000
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016B_ver2_HIPM/240303_182822/0000
+    SingleMuon_Run2016C_HIPM:
+    - /store/user/lpcpfnano/dryu/v2_2_1/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016C_HIPM/220108_003310
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016C_HIPM/230610_145617/0000
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016C_HIPM/230620_214900/0000
+    SingleMuon_Run2016D_HIPM:
+    - /store/user/lpcpfnano/dryu/v2_2_1/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016D_HIPM/220108_003447
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016D_HIPM/230610_145658/0000
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016D_HIPM/230620_215031/0000
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016D_HIPM/240303_183020/0000
+    SingleMuon_Run2016E_HIPM:
+    - /store/user/lpcpfnano/dryu/v2_2_1/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016E_HIPM/220108_003423
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016E_HIPM/230610_145638/0000
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016E_HIPM/230620_215002/0000
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016E_HIPM/240303_182952/0000
+    SingleMuon_Run2016F_HIPM: 
+    - /store/user/lpcpfnano/dryu/v2_2_1/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016F_HIPM/220111_204305
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016F_HIPM/230610_145454/0000
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016F_HIPM/230620_214831/0000
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016F_HIPM/240303_182849/0000
+    
+  "2016" :  
+    SingleMuon_Run2016F:
+    - /store/user/lpcpfnano/dryu/v2_2_1/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016F/220108_003358
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016F/230610_145432/0000
+    SingleMuon_Run2016G:
+    - /store/user/lpcpfnano/dryu/v2_2_1/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016G/220108_003334
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016G/230610_145407/0000
+    SingleMuon_Run2016H:
+    - /store/user/lpcpfnano/dryu/v2_2_1/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016H/220108_003511
+    #- /store/group/lpcpfnano/rkansal/v2_3/2016/SingleMu2016/SingleMuon/SingleMuon_Run2016H/230610_145516/0000
+  "2017" : 
+    SingleMuon_Run2017B : 
+    - /store/user/lpcpfnano/dryu/v2_2_1/2017/SingleMu2017/SingleMuon/SingleMuon_Run2017B/220108_000944/0000
+    SingleMuon_Run2017C : 
+    - /store/user/lpcpfnano/dryu/v2_2_1/2017/SingleMu2017/SingleMuon/SingleMuon_Run2017C/220108_001010/0000
+    SingleMuon_Run2017D : 
+    - /store/user/lpcpfnano/dryu/v2_2_1/2017/SingleMu2017/SingleMuon/SingleMuon_Run2017D/220108_001036/0000
+    SingleMuon_Run2017E : 
+    - /store/user/lpcpfnano/dryu/v2_2_1/2017/SingleMu2017/SingleMuon/SingleMuon_Run2017E/220108_001102/0000
+    SingleMuon_Run2017F : 
+    - /store/user/lpcpfnano/dryu/v2_2_1/2017/SingleMu2017/SingleMuon/SingleMuon_Run2017F/220108_001127/0000
+  "2018" : 
+    SingleMuon_Run2018A :
+    - /store/user/lpcpfnano/dryu/v2_2/2018/SingleMu2018/SingleMuon/SingleMuon_Run2018A/211102_163107/0000 
+    SingleMuon_Run2018B :
+    - /store/user/lpcpfnano/dryu/v2_2/2018/SingleMu2018/SingleMuon/SingleMuon_Run2018B/211102_163148/0000
+    SingleMuon_Run2018C :
+    - /store/user/lpcpfnano/dryu/v2_2/2018/SingleMu2018/SingleMuon/SingleMuon_Run2018C/211102_163128/0000
+    SingleMuon_Run2018D :
+    - /store/user/lpcpfnano/dryu/v2_2/2018/SingleMu2018/SingleMuon/SingleMuon_Run2018D/211102_163209/0000
+    - /store/user/lpcpfnano/dryu/v2_2/2018/SingleMu2018/SingleMuon/SingleMuon_Run2018D/211102_163209/0001
+
+Diboson :
+  is_mc : True
+  split : -30
+  cut : ""
+  is_blinded : False
+  "2016APV" :
+    WW_TuneCP5_13TeV-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_2/2016APV/Diboson/WW_TuneCP5_13TeV-pythia8/WW/220310_211306/0000
+    WZ_TuneCP5_13TeV-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_2/2016APV/Diboson/WZ_TuneCP5_13TeV-pythia8/WZ/220310_211323/0000
+    ZZ_TuneCP5_13TeV-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_2/2016APV/Diboson/ZZ_TuneCP5_13TeV-pythia8/ZZ/220310_211340/0000
+  "2016" :
+    WW_TuneCP5_13TeV-pythia8 :  
+    - /store/group/lpcpfnano/jdickins/v2_2/2016/Diboson/WW_TuneCP5_13TeV-pythia8/WW/220310_204910/0000 
+    WZ_TuneCP5_13TeV-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_2/2016/Diboson/WZ_TuneCP5_13TeV-pythia8/WZ/220310_204927/0000 
+    ZZ_TuneCP5_13TeV-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_2/2016/Diboson/ZZ_TuneCP5_13TeV-pythia8/ZZ/220310_204944/0000
+  "2017" :
+    WW_TuneCP5_13TeV-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_2/2017/Diboson/WW_TuneCP5_13TeV-pythia8/WW/220310_210655/0000
+    WZ_TuneCP5_13TeV-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_2/2017/Diboson/WZ_TuneCP5_13TeV-pythia8/WZ/220310_210712/0000
+    ZZ_TuneCP5_13TeV-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_2/2017/Diboson/ZZ_TuneCP5_13TeV-pythia8/ZZ/220310_210733/0000
+  "2018" :
+    WW_TuneCP5_13TeV-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_2/2018/Diboson/WW_TuneCP5_13TeV-pythia8/WW/220310_201228/0000
+    WZ_TuneCP5_13TeV-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_2/2018/Diboson/WZ_TuneCP5_13TeV-pythia8/WZ/220310_201245/0000
+    ZZ_TuneCP5_13TeV-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_2/2018/Diboson/ZZ_TuneCP5_13TeV-pythia8/ZZ/220314_153133/0000
+  
+
+VectorZPrime:
+  is_mc : True
+  split : -30
+  cut : ""
+  is_blinded : False
+
+  "2016APV" : 
+    VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M50/220103_165218/0000
+    VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M75/220103_165751/0000
+    VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M100/220103_165123/0000
+    VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M125/220103_165504/0000
+    VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M150/220103_164931/0000
+    VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M175/220103_165655/0000
+    VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M200/220103_171407/0000
+    VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M225/220103_165409/0000
+    VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M250/220103_165846/0000
+    VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M300/220103_164739/0000
+
+  "2016" : 
+    VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M50/220103_175816/0000
+    VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M75/220103_175959/0000
+    VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M100/220103_175759/0000
+    VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M125/220103_175908/0000
+    VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M150/220103_175722/0000
+    VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M175/220103_175942/0000
+    VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M200/220105_193844/0000
+    VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M225/220103_175850/0000
+    VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M250/220103_180018/0000
+    VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M300/220105_193910/0000
+  
+  "2017" :
+    VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M50/220103_174825/0000 
+    VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M75//220103_175550/0000
+    VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M100//220103_174729/0000
+    VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M125/220103_175115/0000
+    VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M150//220103_174536/0000
+    VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M175/220103_175310/0000
+    VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M200/220103_174246/0000
+    VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M225/220103_175017/0000
+    VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M250/220103_175650/0000
+    VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M300/220103_174344/0000
+
+  "2018" :
+    VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M50/220103_182907/0000
+    VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M75/220103_183051/0000
+    VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M100/220103_182850/0000
+    VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M125/220103_182959/0000
+    VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M150/220103_182814/0000
+    VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M175/220103_183033/0000
+    VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M200/220103_182724/0000
+    VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M225/220103_182942/0000
+    VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M250/220103_183108/0000
+    VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M300/220103_182741/0000
+
+
+Higgs:
+  is_mc : True
+  split : -30
+  cut : ""
+  is_blinded : False
+
+  "2016APV":
+    GluGluHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016APV/GluGluHToBB/GluGluHToBB_Pt-200ToInf_M-125_TuneCP5_MINLO_13TeV-powheg-pythia8/GluGluHToBB/220322_131919/0000 
+    VBFHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016APV/VBFHToBB/VBFHToBB_M-125_TuneCP5_13TeV-powheg-pythia8/VBFHToBB/220315_175407/0000/
+    ttHtoBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016APV/ttHToBB/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/ttHToBB/220310_211355/0000/
+    ZHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016APV/ZHToBB/ZH_HToBB_ZToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/ZH_HToBB_ZToQQ/220404_153456/0000/
+    ggZHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016APV/ZHToBB/ggZH_HToBB_ZToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/ggZH_HToBB_ZToQQ/220404_153523/0000
+    WminusHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016APV/WHToBB/WminusH_HToBB_WToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/WminusH_HToBB_WToQQ/220527_132228/0000/
+    WplusHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016APV/WHToBB/WplusH_HToBB_WToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/WplusH_HToBB_WToQQ/220527_132211/0000/
+ 
+  "2016" : 
+    GluGluHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016/GluGluHToBB/GluGluHToBB_Pt-200ToInf_M-125_TuneCP5_MINLO_13TeV-powheg-pythia8/GluGluHToBB/220322_131604/0000 
+    VBFHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016/VBFHToBB/VBFHToBB_M-125_TuneCP5_13TeV-powheg-pythia8/VBFHToBB/220310_204959/0000
+    ttHtoBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016/ttHToBB/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/ttHToBB/220310_205015/0000
+    ZHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016/ZHToBB/ZH_HToBB_ZToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/ZH_HToBB_ZToQQ/220404_153921/0000/
+    ggZHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016/ZHToBB/ggZH_HToBB_ZToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/ggZH_HToBB_ZToQQ/220404_153947/0000
+    WminusHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016/WHToBB/WminusH_HToBB_WToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/WminusH_HToBB_WToQQ/220527_131914/0000
+    WplusHToBB:
+    - /store/user/lpcpfnano/jdickins/v2_2/2016/WHToBB/WplusH_HToBB_WToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/WplusH_HToBB_WToQQ/220527_131857/0000
+
+  "2017" : 
+    GluGluHToBB:
+    - /store/group/lpcpfnano/rkansal/v2_3/2017/GluGluHToBB/GluGluHToBB_Pt-200ToInf_M-125_TuneCP5_MINLO_13TeV-powheg-pythia8/GluGluHToBB/220926_153209/0000/
+    VBFHToBB:
+    - /store/group/lpcpfnano/jdickins/v2_2/2017/VBFHToBB/VBFHToBB_M-125_TuneCP5_13TeV-powheg-pythia8/VBFHToBB/220407_194344/0000
+    ttHtoBB:
+    - /store/group/lpcpfnano/jdickins/v2_2/2017/ttHToBB/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/ttHToBB/220310_210749/0000 
+    ZHToBB:
+    - /store/group/lpcpfnano/jdickins/v2_2/2017/ZHToBB/ZH_HToBB_ZToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/ZH_HToBB_ZToQQ/220404_154206/0000
+    ggZHToBB:
+    - /store/group/lpcpfnano/jdickins/v2_2/2017/ZHToBB/ggZH_HToBB_ZToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/ggZH_HToBB_ZToQQ/220404_154230/0000
+    WminusHToBB:
+    - /store/group/lpcpfnano/jdickins/v2_2/2017/WHToBB/WminusH_HToBB_WToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/WminusH_HToBB_WToQQ/220528_123648/0000
+    WplusHToBB:
+    - /store/group/lpcpfnano/jdickins/v2_2/2017/WHToBB/WplusH_HToBB_WToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/WplusH_HToBB_WToQQ/220527_132408/0000/
+    
+  "2018":
+    GluGluHToBB:
+    - /store/user/lpcpfnano/rkansal/v2_3/2018/GluGluHToBB/GluGluHToBB_Pt-200ToInf_M-125_TuneCP5_MINLO_13TeV-powheg-pythia8/GluGluHToBB/220926_153236/0000/
+    VBFHToBB:
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/HToBB/VBFHToBB_M-125_TuneCP5_13TeV-powheg-pythia8/VBFHToBB/230217_202436/0000
+    ttHtoBB:
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/HToBB/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/ttHToBB/230217_202347/0000
+    ZHToBB:
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/HToBB/ZH_HToBB_ZToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/ZH_HToBB_ZToQQ/230217_202420/0000
+    ggZHToBB:
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/HToBB/ggZH_HToBB_ZToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/ggZH_HToBB_ZToQQ/230217_202314/0000
+    WminusHToBB:
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/HToBB/WminusH_HToBB_WToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/WminusH_HToBB_WToQQ/230217_202403/0000
+    WplusHToBB:
+    - /store/group/lpcpfnano/cmantill/v2_3/2018/HToBB/WplusH_HToBB_WToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/WplusH_HToBB_WToQQ/230217_202330/0000
+
+SingleTop: 
+  is_mc : True
+  split : -30
+  cut : ""
+  is_blinded : False
+
+  "2016APV" :
+    ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016APV/SingleTop/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/ST_tW_antitop_5f_inclusiveDecays/220808_173235/0000
+    ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016APV/SingleTop/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/ST_tW_top_5f_inclusiveDecays/220808_173444/0000/
+    ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016APV/SingleTop/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/ST_t-channel_antitop_4f_InclusiveDecays/220808_173302/0000
+    ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016APV/SingleTop/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/ST_t-channel_top_4f_InclusiveDecays/220808_173353/0000
+
+  "2016" :
+    ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/SingleTop/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/ST_tW_antitop_5f_inclusiveDecays/220808_181748/0000/
+    ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/SingleTop/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/ST_tW_top_5f_inclusiveDecays/220808_181632/0000/
+    ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/SingleTop/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/ST_t-channel_antitop_4f_InclusiveDecays/220808_181515/0000
+    ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/SingleTop/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/ST_t-channel_top_4f_InclusiveDecays/220808_181539/0000
+  "2017" :
+    ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2017/SingleTop/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/ST_tW_antitop_5f_inclusiveDecays/230217_201423/0000
+    ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2017/SingleTop/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/ST_tW_top_5f_inclusiveDecays/230217_201529/0000
+    ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2017/SingleTop/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/ST_t-channel_antitop_4f_InclusiveDecays/230217_201439/0000
+    ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+    - /store/group/lpcpfnano/cmantill/v2_3/2017/SingleTop/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/ST_t-channel_top_4f_InclusiveDecays/230217_201512/0000
+  "2018" : 
+    ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    - /store/user/lpcpfnano/cmantill/v2_3/2018/SingleTop/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/ST_tW_antitop_5f_inclusiveDecays/220808_151129/0000
+    ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
+    - /store/user/lpcpfnano/cmantill/v2_3/2018/SingleTop/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/ST_tW_top_5f_inclusiveDecays/220808_151012/0000
+    ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+    - /store/user/lpcpfnano/cmantill/v2_3/2018/SingleTop/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/ST_t-channel_antitop_4f_InclusiveDecays/220808_150825/0000
+    ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
+    - /store/user/lpcpfnano/cmantill/v2_3/2018/SingleTop/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/ST_t-channel_top_4f_InclusiveDecays/220808_150919/0000
+
+
+
+TTTo2L2Nu:
+  is_mc : True
+  split : -30
+  cut : ""
+  is_blinded : False
+  "2016APV":
+    TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8 :
+    - /store/group/lpcpfnano/cmantill/v2_3/2016APV/TTbar/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/TTTo2L2Nu/220808_173718/0000/
+  "2016":
+    TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8 :
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/TTbar/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/TTTo2L2Nu/220808_181933/0000/
+  "2017" : 
+    TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8 : 
+    - /store/user/lpcpfnano/yihan/v2_2/2017/TTbar/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/TTTo2L2Nu/211105_112519/0000 
+  "2018" : 
+    TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8 :
+    - /store/user/lpcpfnano/cmantill/v2_3/2018/TTbar/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/TTTo2L2Nu/220808_151337/0000
+TTToHadronic:
+  is_mc : True
+  split : -30
+  cut : ""
+  is_blinded : False
+  "2016APV" : 
+    TTToHadronic_TuneCP5_13TeV-powheg-pythia8 :
+    - /store/group/lpcpfnano/cmantill/v2_3/2016APV/TTbar/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/TTToHadronic/220808_173601/0000/
+  "2016" : 
+    TTToHadronic_TuneCP5_13TeV-powheg-pythia8 : 
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/TTbar/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/TTToHadronic/220808_181812/0000
+  "2017" : 
+    TTToHadronic_TuneCP5_13TeV-powheg-pythia8 : 
+    - /store/user/lpcpfnano/drankin/v2_2/2017/TTbar/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/TTToHadronic/211112_132910/0000
+  "2018" : 
+    TTToHadronic_TuneCP5_13TeV-powheg-pythia8 : 
+    - /store/user/lpcpfnano/cmantill/v2_3/2018/TTbar/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/TTToHadronic/220808_151154/0000
+TTToSemiLeptonic:
+  is_mc : True
+  split : -30
+  cut : ""
+  is_blinded : False
+  "2016APV" : 
+    TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8 :
+    - /store/group/lpcpfnano/cmantill/v2_3/2016APV/TTbar/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/TTToSemiLeptonic/220808_173625/0000/
+    - /store/group/lpcpfnano/cmantill/v2_3/2016APV/TTbar/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/TTToSemiLeptonic_ext1/220808_173652/0000/
+  "2016" : 
+    TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8 :
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/TTbar/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/TTToSemiLeptonic/220808_181840/0000/
+    - /store/group/lpcpfnano/cmantill/v2_3/2016/TTbar/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/TTToSemiLeptonic_ext1/220808_181908/0000/
+  "2017" : 
+    TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8 :
+    - /store/group/lpcpfnano/rkansal/v2_3/2017/TTbar/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/TTToSemiLeptonic/220705_160227/0000
+  "2018" :
+    TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8 :
+    - /store/user/lpcpfnano/cmantill/v2_3/2018/TTbar/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/TTToSemiLeptonic/220808_151244/0000
+
+WJetsToLNu:
+  is_mc : True
+  split : -30
+  cut : ""
+  is_blinded : False
+  "2016APV" :
+    WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/WJetsToLNu/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-100To200/230620_223351/0000
+    WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/WJetsToLNu/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-200To400/230714_190231/0000
+    WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/WJetsToLNu/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-400To600/230620_223441/0000
+    WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/WJetsToLNu/WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-600To800/230714_190249/0000
+    WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/WJetsToLNu/WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-800To1200/230523_094827/0000
+    WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/WJetsToLNu/WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-1200To2500/230721_003631/0000
+    WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/WJetsToLNu/WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-2500ToInf/230523_094801/0000
+  "2016" :
+    WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/WJetsToLNu/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-100To200/230523_095456/0000
+    WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/WJetsToLNu/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-200To400/230721_003742/0000
+    WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/WJetsToLNu/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-400To600/230621_222815/0000
+    WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/WJetsToLNu/WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-600To800/230721_003807/0000
+    WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/WJetsToLNu/WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-800To1200/230621_222727/0000
+    WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/WJetsToLNu/WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-1200To2500/230523_095521/0000
+    WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/WJetsToLNu/WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-2500ToInf/230621_222702/0000
+  "2017" :
+    WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/WJetsToLNu/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-100To200/230721_004142/0000
+    WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/WJetsToLNu/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-200To400/230717_135412/0000
+    WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/WJetsToLNu/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-400To600/230621_223646/0000
+    WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/WJetsToLNu/WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-600To800/230721_004232/0000
+    WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/WJetsToLNu/WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-800To1200/230721_004207/0000
+    WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/WJetsToLNu/WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-1200To2500/230531_193526/0000
+    WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/WJetsToLNu/WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-2500ToInf/230621_223508/0000
+  "2018" : 
+    WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/WJetsToLNu/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-100To200/230721_004936/0000
+    WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/WJetsToLNu/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-200To400/230721_005027/0000
+    WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/WJetsToLNu/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-400To600/230717_140026/0000
+    WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/WJetsToLNu/WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-600To800/230621_224154/0000
+    WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/WJetsToLNu/WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-800To1200/230621_224103/0000
+    WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/WJetsToLNu/WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-1200To2500/230721_005001/0000
+    WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/WJetsToLNu/WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-2500ToInf/230621_224039/0000
+
+WJetsToQQ:
+  is_mc : True
+  split : -30
+  cut : ""
+  is_blinded : False
+  "2016" : 
+    WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jekrupa/v2_2/2016/WJetsToQQ/WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-400to600/220110_213006/0000
+    WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jekrupa/v2_2/2016/WJetsToQQ/WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-600to800/220110_212715/0000
+    WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jekrupa/v2_2/2016/WJetsToQQ/WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-800toInf/220110_212841/0000
+  "2016APV" : 
+    WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/jekrupa/v2_2/2016APV/WJetsToQQ/WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-400to600/220110_223108/0000
+    WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/jekrupa/v2_2/2016APV/WJetsToQQ/WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-600to800/220110_222814/0000
+    WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jekrupa/v2_2/2016APV/WJetsToQQ/WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-800toInf/220110_222940/0000
+  "2017" : 
+    WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/WJetsToQQ/WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-400to600/211108_171900/0000
+    WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/WJetsToQQ/WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-600to800/211108_171820/0000
+    WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jekrupa/v2_2/2017/WJetsToQQ/WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-800toInf/211108_171840/0000
+  "2018" : 
+    WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jekrupa/v2_2/2018/WJetsToQQ/WJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-400to600/211111_020528/0000
+    WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jekrupa/v2_2/2018/WJetsToQQ/WJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-600to800/211111_020449/0000
+    WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/jekrupa/v2_2/2018/WJetsToQQ/WJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToQQ_HT-800toInf/220110_211625/0000
+
+QCD_HT:
+  is_mc : True
+  cut : ""
+  is_blinded : False
+  "2016" : 
+    QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2016/QCD/QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8/QCD_HT300to500_JME/230308_001633/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2016/QCD/QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT300to500_SUS/230308_001838/0000
+    QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2016/QCD/QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8/QCD_HT500to700_JME/230308_001820/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2016/QCD/QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT500to700_SUS/230308_001950/0000
+    QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2016/QCD/QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT700to1000_SUS/230308_001709/0000
+    QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2016/QCD/QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8/QCD_HT1000to1500_JME/230308_001802/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2016/QCD/QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT1000to1500_SUS/230308_001651/0000
+    QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2016/QCD/QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8/QCD_HT1500to2000_JME/230308_001856/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2016/QCD/QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT1500to2000_SUS/230308_001557/0000
+    QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/dryu/v2_3/2016/QCD/QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8/QCD_HT2000toInf_JME/230308_001932/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2016/QCD/QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT2000toInf_SUS/230308_001745/0000
+  "2016APV" :
+    QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2016APV/QCD/QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8/QCD_HT300to500_JME/230308_002915/0000
+    QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2016APV/QCD/QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8/QCD_HT500to700_JME/230308_003101/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2016APV/QCD/QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT500to700_SUS/230308_003231/0000
+    QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2016APV/QCD/QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8/QCD_HT700to1000_JME/230308_002804/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2016APV/QCD/QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT700to1000_SUS/230308_002950/0000
+    QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2016APV/QCD/QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8/QCD_HT1000to1500_JME/230308_003044/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2016APV/QCD/QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT1000to1500_SUS/230308_002933/0000
+    QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2016APV/QCD/QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8/QCD_HT1500to2000_JME/230308_003138/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2016APV/QCD/QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT1500to2000_SUS/230308_002839/0000
+    QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/dryu/v2_3/2016APV/QCD/QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraphMLM-pythia8/QCD_HT2000toInf_JME/230308_003213/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2016APV/QCD/QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT2000toInf_SUS/230308_003026/0000
+  "2017" :
+    QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2017/QCD/QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT300to500_JME/230308_003827/0000
+    QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2017/QCD/QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT500to700_JME/230308_004019/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2017/QCD/QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT500to700_SUS/230308_004150/0000
+    QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2017/QCD/QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT700to1000_JME/230308_003716/0000/
+    - /store/user/lpcpfnano/dryu/v2_3/2017/QCD/QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT700to1000_SUS/230308_003904/0000/
+    QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2017/QCD/QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT1000to1500_JME/230308_004002/0000/
+    - /store/user/lpcpfnano/dryu/v2_3/2017/QCD/QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT1000to1500_SUS/230308_003846/0000/
+    QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2017/QCD/QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT1500to2000_JME/230308_004056/0000/
+    - /store/user/lpcpfnano/dryu/v2_3/2017/QCD/QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT1500to2000_SUS/230308_003751/0000/
+    QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/dryu/v2_3/2017/QCD/QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT2000toInf_JME/230308_004132/0000/
+    - /store/user/lpcpfnano/dryu/v2_3/2017/QCD/QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT2000toInf_SUS/230308_003944/0000/
+
+
+  "2018" :
+    QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2018/QCD/QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT300to500_JME/230308_004637/0000
+    QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2018/QCD/QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT500to700_JME/230308_004824/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2018/QCD/QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT500to700_SUS/230308_004954/0000
+    QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2018/QCD/QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT700to1000_JME/230308_004526/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2018/QCD/QCD_HT700to1000_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT700to1000_SUS/230308_004712/0000
+    QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2018/QCD/QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT1000to1500_JME/230308_004807/0000
+    - /store/user/lpcpfnano/dryu/v2_3/2018/QCD/QCD_HT1000to1500_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT1000to1500_SUS/230308_004655/0000
+    QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/dryu/v2_3/2018/QCD/QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT1500to2000_JME/230308_004900/0000
+    - /store/user/lpcpfnano/dryu/v2_3_1/2018/QCD/QCD_HT1500to2000_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT1500to2000_SUS/230328_234827/0000
+    QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/dryu/v2_3/2018/QCD/QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8/QCD_HT2000toInf_JME/230308_004936/0000/
+    - /store/user/lpcpfnano/dryu/v2_3/2018/QCD/QCD_HT2000toInf_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT2000toInf_SUS/230308_004749/0000
+ZJetsToQQ:
+  is_mc : True
+  split : -30
+  cut : ""
+  is_blinded : False
+  "2016" : 
+    ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/cmantill/v2_3/2016/ZJetsToQQ/ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-400to600/220808_182140/0000
+    ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/cmantill/v2_3/2016/ZJetsToQQ/ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-600to800/220808_182229/0000
+    ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/cmantill/v2_3/2016/ZJetsToQQ/ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-800toInf/220808_182204/0000
+  "2016APV" :
+    ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/cmantill/v2_3/2016APV/ZJetsToQQ/ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-400to600/220808_173950/0000
+    ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/cmantill/v2_3/2016APV/ZJetsToQQ/ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-600to800/220808_174015/0000
+    ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/cmantill/v2_3/2016APV/ZJetsToQQ/ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-800toInf/220808_173925/0000
+  "2017" :
+    ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/rkansal/v2_3/2017/ZJetsToQQ/ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-400to600/220705_160451/0000
+    ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/rkansal/v2_3/2017/ZJetsToQQ/ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-600to800/220705_160538/0000
+    ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/rkansal/v2_3/2017/ZJetsToQQ/ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-800toInf/220705_160514/0000
+  "2018" :
+    ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8 : 
+    - /store/user/lpcpfnano/cmantill/v2_3/2018/ZJetsToQQ/ZJetsToQQ_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-400to600/220808_151601/0000
+    ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/cmantill/v2_3/2018/ZJetsToQQ/ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-600to800/220808_151653/0000
+    ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/cmantill/v2_3/2018/ZJetsToQQ/ZJetsToQQ_HT-800toInf_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-800toInf/220808_151628/0000
+
+DYJetsToLL:
+  is_mc : True
+  split : -30
+  cut : ""
+  is_blinded : False
+  "2016APV" : 
+    DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/DYJetsToLL/DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-200to400/230621_221756/0000
+    DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/DYJetsToLL/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-400to600/230620_223301/0000
+    DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/DYJetsToLL/DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-600to800/230620_223318/0000
+    DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/DYJetsToLL/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-800to1200/230620_223227/0000
+    DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/DYJetsToLL/DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-1200to2500/230620_223209/0000
+    DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2016APV/DYJetsToLL/DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-2500toInf/230620_223335/0000 
+  "2016" : 
+    DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/DYJetsToLL/DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-200to400/230621_222614/0000
+    DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/DYJetsToLL/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-400to600/230621_222459/0000
+    DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/DYJetsToLL/DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-600to800/230621_222549/0000
+    DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/DYJetsToLL/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-800to1200/230621_222638/0000
+    DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/DYJetsToLL/DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-1200to2500/230621_222524/0000
+    DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2016/DYJetsToLL/DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-2500toInf/230523_095429/0000
+  "2017" : 
+    DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8 :
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/DYJetsToLL/DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-200to400/230721_004028/0000
+    DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/DYJetsToLL/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-400to600/230621_223305/0000
+    DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/DYJetsToLL/DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-600to800/230621_223150/0000
+    DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/DYJetsToLL/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-800to1200/230621_223215/0000
+    DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/DYJetsToLL/DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-1200to2500/230721_004052/0000
+    DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/group/lpcpfnano/jdickins/v2_3/2017/DYJetsToLL/DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-2500toInf/230721_004117/0000
+  "2018" : 
+    DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8 :
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/DYJetsToLL/DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-200to400/230717_135841/0000
+    DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/DYJetsToLL/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-400to600/230523_101009/0000
+    DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/DYJetsToLL/DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-600to800/230717_135815/0000
+    DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/DYJetsToLL/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-800to1200/230523_100917/0000
+    DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/DYJetsToLL/DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-1200to2500/230621_223809/0000
+    DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8:
+    - /store/user/lpcpfnano/jdickins/v2_3/2018/DYJetsToLL/DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-2500toInf/230523_101127/0000
