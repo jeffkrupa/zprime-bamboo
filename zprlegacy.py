@@ -18,6 +18,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 v_PDGID = {
+    "Spin0ToBB" : 54,
     "HiggsToBB" : 25,
     "GluGluHToBB" : 25,
     "WJetsToLNu" : 24,
@@ -37,7 +38,7 @@ v_PDGID = {
 }
 
 syst_file = {
-    "triggerweights" :  f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/fatjet_triggerSF.json",
+    "triggerweights" :  f"/afs/cern.ch/work/j/jekrupa/public/bamboodev7/zprime-bamboo/corrections/fatjet_triggerSF.json",
     "MUO" : { 
         "2016APV" : "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2016preVFP_UL/muon_Z.json.gz",
         "2016" : "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2016postVFP_UL/muon_Z.json.gz",
@@ -62,13 +63,13 @@ syst_file = {
         "2017" : "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/LUM/2017_UL/puWeights.json.gz",
         "2018" : "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz",
     },
-    "NLOVkfactors" : "/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ULvjets_corrections.json",
-    "EWHiggsCorrections" : "/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/EWHiggsCorrections.json",
+    "NLOVkfactors" : "/afs/cern.ch/work/j/jekrupa/public/bamboodev7/zprime-bamboo/corrections/ULvjets_corrections.json",
+    "EWHiggsCorrections" : "/afs/cern.ch/work/j/jekrupa/public/bamboodev7/zprime-bamboo/corrections/EWHiggsCorrections.json",
     "msdcorr" : { 
-        "2016APV" : f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/msdcorr_2016.json",
-        "2016" : f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/msdcorr_2016.json",
-        "2017" : f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/msdcorr_2017.json",
-        "2018" : f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/msdcorr_2018.json",
+        "2016APV" : f"/afs/cern.ch/work/j/jekrupa/public/bamboodev7/zprime-bamboo/corrections/msdcorr_2016.json",
+        "2016" : f"/afs/cern.ch/work/j/jekrupa/public/bamboodev7/zprime-bamboo/corrections/msdcorr_2016.json",
+        "2017" : f"/afs/cern.ch/work/j/jekrupa/public/bamboodev7/zprime-bamboo/corrections/msdcorr_2017.json",
+        "2018" : f"/afs/cern.ch/work/j/jekrupa/public/bamboodev7/zprime-bamboo/corrections/msdcorr_2018.json",
     },
 }
 
@@ -92,9 +93,9 @@ pnmdWPs = {
         
 }
 pnbvlWPs = {
-    "VT" : 0.9999,
-    "T" : 0.999,
-    "M" : 0.99,
+    #"VT" : 0.9999,
+    #"T" : 0.999,
+    #"M" : 0.99,
     "L" : 0.50,
 }
 btagWPs = {
@@ -282,6 +283,7 @@ class zprlegacy(NanoAODHistoModule):
         try:
             do_genmatch = any(sampleCfg["group"] in x for x in v_PDGID.keys())
             if "VectorZPrime" in sampleCfg["group"]: do_genmatch = True
+            if "Spin0ToBB" in sampleCfg["group"]: do_genmatch = True
  
         except:
             do_genmatch = True
@@ -495,6 +497,8 @@ class zprlegacy(NanoAODHistoModule):
                 w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.abs(p.pdgId) == 24,p.statusFlags & 2**GEN_FLAGS["IsLastCopy"],p.statusFlags & 2**GEN_FLAGS["FromHardProcess"])),lambda p: -p.status)
             elif "HiggsToBB" in sampleCfg["group"]:
                 w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.abs(p.pdgId) == 25,p.statusFlags & 2**GEN_FLAGS["IsLastCopy"],p.statusFlags & 2**GEN_FLAGS["FromHardProcess"])), lambda p: -p.status)
+            elif "Spin0ToBB" in sampleCfg["group"]:
+                w_by_status = op.sort(op.select(t.GenPart, lambda p : op.AND(op.abs(p.pdgId) == 54,p.statusFlags & 2**GEN_FLAGS["IsLastCopy"],p.statusFlags & 2**GEN_FLAGS["FromHardProcess"])), lambda p: -p.status)
             #else: 
             #    m_pdgid = v_PDGID[sampleCfg["group"]]
             #print("m_pdgid",m_pdgid)
@@ -504,7 +508,7 @@ class zprlegacy(NanoAODHistoModule):
             q_from_w = op.select(genQuarks, lambda q : q.parent.idx == w_by_status[0].idx)
             Vgen_matched = op.rng_count(q_from_w, lambda q: op.deltaR(q.p4, fatjets[0].p4) < 0.8) == 2 
             if self.args.split_signal_region:
-                if "ZJetsToBB" in sampleCfg["group"] or "VectorZPrimeToBB" in sampleCfg["group"]:
+                if "ZJetsToBB" in sampleCfg["group"] or "VectorZPrimeToBB" in sampleCfg["group"] or "Spin0ToBB" in sampleCfg["group"]:
                     Vgen_matched = op.AND(Vgen_matched, op.rng_count(q_from_w, lambda q: op.abs(q.pdgId) == 5) == 2)
                 #elif "ZJetsToCC" in sampleCfg["group"] or "VectorZPrimeToCC" in sampleCfg["group"]:
                 #    Vgen_matched = op.AND(Vgen_matched, op.rng_count(q_from_w, lambda q: op.abs(q.pdgId) == 4) == 2)
@@ -516,7 +520,7 @@ class zprlegacy(NanoAODHistoModule):
             Vgen_quality_criterion_msd = op.abs((corrected_msd[fatjets[0].idx] - w_by_status[0].mass)/w_by_status[0].mass) < 0.3
             
 
-        ddtmap_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev/bamboo/examples/zprlegacy/corrections/ddt_maps.json"
+        #ddtmap_file = f"/afs/cern.ch/work/j/jekrupa/public/bamboodev7/zprime-bamboo/correctionsddt_maps.json"
 
         #pnmd2prong_ddtmap = get_correction(ddtmap_file,
         #    f"ddtmap_PNMD_pctl0.05_QCD_{era}" ,
@@ -782,7 +786,7 @@ class zprlegacy(NanoAODHistoModule):
         SR_muon_cut = SR_electron_cut.refine("mu_cut",cut=[op.rng_len(loose_muons) == 0])
         #SR_tau_cut_dz = SR_muon_cut.refine("tau_cut_dz",cut=[op.rng_len(taus_dz) == 0]) 
         SR_tau_cut = SR_muon_cut.refine("tau_cut",cut=[op.rng_len(taus) == 0]) 
-        if "ZJetsToQQ" in sample or "ZJetsToBB" in sample or "WJetsToQQ" in sample or "VectorZPrime" in sample or "HiggsToBB" in sampleCfg["group"]:
+        if "ZJetsToQQ" in sample or "ZJetsToBB" in sample or "WJetsToQQ" in sample or "VectorZPrime" in sample or "HiggsToBB" in sampleCfg["group"] or "Spin0ToBB" in sample:
             print("adding matching to cut")
             SR_Vmatched = SR_tau_cut.refine("fj_Vmatched",cut=op.AND(Vgen_matched,Vgen_quality_criterion_pt,Vgen_quality_criterion_msd))
         else:

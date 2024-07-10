@@ -7,25 +7,25 @@ samples:
   JetHT_Run2018A:
     files: file_paths/2018/JetHT_Run2018A.txt
     era: '2018'
-    split: -10
+    split: -5
     group: data
     certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
   JetHT_Run2018B:
     files: file_paths/2018/JetHT_Run2018B.txt
     era: '2018'
-    split: -10
+    split: -5
     group: data
     certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
   JetHT_Run2018C:
     files: file_paths/2018/JetHT_Run2018C.txt
     era: '2018'
-    split: -10
+    split: -5
     group: data
     certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
   JetHT_Run2018D:
     files: file_paths/2018/JetHT_Run2018D.txt
     era: '2018'
-    split: -10
+    split: -5
     group: data
     certified_lumi_file: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
   #DYJetsToLL_HT-100To400:
@@ -34,7 +34,7 @@ samples:
   #  era: '2018'
   #  type: mc
   #  generated-events: genEventSumw
-  #  split: -10
+  #  split: -5
   #  group: DYJetsToLL
   DYJetsToLL_HT-400To600:
     cross-section: 5.217
@@ -42,7 +42,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: DYJetsToLL
   DYJetsToLL_HT-600To800:
     cross-section: 1.267
@@ -50,7 +50,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: DYJetsToLL
   DYJetsToLL_HT-800To1200:
     cross-section: 0.5682
@@ -58,7 +58,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: DYJetsToLL
   DYJetsToLL_HT-1200To2500:
     cross-section: 0.1332
@@ -66,7 +66,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: DYJetsToLL
   #DYJetsToLL_HT-2500ToInf:
   #  cross-section: 0.002978 
@@ -74,7 +74,7 @@ samples:
   #  era: '2018'
   #  type: mc
   #  generated-events: genEventSumw
-  #  split: -10
+  #  split: -5
   #  group: DYJetsToLL
   WJetsToQQ_HT-600to800:
     cross-section: 59.06
@@ -82,7 +82,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: WJetsToQQ
   WJetsToQQ_HT-800toInf:
     cross-section: 28.75
@@ -90,7 +90,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: WJetsToQQ
   ZJetsToQQ_HT-600to800:
     cross-section: 25.41
@@ -98,7 +98,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: ZJetsToQQ
   ZJetsToQQ_HT-800toInf:
     cross-section: 12.91
@@ -106,7 +106,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: ZJetsToQQ
   ZJetsToBB_HT-600to800:
     cross-section: 25.41
@@ -114,7 +114,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: ZJetsToBB
     subprocess: ZJetsToBB
   ZJetsToBB_HT-800toInf:
@@ -123,7 +123,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: ZJetsToBB
     subprocess: ZJetsToBB
   QCD_HT500to700:
@@ -132,7 +132,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: QCD
   QCD_HT700to1000:
     cross-section: 6412.0
@@ -140,7 +140,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: QCD
   QCD_HT1000to1500:
     cross-section: 1118.0
@@ -148,7 +148,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: QCD
   QCD_HT1500to2000:
     cross-section: 108.5
@@ -156,7 +156,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: QCD
   QCD_HT2000toInf:
     cross-section: 21.94
@@ -164,15 +164,105 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: QCD
-  VectorZPrimeToQQ_M50:
-    cross-section: 1.466e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+  Spin0ToBB_M50:
+    cross-section: 0.022
+    files: file_paths/2018/Spin0ToBB_1j_scalar_pt350_M50.txt
     era: '2018'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M50
+    subprocess: Spin0ToBB_M50
+  Spin0ToBB_M100:
+    cross-section: 0.021
+    files: file_paths/2018/Spin0ToBB_1j_scalar_pt350_M100.txt
+    era: '2018'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M100
+    subprocess: Spin0ToBB_M100
+  Spin0ToBB_M150:
+    cross-section: 0.020
+    files: file_paths/2018/Spin0ToBB_1j_scalar_pt350_M150.txt
+    era: '2018'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M150
+    subprocess: Spin0ToBB_M150
+  Spin0ToBB_M200:
+    cross-section: 0.0189
+    files: file_paths/2018/Spin0ToBB_1j_scalar_pt350_M200.txt
+    era: '2018'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M200
+    subprocess: Spin0ToBB_M200
+  Spin0ToBB_M250:
+    cross-section: 0.0178
+    files: file_paths/2018/Spin0ToBB_1j_scalar_pt350_M250.txt
+    era: '2018'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M250
+    subprocess: Spin0ToBB_M250
+  Spin0ToBB_M300:
+    cross-section: 0.0166
+    files: file_paths/2018/Spin0ToBB_1j_scalar_pt350_M300.txt
+    era: '2018'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M300
+    subprocess: Spin0ToBB_M300
+  VectorZPrimeToQQ_M50:
+    cross-section: 5.77
+    files: file_paths/2018/VectorZPrimeToQQ_M50_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
+    era: '2018'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
     #legend: "m_{Z'} = 50 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -182,12 +272,12 @@ samples:
     group: VectorZPrimeToQQ_M50
     subprocess: VectorZPrimeToQQ_M50
   VectorZPrimeToBB_M50:
-    cross-section: 1.466e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 5.77
+    files: file_paths/2018/VectorZPrimeToQQ_M50_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2018'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 50 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -196,43 +286,13 @@ samples:
     order: 3
     group: VectorZPrimeToBB_M50
     subprocess: VectorZPrimeToBB_M50
-  VectorZPrimeToQQ_M75:
-    cross-section: 1.521e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2018'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 75 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    line-width: 3
-    order: 3
-    group: VectorZPrimeToQQ_M75
-    subprocess: VectorZPrimeToQQ_M75
-  VectorZPrimeToBB_M75:
-    cross-section: 1.521e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2018'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 75 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    line-width: 3
-    order: 3
-    group: VectorZPrimeToBB_M75
-    subprocess: VectorZPrimeToBB_M75
   VectorZPrimeToQQ_M100:
-    cross-section: 1.433e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 5.16
+    files: file_paths/2018/VectorZPrimeToQQ_M100_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2018'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 100 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -242,12 +302,12 @@ samples:
     group: VectorZPrimeToQQ_M100
     subprocess: VectorZPrimeToQQ_M100
   VectorZPrimeToBB_M100:
-    cross-section: 1.433e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 5.16
+    files: file_paths/2018/VectorZPrimeToQQ_M100_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2018'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 100 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -256,43 +316,13 @@ samples:
     order: 3
     group: VectorZPrimeToBB_M100
     subprocess: VectorZPrimeToBB_M100
-  VectorZPrimeToQQ_M125:
-    cross-section: 1.456e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2018'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 125 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    line-width: 3
-    order: 3
-    group: VectorZPrimeToQQ_M125
-    subprocess: VectorZPrimeToQQ_M125
-  VectorZPrimeToBB_M125:
-    cross-section: 1.456e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2018'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 125 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    line-width: 3
-    order: 3
-    group: VectorZPrimeToBB_M125
-    subprocess: VectorZPrimeToBB_M125
   VectorZPrimeToQQ_M150:
-    cross-section: 1.444e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 4.55
+    files: file_paths/2018/VectorZPrimeToQQ_M150_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2018'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 150 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -302,12 +332,12 @@ samples:
     group: VectorZPrimeToQQ_M150
     subprocess: VectorZPrimeToQQ_M150
   VectorZPrimeToBB_M150:
-    cross-section: 1.444e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 4.55
+    files: file_paths/2018/VectorZPrimeToQQ_M150_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2018'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 150 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -316,103 +346,13 @@ samples:
     order: 3
     group: VectorZPrimeToBB_M150
     subprocess: VectorZPrimeToBB_M150
-  VectorZPrimeToQQ_M175:
-    cross-section: 1.362e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2018'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 175 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    line-width: 3
-    order: 3
-    group: VectorZPrimeToQQ_M175
-    subprocess: VectorZPrimeToQQ_M175
-  VectorZPrimeToBB_M175:
-    cross-section: 1.362e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2018'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 175 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    line-width: 3
-    order: 3
-    group: VectorZPrimeToBB_M175
-    subprocess: VectorZPrimeToBB_M175
-  VectorZPrimeToQQ_M200:
-    cross-section: 1.338e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2018'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 200 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#df2bff"
-    line-width: 3
-    order: 2
-    group: VectorZPrimeToQQ_M200
-    subprocess: VectorZPrimeToQQ_M200
-  VectorZPrimeToBB_M200:
-    cross-section: 1.338e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2018'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 200 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#df2bff"
-    line-width: 3
-    order: 2
-    group: VectorZPrimeToBB_M200
-    subprocess: VectorZPrimeToBB_M200
-  VectorZPrimeToQQ_M225:
-    cross-section: 1.370e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2018'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 225 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#df2bff"
-    line-width: 3
-    order: 2
-    group: VectorZPrimeToQQ_M225
-    subprocess: VectorZPrimeToQQ_M225
-  VectorZPrimeToBB_M225:
-    cross-section: 1.370e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2018'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 225 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#df2bff"
-    line-width: 3
-    order: 2
-    group: VectorZPrimeToBB_M225
-    subprocess: VectorZPrimeToBB_M225
   VectorZPrimeToQQ_M250:
-    cross-section: 1.278e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 3.34
+    files: file_paths/2018/VectorZPrimeToQQ_M250_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2018'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 250 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -422,12 +362,12 @@ samples:
     group: VectorZPrimeToQQ_M250
     subprocess: VectorZPrimeToQQ_M250
   VectorZPrimeToBB_M250:
-    cross-section: 1.278e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 3.34
+    files: file_paths/2018/VectorZPrimeToQQ_M250_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2018'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 250 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -437,12 +377,12 @@ samples:
     group: VectorZPrimeToBB_M250
     subprocess: VectorZPrimeToBB_M250
   VectorZPrimeToQQ_M300:
-    cross-section: 1.4e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 2.78
+    files: file_paths/2018/VectorZPrimeToQQ_M300_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2018'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 300 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -452,12 +392,12 @@ samples:
     group: VectorZPrimeToQQ_M300
     subprocess: VectorZPrimeToQQ_M300
   VectorZPrimeToBB_M300:
-    cross-section: 1.4e+01
-    files: file_paths/2018/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 2.78
+    files: file_paths/2018/VectorZPrimeToQQ_M300_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2018'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 300 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
@@ -472,7 +412,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: TTbar
   TTToHadronic: 
     cross-section: 303.8527975
@@ -480,7 +420,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: TTbar
   TTToSemiLeptonic:
     cross-section: 306.137405
@@ -488,7 +428,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: TTbar
   #WJetsToLNu_HT200to400:
   #  cross-section: 336.5
@@ -496,7 +436,7 @@ samples:
   #  era: '2018'
   #  type: mc
   #  generated-events: genEventSumw
-  #  split: -10
+  #  split: -5
   #  group: WJetsToLNu
   WJetsToLNu_HT400to600:
     cross-section: 45.12
@@ -504,7 +444,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: WJetsToLNu
   WJetsToLNu_HT600to800:
     cross-section: 10.99
@@ -512,7 +452,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: WJetsToLNu
   WJetsToLNu_HT800to1200:
     cross-section: 4.938
@@ -520,7 +460,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: WJetsToLNu
   WJetsToLNu_HT1200to2500:
     cross-section: 1.155
@@ -528,7 +468,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: WJetsToLNu
   WJetsToLNu_HT2500toInf:
     cross-section: 0.02625
@@ -536,7 +476,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: WJetsToLNu
   ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
     cross-section: 32.51
@@ -544,7 +484,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: SingleTop
   ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8:
     cross-section: 32.45
@@ -552,7 +492,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: SingleTop
   ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
     cross-section: 81.42
@@ -560,7 +500,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: SingleTop
   ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8:
     cross-section: 136.82
@@ -568,7 +508,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: SingleTop
   GluGluHToBB:
     cross-section : 0.27 #CHECK???
@@ -576,7 +516,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: HiggsToBB
   ttHToBB:
     cross-section : 0.2912 #CHECK???
@@ -584,7 +524,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: HiggsToBB
   VBFHToBB:
     cross-section : 2.2498257  #CHECK???
@@ -592,7 +532,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: HiggsToBB
   ZHToBB:
     cross-section : 0.32600108  #CHECK???
@@ -600,7 +540,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: HiggsToBB
   ggZHToBB:
     cross-section : 0.0250890  #CHECK???
@@ -608,7 +548,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: HiggsToBB
   WminusH_HToBB:
     cross-section : 0.21348075 #CHECK???
@@ -616,7 +556,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: HiggsToBB
   WplusH_HToBB:
     cross-section : 0.3421500999 #CHECK???
@@ -624,7 +564,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: HiggsToBB
   WW_TuneCP5_13TeV-pythia8:
     cross-section: 75.83
@@ -632,7 +572,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: Diboson
     order: 0
   ZZ_TuneCP5_13TeV-pythia8:
@@ -641,7 +581,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: Diboson
     order: 0
   WZ_TuneCP5_13TeV-pythia8:
@@ -650,7 +590,7 @@ samples:
     era: '2018'
     type: mc
     generated-events: genEventSumw
-    split: -10
+    split: -5
     group: Diboson
     order: 0
 plotIt:

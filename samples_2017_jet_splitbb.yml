@@ -1,5 +1,5 @@
 tree: Events
-dbcache: "2018_UL.db"
+dbcache: "2017_UL.db"
 eras:
   '2017':
     luminosity: 41480.0
@@ -189,306 +189,246 @@ samples:
     generated-events: genEventSumw
     split: -10
     group: QCD
-  VectorZPrimeToBB_M50:
-    cross-section: 1.466e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+  Spin0ToBB_M50:
+    cross-section: 0.022
+    files: file_paths/2017/Spin0ToBB_1j_scalar_pt350_M50.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -10
-    legend: "Z(bb) m = 50 GeV"
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
     fill-type: 0
-    fill-color: "#ff0000"
+    #fill-color: "#ff0000"
     line-color: "#b314f7"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToBB_M50
-    subprocess: VectorZPrimeToBB_M50
-  VectorZPrimeToQQ_M50:
-    cross-section: 1.466e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M50
+    subprocess: Spin0ToBB_M50
+  Spin0ToBB_M100:
+    cross-section: 0.021
+    files: file_paths/2017/Spin0ToBB_1j_scalar_pt350_M100.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -10
-    legend: "Z(qq) m = 50 GeV"
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
     fill-type: 0
-    fill-color: "#ff0000"
-    line-color: "#e31475"
-    #line-width: 3
-    #order: 3
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M100
+    subprocess: Spin0ToBB_M100
+  Spin0ToBB_M150:
+    cross-section: 0.020
+    files: file_paths/2017/Spin0ToBB_1j_scalar_pt350_M150.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M150
+    subprocess: Spin0ToBB_M150
+  Spin0ToBB_M200:
+    cross-section: 0.0189
+    files: file_paths/2017/Spin0ToBB_1j_scalar_pt350_M200.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M200
+    subprocess: Spin0ToBB_M200
+  Spin0ToBB_M250:
+    cross-section: 0.0178
+    files: file_paths/2017/Spin0ToBB_1j_scalar_pt350_M250.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M250
+    subprocess: Spin0ToBB_M250
+  Spin0ToBB_M300:
+    cross-section: 0.0166
+    files: file_paths/2017/Spin0ToBB_1j_scalar_pt350_M300.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: Spin0ToBB_M300
+    subprocess: Spin0ToBB_M300
+  VectorZPrimeToQQ_M50:
+    cross-section: 5.77
+    files: file_paths/2017/VectorZPrimeToQQ_M50_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
     group: VectorZPrimeToQQ_M50
     subprocess: VectorZPrimeToQQ_M50
-  VectorZPrimeToBB_M75:
-    cross-section: 1.521e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+  VectorZPrimeToBB_M50:
+    cross-section: 5.77
+    files: file_paths/2017/VectorZPrimeToQQ_M50_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 75 GeV"
+    split: -5
+    #legend: "m_{Z'} = 50 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToBB_M75
-    subprocess: VectorZPrimeToBB_M75
-  VectorZPrimeToQQ_M75:
-    cross-section: 1.521e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 75 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToQQ_M75
-    subprocess: VectorZPrimeToQQ_M75
-  VectorZPrimeToBB_M100:
-    cross-section: 1.433e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 100 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToBB_M100
-    subprocess: VectorZPrimeToBB_M100
+    line-color: "#b314f7"
+    line-width: 3
+    order: 3
+    group: VectorZPrimeToBB_M50
+    subprocess: VectorZPrimeToBB_M50
   VectorZPrimeToQQ_M100:
-    cross-section: 1.433e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 5.16
+    files: file_paths/2017/VectorZPrimeToQQ_M100_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 100 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
     line-color: "#ff0000"
-    #line-width: 3
-    #order: 3
+    line-width: 3
+    order: 3
     group: VectorZPrimeToQQ_M100
     subprocess: VectorZPrimeToQQ_M100
-  VectorZPrimeToBB_M125:
-    cross-section: 1.456e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+  VectorZPrimeToBB_M100:
+    cross-section: 5.16
+    files: file_paths/2017/VectorZPrimeToQQ_M100_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 125 GeV"
+    split: -5
+    #legend: "m_{Z'} = 100 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
     line-color: "#ff0000"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToBB_M125
-    subprocess: VectorZPrimeToBB_M125
-  VectorZPrimeToQQ_M125:
-    cross-section: 1.456e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 125 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToQQ_M125
-    subprocess: VectorZPrimeToQQ_M125
-  VectorZPrimeToBB_M150:
-    cross-section: 1.444e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 150 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToBB_M150
-    subprocess: VectorZPrimeToBB_M150
+    line-width: 3
+    order: 3
+    group: VectorZPrimeToBB_M100
+    subprocess: VectorZPrimeToBB_M100
   VectorZPrimeToQQ_M150:
-    cross-section: 1.444e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 4.55
+    files: file_paths/2017/VectorZPrimeToQQ_M150_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 150 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
     line-color: "#ff0000"
-    #line-width: 3
-    #order: 3
+    line-width: 3
+    order: 3
     group: VectorZPrimeToQQ_M150
     subprocess: VectorZPrimeToQQ_M150
-  VectorZPrimeToBB_M175:
-    cross-section: 1.362e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+  VectorZPrimeToBB_M150:
+    cross-section: 4.55
+    files: file_paths/2017/VectorZPrimeToQQ_M150_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 175 GeV"
+    split: -5
+    #legend: "m_{Z'} = 150 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
     line-color: "#ff0000"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToBB_M175
-    subprocess: VectorZPrimeToBB_M175
-  VectorZPrimeToQQ_M175:
-    cross-section: 1.362e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 175 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#ff0000"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToQQ_M175
-    subprocess: VectorZPrimeToQQ_M175
-  VectorZPrimeToBB_M200:
-    cross-section: 1.338e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 200 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#df2bff"
-    #line-width: 3
-    #order: 2
-    group: VectorZPrimeToBB_M200
-    subprocess: VectorZPrimeToBB_M200
-  VectorZPrimeToQQ_M200:
-    cross-section: 1.338e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 200 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#df2bff"
-    #line-width: 3
-    #order: 2
-    group: VectorZPrimeToQQ_M200
-    subprocess: VectorZPrimeToQQ_M200
-  VectorZPrimeToBB_M225:
-    cross-section: 1.370e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 225 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#df2bff"
-    #line-width: 3
-    #order: 2
-    group: VectorZPrimeToBB_M225
-    subprocess: VectorZPrimeToBB_M225
-  VectorZPrimeToQQ_M225:
-    cross-section: 1.370e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 225 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#df2bff"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToQQ_M225
-    subprocess: VectorZPrimeToQQ_M225
-  VectorZPrimeToBB_M250:
-    cross-section: 1.278e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
-    era: '2017'
-    type: signal
-    generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 250 GeV"
-    fill-type: 0
-    #fill-color: "#ff0000"
-    line-color: "#df2bff"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToBB_M250
-    subprocess: VectorZPrimeToBB_M250
+    line-width: 3
+    order: 3
+    group: VectorZPrimeToBB_M150
+    subprocess: VectorZPrimeToBB_M150
   VectorZPrimeToQQ_M250:
-    cross-section: 1.278e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 3.34
+    files: file_paths/2017/VectorZPrimeToQQ_M250_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 250 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
     line-color: "#df2bff"
-    #line-width: 3
-    #order: 3
+    line-width: 3
+    order: 2
     group: VectorZPrimeToQQ_M250
     subprocess: VectorZPrimeToQQ_M250
-  VectorZPrimeToBB_M300:
-    cross-section: 1.4e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+  VectorZPrimeToBB_M250:
+    cross-section: 3.34
+    files: file_paths/2017/VectorZPrimeToQQ_M250_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -10
-    #legend: "m_{Z'} = 300 GeV"
+    split: -5
+    #legend: "m_{Z'} = 250 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
     line-color: "#df2bff"
-    #line-width: 3
-    #order: 3
-    group: VectorZPrimeToBB_M300
-    subprocess: VectorZPrimeToBB_M300
+    line-width: 3
+    order: 2
+    group: VectorZPrimeToBB_M250
+    subprocess: VectorZPrimeToBB_M250
   VectorZPrimeToQQ_M300:
-    cross-section: 1.4e+01
-    files: file_paths/2017/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8.txt
+    cross-section: 2.78
+    files: file_paths/2017/VectorZPrimeToQQ_M300_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
     era: '2017'
     type: signal
     generated-events: genEventSumw
-    split: -10
+    split: -5
     #legend: "m_{Z'} = 300 GeV"
     fill-type: 0
     #fill-color: "#ff0000"
     line-color: "#df2bff"
-    #line-width: 3
-    #order: 3
+    line-width: 3
+    order: 2
     group: VectorZPrimeToQQ_M300
     subprocess: VectorZPrimeToQQ_M300
+  VectorZPrimeToBB_M300:
+    cross-section: 2.78
+    files: file_paths/2017/VectorZPrimeToQQ_M300_pT350_TuneCP5_13TeV-madgraph-pythia8.txt
+    era: '2017'
+    type: signal
+    generated-events: genEventSumw
+    split: -5
+    #legend: "m_{Z'} = 300 GeV"
+    fill-type: 0
+    #fill-color: "#ff0000"
+    line-color: "#df2bff"
+    line-width: 3
+    order: 2
+    group: VectorZPrimeToBB_M300
+    subprocess: VectorZPrimeToBB_M300
   TTTo2L2Nu: 
     cross-section: 77.10979749999998 
     files: file_paths/2017/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8.txt

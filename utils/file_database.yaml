@@ -159,93 +159,115 @@ VectorZPrime:
   is_blinded : False
 
   "2016APV" : 
-    VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M50/220103_165218/0000
-    VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M75/220103_165751/0000
-    VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M100/220103_165123/0000
-    VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M125/220103_165504/0000
-    VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M150/220103_164931/0000
-    VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M175/220103_165655/0000
-    VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M200/220103_171407/0000
-    VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M225/220103_165409/0000
-    VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M250/220103_165846/0000
-    VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/jekrupa/v2_2/2016APV/VectorZPrime/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M300/220103_164739/0000
+    VectorZPrimeToQQ_M50_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2016APV/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M50/20240629/0000
+    VectorZPrimeToQQ_M100_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2016APV/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M100/20240629/0000
+    VectorZPrimeToQQ_M150_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2016APV/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M150/20240629/0000
+    VectorZPrimeToQQ_M200_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2016APV/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M200/20240629/0000
+    VectorZPrimeToQQ_M250_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2016APV/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M250/20240629/0000
+    VectorZPrimeToQQ_M300_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2016APV/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M300/20240629/0000
 
   "2016" : 
-    VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M50/220103_175816/0000
-    VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M75/220103_175959/0000
-    VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M100/220103_175759/0000
-    VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M125/220103_175908/0000
-    VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M150/220103_175722/0000
-    VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M175/220103_175942/0000
-    VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M200/220105_193844/0000
-    VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M225/220103_175850/0000
-    VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M250/220103_180018/0000
-    VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/group/lpcpfnano/dryu/v2_2/2016/VectorZPrime/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M300/220105_193910/0000
+    VectorZPrimeToQQ_M50_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2016/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M50/20240629/0000
+    VectorZPrimeToQQ_M100_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2016/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M100/20240629/0000
+    VectorZPrimeToQQ_M150_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2016/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M150/20240629/0000
+    VectorZPrimeToQQ_M200_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2016/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M200/20240629/0000
+    VectorZPrimeToQQ_M250_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2016/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M250/20240629/0000
+    VectorZPrimeToQQ_M300_pT350_TuneCP5_13TeV-madgraph-pythia8:
+     - /store/group/lpcpfnano/dryu/v2_3/2016/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M300/20240629/0000
   
   "2017" :
-    VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M50/220103_174825/0000 
-    VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M75//220103_175550/0000
-    VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M100//220103_174729/0000
-    VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M125/220103_175115/0000
-    VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M150//220103_174536/0000
-    VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M175/220103_175310/0000
-    VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M200/220103_174246/0000
-    VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M225/220103_175017/0000
-    VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M250/220103_175650/0000
-    VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/jekrupa/v2_2/2017/VectorZPrime/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M300/220103_174344/0000
+    VectorZPrimeToQQ_M50_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2017/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M50/20240629/0000
+    VectorZPrimeToQQ_M100_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2017/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M100/20240629/0000
+    VectorZPrimeToQQ_M150_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2017/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M150/20240629/0000
+    VectorZPrimeToQQ_M200_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2017/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M200/20240629/0000
+    VectorZPrimeToQQ_M250_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2017/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M250/20240629/0000
+    VectorZPrimeToQQ_M300_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2017/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M300/20240629/0000
 
   "2018" :
-    VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M50_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M50/220103_182907/0000
-    VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M75_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M75/220103_183051/0000
-    VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M100_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M100/220103_182850/0000
-    VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M125_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M125/220103_182959/0000
-    VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M150_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M150/220103_182814/0000
-    VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M175_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M175/220103_183033/0000
-    VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M200_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M200/220103_182724/0000
-    VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M225_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M225/220103_182942/0000
-    VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M250_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M250/220103_183108/0000
-    VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8:
-    - /store/user/lpcpfnano/dryu/v2_2/2018/VectorZPrime/VectorZPrimeToQQ_M300_pT300_TuneCP5_13TeV-madgraph-pythia8/VectorZPrimeToQQ_M300/220103_182741/0000
+    VectorZPrimeToQQ_M50_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2018/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M50/20240629/0000/
+    VectorZPrimeToQQ_M100_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2018/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M100/20240629/0000/
+    VectorZPrimeToQQ_M150_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2018/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M150/20240629/0000/
+    VectorZPrimeToQQ_M200_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2018/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M200/20240629/0000/
+    VectorZPrimeToQQ_M250_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2018/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M250/20240629/0000/
+    VectorZPrimeToQQ_M300_pT350_TuneCP5_13TeV-madgraph-pythia8:
+    - /store/group/lpcpfnano/dryu/v2_3/2018/VectorZPrimeToQQ/VectorZPrimeToQQ_pt350_M300/20240629/0000/
+    
+Spin0ToBB:
+   "2016APV" :
+     Spin0ToBB_1j_scalar_pt350_M50:
+     - /store/group/lpcpfnano/dryu/v2_3/2016APV/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M50/20240709/0000/
+     Spin0ToBB_1j_scalar_pt350_M100:
+     - /store/group/lpcpfnano/dryu/v2_3/2016APV/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M100/20240709/0000/
+     Spin0ToBB_1j_scalar_pt350_M150:
+     - /store/group/lpcpfnano/dryu/v2_3/2016APV/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M150/20240709/0000/
+     Spin0ToBB_1j_scalar_pt350_M200:
+     - /store/group/lpcpfnano/dryu/v2_3/2016APV/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M200/20240709/0000/
+     Spin0ToBB_1j_scalar_pt350_M250:
+     - /store/group/lpcpfnano/dryu/v2_3/2016APV/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M250/20240709/0000/
+     Spin0ToBB_1j_scalar_pt350_M300:
+     - /store/group/lpcpfnano/dryu/v2_3/2016APV/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M300/20240709/0000/
 
+   "2016" :
+     Spin0ToBB_1j_scalar_pt350_M50:
+     - /store/group/lpcpfnano/dryu/v2_3/2016/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M50/20240709/0000/
+     Spin0ToBB_1j_scalar_pt350_M100:
+     - /store/group/lpcpfnano/dryu/v2_3/2016/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M100/20240709/0000/
+     Spin0ToBB_1j_scalar_pt350_M150:
+     - /store/group/lpcpfnano/dryu/v2_3/2016/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M150/20240709/0000/
+     Spin0ToBB_1j_scalar_pt350_M200:
+     - /store/group/lpcpfnano/dryu/v2_3/2016/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M200/20240709/0000/
+     Spin0ToBB_1j_scalar_pt350_M250:
+     - /store/group/lpcpfnano/dryu/v2_3/2016/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M250/20240709/0000/
+     Spin0ToBB_1j_scalar_pt350_M300:
+     - /store/group/lpcpfnano/dryu/v2_3/2016/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M300/20240709/0000/
+   "2017" :
+     Spin0ToBB_1j_scalar_pt350_M50:
+     - /store/group/lpcpfnano/dryu/v2_3/2017/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M50/20240427/0000/
+     Spin0ToBB_1j_scalar_pt350_M100:
+     - /store/group/lpcpfnano/dryu/v2_3/2017/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M100/20240427/0000/
+     Spin0ToBB_1j_scalar_pt350_M150:
+     - /store/group/lpcpfnano/dryu/v2_3/2017/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M150/20240427/0000/
+     Spin0ToBB_1j_scalar_pt350_M200:
+     - /store/group/lpcpfnano/dryu/v2_3/2017/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M200/20240427/0000/
+     Spin0ToBB_1j_scalar_pt350_M250:
+     - /store/group/lpcpfnano/dryu/v2_3/2017/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M250/20240427/0000/
+     Spin0ToBB_1j_scalar_pt350_M300:
+     - /store/group/lpcpfnano/dryu/v2_3/2017/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M300/20240427/0000/
+   "2018" : 
+     Spin0ToBB_1j_scalar_pt350_M50:
+     - /store/group/lpcpfnano/dryu/v2_3/2018/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M50/20240427/0000/ 
+     Spin0ToBB_1j_scalar_pt350_M100:
+     - /store/group/lpcpfnano/dryu/v2_3/2018/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M100/20240427/0000/
+     Spin0ToBB_1j_scalar_pt350_M150:
+     - /store/group/lpcpfnano/dryu/v2_3/2018/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M150/20240427/0000/
+     Spin0ToBB_1j_scalar_pt350_M200:
+     - /store/group/lpcpfnano/dryu/v2_3/2018/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M200/20240427/0000/
+     Spin0ToBB_1j_scalar_pt350_M250:
+     - /store/group/lpcpfnano/dryu/v2_3/2018/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M250/20240427/0000/
+     Spin0ToBB_1j_scalar_pt350_M300:
+     - /store/group/lpcpfnano/dryu/v2_3/2018/Spin0ToBB/Spin0ToBB_1j_scalar_pt350_M300/20240427/0000/
 
 Higgs:
   is_mc : True
